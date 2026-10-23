@@ -9,12 +9,12 @@ export async function connectDB() {
   }
 
   try {
-    const conn = await mongoose.connect(uri, {
+    const connection = await mongoose.connect(uri, {
       serverSelectionTimeoutMS: 8000,
     });
 
     console.log(`✅ MongoDB Connected: ${conn.connection.host} [Database: ${conn.connection.name}]`);
-    return conn;
+    return connection;
   } catch (error) {
     console.error(`❌ MongoDB Connection Error: ${error.message}`);
     // Do not crash the entire process immediately in development so health check can report db status
