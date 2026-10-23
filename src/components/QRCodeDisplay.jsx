@@ -1,11 +1,12 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { QRCodeSVG } from "qrcode.react";
 import { Check, Copy, Download, ExternalLink, Edit3, Save, X, Loader2 } from "lucide-react";
 import { downloadQR } from "../utils/downloadQR";
-import { updateCardApi } from "../utils/api";
+import { updateCardApi, getCardApi } from "../utils/api";
 
 export default function QRCodeDisplay({ qrUrl, destinationUrl, value, cardId }) {
-  const permanentQrValue = qrUrl || value;
+  const [liveQrUrl, setLiveQrUrl] = useState(qrUrl || value);
+  const permanentQrValue = liveQrUrl || qrUrl || value;
   const [currentDestination, setCurrentDestination] = useState(destinationUrl || value);
   const [isEditing, setIsEditing] = useState(false);
   const [editUrl, setEditUrl] = useState(destinationUrl || value);
@@ -13,6 +14,21 @@ export default function QRCodeDisplay({ qrUrl, destinationUrl, value, cardId }) 
   const [updateSuccess, setUpdateSuccess] = useState(false);
   const [copiedPermanent, setCopiedPermanent] = useState(false);
   const [error, setError] = useState("");
+
+  useEffect(() => {
+    if (cardId) {
+      getCardApi(cardId)
+        .then((res) => {
+          if (res?.data?.qrUrl) {
+            setLiveQrUrl(res.data.qrUrl);
+          }
+          if (res?.data?.destinationUrl) {
+            setCurrentDestination(res.data.destinationUrl);
+          }
+        })
+        .catch(() => {});
+    }
+  }, [cardId]);
 
   async function copyPermanentLink() {
     try {

@@ -13,6 +13,9 @@ import { errorHandler, notFoundHandler } from "./middleware/errorHandler.js";
 const app = express();
 const PORT = process.env.PORT || 5000;
 
+// Trust proxies (Cloudflare tunnel / Vite proxy)
+app.set("trust proxy", 1);
+
 // Connect to MongoDB
 connectDB();
 

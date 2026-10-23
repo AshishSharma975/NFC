@@ -20,19 +20,18 @@ function getLocalIp() {
 }
 
 function getBaseUrl(req) {
-  // If explicitly configured in production (public URL)
-  if (process.env.BASE_URL && !process.env.BASE_URL.includes("localhost") && !process.env.BASE_URL.includes("127.0.0.1")) {
+  // Prioritize BASE_URL if set in environment (e.g. Cloudflare tunnel or production URL)
+  if (process.env.BASE_URL && process.env.BASE_URL.trim()) {
     return process.env.BASE_URL.replace(/\/$/, "");
   }
 
-  // If request came from a LAN device/IP, use host
+  // Otherwise deduce from request host
+  const protocol = req.headers["x-forwarded-proto"] || req.protocol;
   const host = req.get("host");
-  if (host && !host.includes("localhost") && !host.includes("127.0.0.1")) {
-    const protocol = req.headers["x-forwarded-proto"] || req.protocol;
+  if (host) {
     return `${protocol}://${host}`;
   }
 
-  // In local dev, auto-use local network IP (e.g. 172.20.10.5) so mobile phone camera scans work
   const port = process.env.PORT || 5000;
   const localIp = getLocalIp();
   return `http://${localIp}:${port}`;
