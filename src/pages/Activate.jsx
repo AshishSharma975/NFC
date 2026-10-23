@@ -1,16 +1,26 @@
 
-import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { ArrowLeft, ArrowRight, ExternalLink, ShieldCheck } from "lucide-react";
+import { useState, useEffect } from "react";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
+import { ArrowLeft, ArrowRight, ExternalLink, ShieldCheck, Loader2 } from "lucide-react";
 import StepIndicator from "../components/StepIndicator";
+import { activateCardApi } from "../utils/api";
 
 export default function Activate() {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const [cardId, setCardId] = useState("");
   const [reviewUrl, setReviewUrl] = useState("");
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  function handleSubmit(event) {
+  useEffect(() => {
+    const paramId = searchParams.get("cardId");
+    if (paramId) {
+      setCardId(paramId.trim());
+    }
+  }, [searchParams]);
+
+  async function handleSubmit(event) {
     event.preventDefault();
 
     if (!cardId.trim()) {
@@ -30,13 +40,29 @@ export default function Activate() {
     }
 
     setError("");
+    setLoading(true);
 
-    navigate("/result", {
-      state: {
+    try {
+      const response = await activateCardApi({
         cardId: cardId.trim(),
-        reviewUrl: reviewUrl.trim(),
-      },
-    });
+        destinationUrl: reviewUrl.trim(),
+      });
+
+      const cardData = response.data;
+
+      navigate("/result", {
+        state: {
+          cardId: cardData.cardId,
+          reviewUrl: cardData.destinationUrl,
+          qrUrl: cardData.qrUrl,
+          status: cardData.status,
+        },
+      });
+    } catch (err) {
+      setError(err.message || "Failed to activate card. Please ensure backend is running.");
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (
@@ -110,14 +136,22 @@ export default function Activate() {
 
             {error && <p className="form-error" role="alert">{error}</p>}
 
-            <button className="button button-dark form-submit" type="submit">
-              Generate QR code <ArrowRight size={17} />
+            <button className="button button-dark form-submit" type="submit" disabled={loading}>
+              {loading ? (
+                <>
+                  <Loader2 size={17} style={{ animation: "spin 1s linear infinite" }} /> Activating card...
+                </>
+              ) : (
+                <>
+                  Generate QR code <ArrowRight size={17} />
+                </>
+              )}
             </button>
           </form>
 
           <div className="form-disclaimer">
-            This demo generates a QR code locally. It does not sign in
-            to Google or activate a physical card.
+            Card details are securely saved in MongoDB. The permanent dynamic QR code
+            allows you to update your Google Review destination link at any time.
           </div>
         </div>
       </div>

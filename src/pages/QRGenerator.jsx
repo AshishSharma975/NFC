@@ -1,14 +1,16 @@
 
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { ArrowLeft, ArrowRight, QrCode } from "lucide-react";
+import { ArrowLeft, ArrowRight, QrCode, Loader2 } from "lucide-react";
+import { activateCardApi } from "../utils/api";
 
 export default function QRGenerator() {
   const navigate = useNavigate();
   const [url, setUrl] = useState("");
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  function submit(event) {
+  async function submit(event) {
     event.preventDefault();
 
     try {
@@ -18,14 +20,31 @@ export default function QRGenerator() {
         throw new Error("Invalid URL");
       }
 
+      setError("");
+      setLoading(true);
+
+      const generatedId = "QR-" + Math.random().toString(36).slice(2, 8).toUpperCase();
+
+      const response = await activateCardApi({
+        cardId: generatedId,
+        destinationUrl: parsed.href,
+        title: "Quick Dynamic QR",
+      });
+
+      const cardData = response.data;
+
       navigate("/result", {
         state: {
-          cardId: "QR-" + Math.random().toString(36).slice(2, 8).toUpperCase(),
-          reviewUrl: parsed.href,
+          cardId: cardData.cardId,
+          reviewUrl: cardData.destinationUrl,
+          qrUrl: cardData.qrUrl,
+          status: cardData.status,
         },
       });
-    } catch {
-      setError("Please enter a valid URL beginning with https://");
+    } catch (err) {
+      setError(err.message || "Please enter a valid URL beginning with https://");
+    } finally {
+      setLoading(false);
     }
   }
 
@@ -62,14 +81,22 @@ export default function QRGenerator() {
 
           {error && <p className="form-error" role="alert">{error}</p>}
 
-          <button className="button button-dark form-submit" type="submit">
-            Create QR code <ArrowRight size={17} />
+          <button className="button button-dark form-submit" type="submit" disabled={loading}>
+            {loading ? (
+              <>
+                <Loader2 size={17} style={{ animation: "spin 1s linear infinite" }} /> Generating dynamic QR...
+              </>
+            ) : (
+              <>
+                Create QR code <ArrowRight size={17} />
+              </>
+            )}
           </button>
         </form>
 
         <p className="standalone-note">
-          This generates a QR code for the URL you provide.
-          Changing its destination later requires a redirect service.
+          Generates a dynamic QR code stored in MongoDB.
+          The permanent link routes to your destination URL seamlessly.
         </p>
       </div>
     </section>

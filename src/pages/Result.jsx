@@ -36,7 +36,8 @@ export default function Result() {
             labels={["Card details", "Review link", "QR result"]}
           />
           <QRCodeDisplay
-            value={state.reviewUrl}
+            qrUrl={state.qrUrl || state.reviewUrl}
+            destinationUrl={state.reviewUrl}
             cardId={state.cardId}
           />
         </div>

@@ -1,0 +1,86 @@
+import express from "express";
+import cors from "cors";
+import morgan from "morgan";
+import dotenv from "dotenv";
+
+dotenv.config();
+
+import { connectDB } from "./config/db.js";
+import cardRoutes from "./routes/cardRoutes.js";
+import healthRoutes from "./routes/healthRoutes.js";
+import { errorHandler, notFoundHandler } from "./middleware/errorHandler.js";
+
+const app = express();
+const PORT = process.env.PORT || 5000;
+
+// Connect to MongoDB
+connectDB();
+
+// CORS setup
+const allowedOrigins = process.env.CLIENT_ORIGIN
+  ? process.env.CLIENT_ORIGIN.split(",").map((s) => s.trim())
+  : ["http://localhost:5173", "http://localhost:3000"];
+
+app.use(
+  cors({
+    origin: (origin, callback) => {
+      // Allow requests with no origin (like mobile apps, curl, QR scans)
+      if (!origin || allowedOrigins.includes("*") || allowedOrigins.includes(origin)) {
+        return callback(null, true);
+      }
+      return callback(null, true); // Allow all in dev/scans, or filter strictly if needed
+    },
+    credentials: true,
+  })
+);
+
+
+if (process.env.NODE_ENV !== "test") {
+  app.use(morgan("dev"));
+}
+app.use(express.json({ limit: "256kb" }));
+app.use(express.urlencoded({ extended: true, limit: "256kb" }));
+
+// Root welcome / discovery route
+app.get("/", (req, res) => {
+  res.json({
+    name: "Tapform NFC & Dynamic QR Backend API",
+    status: "running",
+    healthCheck: "/health",
+    documentation: {
+      activate: "POST /api/cards/activate",
+      update: "PUT /api/cards/:cardId",
+      getCard: "GET /api/cards/:cardId",
+      scanRedirect: "GET /c/:cardId",
+    },
+  });
+});
+
+// App Routes
+app.use(healthRoutes);
+app.use(cardRoutes);
+
+// Catch-all 404 handler
+app.use(notFoundHandler);
+
+
+app.use(errorHandler);
+
+// Start server
+const server = app.listen(PORT, "0.0.0.0", () => {
+  console.log(`🚀 NFC Backend server running on:`);
+  console.log(`   - Local:   http://localhost:${PORT}`);
+  console.log(`   - Network: http://172.20.10.5:${PORT}`);
+  console.log(`📡 Redirect scanner ready at: http://172.20.10.5:${PORT}/c/:cardId`);
+});
+
+
+process.on("SIGTERM", () => {
+  console.log("SIGTERM received. Shutting down gracefully...");
+  server.close(() => {
+    console.log("Server closed.");
+    process.exit(0);
+  });
+});
+
+export default app;
