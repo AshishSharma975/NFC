@@ -300,8 +300,9 @@ export default function DynamicQRSection() {
           </div>
           <h2 className="dashboard-title">Dynamic QR Stands & Connected Links</h2>
           <p className="dashboard-subtitle">
-            Aapke paas kitne dynamic QR stands hain, kitne live active hain, aur har stand kis
-            Google review / maps link se judha hua hai — sabhi kuch live track karein aur instant edit karein.
+            Track all your dynamic QR stands in real time — monitor total and active stands,
+            manage linked Google Reviews and Google Maps URLs, and update destinations instantly
+            from one dashboard.
           </p>
         </div>
 
@@ -596,7 +597,7 @@ export default function DynamicQRSection() {
 
                     <div className="redirect-actions">
                       <a
-                        href={`/c/${card.cardId}`}
+                        href={card.qrUrl || `/c/${card.cardId}`}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="test-scan-btn"

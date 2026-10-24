@@ -4,6 +4,7 @@ import {
   isValidHttpUrl,
   normalizeCardId,
 } from "../utils/validators.js";
+import { resolveGoogleMapsUrl } from "../utils/urlResolver.js";
 
 import os from "os";
 
@@ -69,8 +70,11 @@ export async function activateCard(req, res, next) {
     }
 
     const normalizedId = normalizeCardId(cardId);
-    const trimmedUrl = destinationUrl.trim();
+    const rawUrl = destinationUrl.trim();
     const trimmedTitle = typeof title === "string" ? title.trim() : "";
+
+    // Automatically unshorten Google Maps short URLs (maps.app.goo.gl, goo.gl) for instant loading
+    const trimmedUrl = await resolveGoogleMapsUrl(rawUrl);
 
     // Check if card already exists
     let card = await Card.findOne({ cardId: normalizedId });
@@ -142,7 +146,7 @@ export async function updateCard(req, res, next) {
           message: "Invalid destination URL. Must start with http:// or https://",
         });
       }
-      card.destinationUrl = destinationUrl.trim();
+      card.destinationUrl = await resolveGoogleMapsUrl(destinationUrl.trim());
     }
 
     if (title !== undefined) {
@@ -344,6 +348,19 @@ export async function redirectScan(req, res, next) {
       );
     }
 
+    // If destination URL is still a short link, resolve it to canonical Google Maps URL on the fly
+    let targetUrl = card.destinationUrl;
+    if (targetUrl.includes("goo.gl") || targetUrl.includes("bit.ly")) {
+      const resolved = await resolveGoogleMapsUrl(targetUrl);
+      if (resolved && resolved !== targetUrl) {
+        targetUrl = resolved;
+        // Asynchronously update card in MongoDB so future scans don't need resolving
+        Card.updateOne({ _id: card._id }, { destinationUrl: resolved })
+          .exec()
+          .catch(() => {});
+      }
+    }
+
     // Increment scanCount asynchronously without blocking user redirection
     Card.updateOne(
       { _id: card._id },
@@ -353,8 +370,74 @@ export async function redirectScan(req, res, next) {
       }
     ).exec().catch((err) => console.error("Failed to update scan count:", err));
 
-    // Perform HTTP 302 Found redirect
-    return res.redirect(302, card.destinationUrl);
+    // Send HTTP 302 Location header AND instant client-side fallback redirect payload
+    res.setHeader("Location", targetUrl);
+    res.setHeader("Content-Type", "text/html; charset=utf-8");
+    return res.status(302).send(`<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="refresh" content="0;url=${targetUrl}">
+  <title>Opening Location...</title>
+  <script>
+    window.location.replace(${JSON.stringify(targetUrl)});
+  </script>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: #fafaf7;
+      font-family: -apple-system, BlinkMacSystemFont, "DM Sans", sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 20px;
+    }
+    .box {
+      background: #ffffff;
+      border: 1px solid #e7e8e0;
+      border-radius: 16px;
+      padding: 32px 24px;
+      text-align: center;
+      max-width: 420px;
+      width: 100%;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.04);
+    }
+    .spin {
+      width: 38px;
+      height: 38px;
+      border: 3px solid #e7e8e0;
+      border-top-color: #16a34a;
+      border-radius: 50%;
+      animation: spin 0.6s linear infinite;
+      margin: 0 auto 16px;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    h3 { margin: 0 0 6px; font-size: 17px; color: #202720; font-weight: 700; }
+    p { margin: 0; font-size: 13px; color: #7b8178; }
+    a {
+      display: inline-block;
+      margin-top: 18px;
+      color: #16a34a;
+      font-size: 13px;
+      font-weight: 600;
+      text-decoration: none;
+      padding: 8px 16px;
+      background: #f0fdf4;
+      border-radius: 8px;
+    }
+  </style>
+</head>
+<body>
+  <div class="box">
+    <div class="spin"></div>
+    <h3>Opening in Google Maps...</h3>
+    <p>Stand destination par redirect ho rahe hain...</p>
+    <a href="${targetUrl}">Yahan click karein agar redirect na ho &rarr;</a>
+  </div>
+</body>
+</html>`);
   } catch (error) {
     next(error);
   }
