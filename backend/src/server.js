@@ -51,31 +51,48 @@ if (process.env.NODE_ENV !== "test") {
 app.use(express.json({ limit: "256kb" }));
 app.use(express.urlencoded({ extended: true, limit: "256kb" }));
 
-// Root welcome / discovery route
-app.get("/", (req, res) => {
-  res.json({
-    name: "Tapform NFC & Dynamic QR Backend API",
-    status: "running",
-    healthCheck: "/health",
-    documentation: {
-      list: "GET /api/cards",
-      activate: "POST /api/cards/activate",
-      update: "PUT /api/cards/:cardId",
-      delete: "DELETE /api/cards/:cardId",
-      getCard: "GET /api/cards/:cardId",
-      scanRedirect: "GET /c/:cardId",
-    },
+import fs from "fs";
+
+const distPath = path.resolve(__dirname, "../../dist");
+const hasFrontendBuild = fs.existsSync(distPath);
+
+if (hasFrontendBuild) {
+  app.use(express.static(distPath));
+} else {
+  // Root welcome / discovery route when running backend independently
+  app.get("/", (req, res) => {
+    res.json({
+      name: "Tapform NFC & Dynamic QR Backend API",
+      status: "running",
+      healthCheck: "/health",
+      documentation: {
+        list: "GET /api/cards",
+        activate: "POST /api/cards/activate",
+        update: "PUT /api/cards/:cardId",
+        delete: "DELETE /api/cards/:cardId",
+        getCard: "GET /api/cards/:cardId",
+        scanRedirect: "GET /c/:cardId",
+      },
+    });
   });
-});
+}
 
 // App Routes
 app.use(healthRoutes);
 app.use(cardRoutes);
 
-// Catch-all 404 handler
+// If frontend build exists, fallback to index.html for SPA routes (e.g. /activate, /dashboard)
+if (hasFrontendBuild) {
+  app.get("*", (req, res, next) => {
+    if (req.path.startsWith("/api") || req.path.startsWith("/c/")) {
+      return next();
+    }
+    res.sendFile(path.resolve(distPath, "index.html"));
+  });
+}
+
+// Catch-all 404 handler for API and static misses
 app.use(notFoundHandler);
-
-
 app.use(errorHandler);
 
 // Start server

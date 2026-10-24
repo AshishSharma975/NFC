@@ -1,9 +1,8 @@
 export function requireApiKey(req, res, next) {
   const configuredKey = process.env.API_SECRET_KEY;
-  const isProduction = process.env.NODE_ENV === "production";
 
-  // In development, if no key configured, allow
-  if (!isProduction && (!configuredKey || configuredKey === "nfc_secret_key_change_in_production")) {
+  // If no custom secret key is configured or left as default, allow
+  if (!configuredKey || configuredKey === "nfc_secret_key_change_in_production") {
     return next();
   }
 
