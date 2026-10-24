@@ -1,7 +1,7 @@
 const API_BASE_URL =
   import.meta.env.VITE_API_BASE_URL || "http://localhost:5000";
 
-const API_KEY = import.meta.env.VITE_API_KEY || "";
+const API_KEY = import.meta.env.VITE_API_KEY || "nfc_secret_key_change_in_production";
 
 function getHeaders() {
   const headers = {
@@ -56,6 +56,54 @@ export async function updateCardApi(cardId, updates) {
 }
 
 /**
+ * Get all cards and statistics
+ * @param {Object} params - { status: 'all' | 'active' | 'inactive', search: string }
+ */
+export async function getAllCardsApi(params = {}) {
+  const query = new URLSearchParams();
+  if (params.status && params.status !== "all") {
+    query.set("status", params.status);
+  }
+  if (params.search && params.search.trim()) {
+    query.set("search", params.search.trim());
+  }
+
+  const queryString = query.toString();
+  const url = `${API_BASE_URL}/api/cards${queryString ? `?${queryString}` : ""}`;
+
+  const response = await fetch(url, {
+    method: "GET",
+    headers: getHeaders(),
+  });
+
+  const data = await response.json().catch(() => ({}));
+
+  if (!response.ok) {
+    throw new Error(data.message || `Failed to fetch cards (${response.status})`);
+  }
+
+  return data;
+}
+
+/**
+ * Delete a card by Card ID
+ */
+export async function deleteCardApi(cardId) {
+  const response = await fetch(`${API_BASE_URL}/api/cards/${encodeURIComponent(cardId)}`, {
+    method: "DELETE",
+    headers: getHeaders(),
+  });
+
+  const data = await response.json().catch(() => ({}));
+
+  if (!response.ok) {
+    throw new Error(data.message || `Failed to delete card (${response.status})`);
+  }
+
+  return data;
+}
+
+/**
  * Get card details by Card ID
  */
 export async function getCardApi(cardId) {
@@ -74,3 +122,4 @@ export async function getCardApi(cardId) {
 }
 
 export { API_BASE_URL };
+

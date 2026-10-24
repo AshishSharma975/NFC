@@ -201,6 +201,90 @@ export async function getCard(req, res, next) {
 }
 
 /**
+ * Get all Dynamic QRs / Cards with stats and filtering
+ * GET /api/cards
+ * Query params: status (all, active, inactive), search (string)
+ */
+export async function getAllCards(req, res, next) {
+  try {
+    const { status, search } = req.query;
+    const filter = {};
+
+    if (status && ["active", "inactive"].includes(status)) {
+      filter.status = status;
+    }
+
+    if (search && search.trim()) {
+      const regex = new RegExp(search.trim(), "i");
+      filter.$or = [
+        { cardId: regex },
+        { title: regex },
+        { destinationUrl: regex },
+      ];
+    }
+
+    const [cards, totalCount, activeCount, inactiveCount, aggregateScans] = await Promise.all([
+      Card.find(filter).sort({ updatedAt: -1 }),
+      Card.countDocuments({}),
+      Card.countDocuments({ status: "active" }),
+      Card.countDocuments({ status: "inactive" }),
+      Card.aggregate([
+        {
+          $group: {
+            _id: null,
+            totalScans: { $sum: "$scanCount" },
+          },
+        },
+      ]),
+    ]);
+
+    const baseUrl = getBaseUrl(req);
+    const totalScans = aggregateScans.length > 0 ? aggregateScans[0].totalScans : 0;
+
+    return res.status(200).json({
+      success: true,
+      stats: {
+        total: totalCount,
+        active: activeCount,
+        inactive: inactiveCount,
+        totalScans,
+      },
+      data: cards.map((card) => formatCardResponse(card, baseUrl)),
+    });
+  } catch (error) {
+    next(error);
+  }
+}
+
+/**
+ * Delete a Card
+ * DELETE /api/cards/:cardId
+ */
+export async function deleteCard(req, res, next) {
+  try {
+    const { cardId } = req.params;
+    const normalizedId = normalizeCardId(cardId);
+
+    const card = await Card.findOneAndDelete({ cardId: normalizedId });
+
+    if (!card) {
+      return res.status(404).json({
+        success: false,
+        message: `Card with ID '${normalizedId}' not found.`,
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: `Card '${normalizedId}' deleted successfully.`,
+      data: { cardId: normalizedId },
+    });
+  } catch (error) {
+    next(error);
+  }
+}
+
+/**
  * Customer scans NFC or QR Code
  * GET /c/:cardId
  * Increments scanCount and redirects to destinationUrl

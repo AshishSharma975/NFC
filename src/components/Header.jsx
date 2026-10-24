@@ -13,6 +13,7 @@ export default function Header() {
       <nav className="nav-links">
         <NavLink to="/activate">Card setup</NavLink>
         <NavLink to="/qr-generator">QR generator</NavLink>
+        <a href="/#dashboard">Live Stands & QRs</a>
       </nav>
 
       <Link to="/activate" className="header-cta">

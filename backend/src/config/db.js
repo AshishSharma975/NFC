@@ -13,7 +13,7 @@ export async function connectDB() {
       serverSelectionTimeoutMS: 8000,
     });
 
-    console.log(`✅ MongoDB Connected: ${conn.connection.host} [Database: ${conn.connection.name}]`);
+    console.log(`✅ MongoDB Connected: ${connection.connection.host} [Database: ${connection.connection.name}]`);
     return connection;
   } catch (error) {
     console.error(`❌ MongoDB Connection Error: ${error.message}`);

@@ -2,7 +2,14 @@ import express from "express";
 import cors from "cors";
 import morgan from "morgan";
 import dotenv from "dotenv";
+import path from "path";
+import { fileURLToPath } from "url";
 
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// Ensure backend/.env is loaded regardless of execution working directory
+dotenv.config({ path: path.resolve(__dirname, "../.env") });
 dotenv.config();
 
 import { connectDB } from "./config/db.js";
@@ -51,8 +58,10 @@ app.get("/", (req, res) => {
     status: "running",
     healthCheck: "/health",
     documentation: {
+      list: "GET /api/cards",
       activate: "POST /api/cards/activate",
       update: "PUT /api/cards/:cardId",
+      delete: "DELETE /api/cards/:cardId",
       getCard: "GET /api/cards/:cardId",
       scanRedirect: "GET /c/:cardId",
     },

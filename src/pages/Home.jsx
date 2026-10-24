@@ -8,6 +8,7 @@ import {
   Link2,
   QrCode,
 } from "lucide-react";
+import DynamicQRSection from "../components/DynamicQRSection";
 
 export default function Home() {
   return (
@@ -103,6 +104,9 @@ export default function Home() {
           <p>Create QR codes for print and digital sharing.</p>
         </div>
       </section>
+
+      {/* Dynamic QR Live Dashboard Section */}
+      <DynamicQRSection />
     </div>
   );
 }

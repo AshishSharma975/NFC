@@ -15,6 +15,7 @@ export default function App() {
       <main className="main-content">
         <Routes>
           <Route path="/" element={<Home />} />
+          <Route path="/dashboard" element={<Home />} />
           <Route path="/activate" element={<Activate />} />
           <Route path="/qr-generator" element={<QRGenerator />} />
           <Route path="/result" element={<Result />} />
