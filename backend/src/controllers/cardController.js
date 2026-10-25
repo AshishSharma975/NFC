@@ -21,16 +21,26 @@ function getLocalIp() {
 }
 
 function getBaseUrl(req) {
-  // Prioritize BASE_URL if set in environment (e.g. Cloudflare tunnel or production URL)
-  if (process.env.BASE_URL && process.env.BASE_URL.trim()) {
+  // If explicitly configured with a custom domain (non-localhost), prioritize it
+  if (
+    process.env.BASE_URL &&
+    process.env.BASE_URL.trim() &&
+    !process.env.BASE_URL.includes("localhost")
+  ) {
     return process.env.BASE_URL.replace(/\/$/, "");
   }
 
-  // Otherwise deduce from request host
-  const protocol = req.headers["x-forwarded-proto"] || req.protocol;
-  const host = req.get("host");
-  if (host) {
-    return `${protocol}://${host}`;
+  // Deduce dynamically from incoming request headers (works seamlessly on Render, Railway, VPS, Cloudflare tunnel)
+  if (req) {
+    const protocol = req.headers["x-forwarded-proto"] || req.protocol || "http";
+    const host = req.get("host");
+    if (host) {
+      return `${protocol}://${host}`;
+    }
+  }
+
+  if (process.env.BASE_URL && process.env.BASE_URL.trim()) {
+    return process.env.BASE_URL.replace(/\/$/, "");
   }
 
   const port = process.env.PORT || 5000;
@@ -211,11 +221,15 @@ export async function getCard(req, res, next) {
  */
 export async function getAllCards(req, res, next) {
   try {
-    const { status, search } = req.query;
+    const { status, search, limit, batchId } = req.query;
     const filter = {};
 
     if (status && ["active", "inactive"].includes(status)) {
       filter.status = status;
+    }
+
+    if (batchId && batchId.trim()) {
+      filter.batchId = batchId.trim();
     }
 
     if (search && search.trim()) {
@@ -227,8 +241,14 @@ export async function getAllCards(req, res, next) {
       ];
     }
 
+    const query = Card.find(filter).sort({ cardNumber: -1, createdAt: -1 });
+
+    if (limit && !isNaN(parseInt(limit, 10)) && parseInt(limit, 10) > 0) {
+      query.limit(parseInt(limit, 10));
+    }
+
     const [cards, totalCount, activeCount, inactiveCount, aggregateScans] = await Promise.all([
-      Card.find(filter).sort({ updatedAt: -1 }),
+      query.exec(),
       Card.countDocuments({}),
       Card.countDocuments({ status: "active" }),
       Card.countDocuments({ status: "inactive" }),
@@ -253,6 +273,7 @@ export async function getAllCards(req, res, next) {
         inactive: inactiveCount,
         totalScans,
       },
+      count: cards.length,
       data: cards.map((card) => formatCardResponse(card, baseUrl)),
     });
   } catch (error) {
@@ -316,33 +337,35 @@ export async function redirectScan(req, res, next) {
       );
     }
 
-    // Handle inactive card
+    // Handle inactive card or pending activation
     if (card.status !== "active") {
-      return res.status(403).send(
+      const isPendingActivation = !card.destinationUrl || card.destinationUrl.trim() === "";
+      return res.status(200).send(
         renderScanStatusHtml({
-          status: 403,
-          badge: "INACTIVE",
-          title: "Card Is Currently Disabled",
+          status: isPendingActivation ? "SETUP" : 403,
+          badge: isPendingActivation ? "READY FOR ACTIVATION" : "PAUSED",
+          title: isPendingActivation ? "Card Ready for Setup" : "Card Is Currently Disabled",
           cardId: normalizedId,
-          description:
-            "The owner of this card has temporarily paused or disabled this link.",
-          buttonText: "Return Home",
-          buttonLink: "/",
+          description: isPendingActivation
+            ? "This dynamic NFC card / QR stand has been issued. Tap below to link your Google Review or business destination!"
+            : "The owner of this card has temporarily paused this link.",
+          buttonText: isPendingActivation ? "Activate This Card" : "Manage / Reactivate Link",
+          buttonLink: `/activate?cardId=${encodeURIComponent(normalizedId)}`,
         })
       );
     }
 
     // Handle invalid destination
     if (!card.destinationUrl || !isValidHttpUrl(card.destinationUrl)) {
-      return res.status(400).send(
+      return res.status(200).send(
         renderScanStatusHtml({
-          status: 400,
-          badge: "INVALID DESTINATION",
-          title: "Destination Link Not Ready",
+          status: "SETUP",
+          badge: "SETUP REQUIRED",
+          title: "Destination Link Not Connected",
           cardId: normalizedId,
           description:
-            "The destination URL configured for this card is invalid or missing.",
-          buttonText: "Update Card Link",
+            "This NFC stand has not been connected to a Google Review destination yet.",
+          buttonText: "Activate This Card",
           buttonLink: `/activate?cardId=${encodeURIComponent(normalizedId)}`,
         })
       );
@@ -567,4 +590,232 @@ function renderScanStatusHtml({
   </div>
 </body>
 </html>`;
+}
+
+/**
+ * Admin Login / Passcode verification
+ * POST /api/admin/login
+ */
+export async function adminLogin(req, res) {
+  try {
+    const { password } = req.body;
+    const configuredAdminPass = process.env.ADMIN_PASSWORD || "admin1234";
+    const configuredApiKey = process.env.API_SECRET_KEY || "nfc_secret_key_change_in_production";
+
+    if (!password || (password !== configuredAdminPass && password !== configuredApiKey)) {
+      return res.status(401).json({
+        success: false,
+        message: "Invalid admin passcode or master key.",
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: "Admin authentication successful.",
+      token: password,
+    });
+  } catch (error) {
+    return res.status(500).json({ success: false, message: error.message });
+  }
+}
+
+/**
+ * Admin Token Verification
+ * GET /api/admin/verify
+ */
+export async function adminVerify(req, res) {
+  return res.status(200).json({
+    success: true,
+    message: "Admin credentials verified.",
+  });
+}
+
+/**
+ * Get Comprehensive Admin Analytics & Stats
+ * GET /api/admin/stats
+ */
+export async function getAdminStats(req, res, next) {
+  try {
+    const [
+      totalCount,
+      activeCount,
+      inactiveCount,
+      aggregateScans,
+      recentCards,
+      recentScans,
+      batchAggregates,
+    ] = await Promise.all([
+      Card.countDocuments({}),
+      Card.countDocuments({ status: "active" }),
+      Card.countDocuments({ status: "inactive" }),
+      Card.aggregate([
+        {
+          $group: {
+            _id: null,
+            totalScans: { $sum: "$scanCount" },
+          },
+        },
+      ]),
+      Card.find({}).sort({ createdAt: -1 }).limit(10),
+      Card.find({ lastScannedAt: { $ne: null } })
+        .sort({ lastScannedAt: -1 })
+        .limit(10),
+      Card.aggregate([
+        { $match: { batchId: { $ne: "" } } },
+        {
+          $group: {
+            _id: "$batchId",
+            count: { $sum: 1 },
+            active: {
+              $sum: { $cond: [{ $eq: ["$status", "active"] }, 1, 0] },
+            },
+            inactive: {
+              $sum: { $cond: [{ $eq: ["$status", "inactive"] }, 1, 0] },
+            },
+            totalScans: { $sum: "$scanCount" },
+          },
+        },
+        { $sort: { _id: -1 } },
+        { $limit: 10 },
+      ]),
+    ]);
+
+    const totalScans = aggregateScans.length > 0 ? aggregateScans[0].totalScans : 0;
+    const baseUrl = getBaseUrl(req);
+
+    return res.status(200).json({
+      success: true,
+      stats: {
+        total: totalCount,
+        active: activeCount,
+        inactive: inactiveCount,
+        totalScans,
+        activationRate:
+          totalCount > 0 ? Math.round((activeCount / totalCount) * 100) : 0,
+      },
+      batches: batchAggregates,
+      recentCards: recentCards.map((c) => formatCardResponse(c, baseUrl)),
+      recentScans: recentScans.map((c) => formatCardResponse(c, baseUrl)),
+    });
+  } catch (error) {
+    next(error);
+  }
+}
+
+/**
+ * Bulk Generate Dynamic QR Cards (e.g. 100 to 500+ cards)
+ * POST /api/cards/bulk
+ */
+export async function bulkGenerateCards(req, res, next) {
+  try {
+    let { count = 100, prefix = "TF-", startNumber, status = "inactive", batchId } = req.body;
+
+    count = parseInt(count, 10);
+    if (isNaN(count) || count < 1) {
+      return res.status(400).json({
+        success: false,
+        message: "Please enter a valid count of cards to create (e.g. 100 to 500).",
+      });
+    }
+
+    if (count > 2000) {
+      return res.status(400).json({
+        success: false,
+        message: "Maximum 2,000 cards can be created in a single batch.",
+      });
+    }
+
+    let cleanPrefix = (prefix || "TF-").trim().toUpperCase();
+    if (!cleanPrefix.endsWith("-") && !cleanPrefix.endsWith("_")) {
+      cleanPrefix = `${cleanPrefix}-`;
+    }
+
+    // Determine starting sequence number
+    let currentNumber;
+    if (startNumber !== undefined && !isNaN(parseInt(startNumber, 10))) {
+      currentNumber = parseInt(startNumber, 10);
+    } else {
+      const highestCard = await Card.findOne({ cardNumber: { $ne: null } })
+        .sort({ cardNumber: -1 })
+        .select("cardNumber");
+      currentNumber = highestCard && highestCard.cardNumber ? highestCard.cardNumber + 1 : 1001;
+    }
+
+    const todayStr = new Date().toISOString().slice(0, 10).replace(/-/g, "");
+    const generatedBatchId = batchId && batchId.trim()
+      ? batchId.trim().toUpperCase()
+      : `BATCH-${todayStr}-${Math.random().toString(36).substring(2, 6).toUpperCase()}`;
+
+    const cardsToInsert = [];
+    for (let i = 0; i < count; i++) {
+      const num = currentNumber + i;
+      const cardId = `${cleanPrefix}${String(num).padStart(5, "0")}`;
+
+      cardsToInsert.push({
+        cardId,
+        cardNumber: num,
+        destinationUrl: "",
+        title: `NFC Stand #${num}`,
+        status: status === "active" ? "active" : "inactive",
+        batchId: generatedBatchId,
+        scanCount: 0,
+      });
+    }
+
+    let inserted = [];
+    try {
+      inserted = await Card.insertMany(cardsToInsert, { ordered: false });
+    } catch (insertError) {
+      if (insertError.insertedDocs && insertError.insertedDocs.length > 0) {
+        inserted = insertError.insertedDocs;
+      } else {
+        throw insertError;
+      }
+    }
+
+    const baseUrl = getBaseUrl(req);
+    return res.status(201).json({
+      success: true,
+      message: `Successfully created ${inserted.length} dynamic QR cards.`,
+      batchId: generatedBatchId,
+      count: inserted.length,
+      startNumber: currentNumber,
+      endNumber: currentNumber + inserted.length - 1,
+      data: inserted.map((c) => formatCardResponse(c, baseUrl)),
+    });
+  } catch (error) {
+    next(error);
+  }
+}
+
+/**
+ * Bulk Delete Cards
+ * DELETE /api/cards/bulk
+ */
+export async function bulkDeleteCards(req, res, next) {
+  try {
+    const { cardIds, batchId } = req.body;
+    let filter = {};
+
+    if (Array.isArray(cardIds) && cardIds.length > 0) {
+      filter = { cardId: { $in: cardIds.map(normalizeCardId) } };
+    } else if (batchId && typeof batchId === "string") {
+      filter = { batchId: batchId.trim() };
+    } else {
+      return res.status(400).json({
+        success: false,
+        message: "Provide either a 'cardIds' array or a 'batchId' to delete.",
+      });
+    }
+
+    const result = await Card.deleteMany(filter);
+
+    return res.status(200).json({
+      success: true,
+      message: `Deleted ${result.deletedCount} cards successfully.`,
+      deletedCount: result.deletedCount,
+    });
+  } catch (error) {
+    next(error);
+  }
 }

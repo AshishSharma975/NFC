@@ -22,3 +22,31 @@ export function requireApiKey(req, res, next) {
 
   next();
 }
+
+export function requireAdminAuth(req, res, next) {
+  const configuredAdminPass = process.env.ADMIN_PASSWORD || "admin1234";
+  const configuredApiKey = process.env.API_SECRET_KEY || "nfc_secret_key_change_in_production";
+
+  const providedKey =
+    req.headers["x-admin-key"] ||
+    req.headers["x-api-key"] ||
+    (req.headers["authorization"]?.startsWith("Bearer ")
+      ? req.headers["authorization"].split(" ")[1]
+      : null);
+
+  if (!providedKey) {
+    return res.status(401).json({
+      success: false,
+      message: "Admin authorization required. Please provide a valid admin key.",
+    });
+  }
+
+  if (providedKey !== configuredAdminPass && providedKey !== configuredApiKey) {
+    return res.status(403).json({
+      success: false,
+      message: "Forbidden: Invalid admin credentials.",
+    });
+  }
+
+  next();
+}

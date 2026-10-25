@@ -14,8 +14,19 @@ const cardSchema = new mongoose.Schema(
     },
     destinationUrl: {
       type: String,
-      required: [true, "Destination URL is required"],
       trim: true,
+      default: "",
+    },
+    cardNumber: {
+      type: Number,
+      index: true,
+      default: null,
+    },
+    batchId: {
+      type: String,
+      trim: true,
+      index: true,
+      default: "",
     },
     title: {
       type: String,
