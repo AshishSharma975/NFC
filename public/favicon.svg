@@ -1,34 +1,37 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128">
   <defs>
-    <linearGradient id="tfBg" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#1e293b" />
-      <stop offset="100%" stop-color="#090d16" />
-    </linearGradient>
-    <linearGradient id="tfEmerald" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#34d399" />
-      <stop offset="100%" stop-color="#10b981" />
-    </linearGradient>
-    <filter id="softGlow" x="-20%" y="-20%" width="140%" height="140%">
-      <feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#10b981" flood-opacity="0.35"/>
+    <filter id="tfGlow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="1" stdDeviation="2.5" flood-color="#10b981" flood-opacity="0.45"/>
     </filter>
   </defs>
+  <style>
+    .tf-knot {
+      stroke: #059669;
+    }
+    .tf-core {
+      fill: #059669;
+    }
+    @media (prefers-color-scheme: dark) {
+      .tf-knot {
+        stroke: #34d399;
+      }
+      .tf-core {
+        fill: #ffffff;
+      }
+    }
+  </style>
 
-  <!-- Premium Dark Squircle Background -->
-  <rect width="128" height="128" rx="30" fill="url(#tfBg)" />
-  <rect x="2" y="2" width="124" height="124" rx="28" fill="none" stroke="#334155" stroke-width="2.5" stroke-opacity="0.6" />
-
-  <!-- NFC Wave / Contactless Tap Icon (Standard 45-deg Contactless Angle) -->
-  <g transform="translate(64, 64) rotate(-45)" filter="url(#softGlow)">
-    <!-- Central Pulse Dot -->
-    <circle cx="0" cy="0" r="9.5" fill="#34d399" />
-
-    <!-- Wave 1 (Inner) -->
-    <path d="M 0 -22 A 22 22 0 0 1 22 0" fill="none" stroke="url(#tfEmerald)" stroke-width="7.5" stroke-linecap="round" />
-
-    <!-- Wave 2 (Middle) -->
-    <path d="M 0 -36 A 36 36 0 0 1 36 0" fill="none" stroke="url(#tfEmerald)" stroke-width="7.5" stroke-linecap="round" />
-
-    <!-- Wave 3 (Outer) -->
-    <path d="M 0 -50 A 50 50 0 0 1 50 0" fill="none" stroke="url(#tfEmerald)" stroke-width="7.5" stroke-linecap="round" />
+  <!-- Clean Floating Geometric Vortex Knot (ChatGPT-inspired, Contactless Energy) -->
+  <g transform="translate(64, 64)" filter="url(#tfGlow)">
+    <g class="tf-knot" stroke-width="12" stroke-linecap="round" stroke-linejoin="round" fill="none">
+      <path d="M 0,-44 C 18,-44 32,-30 32,-14 C 32,-1 20,10 7,17 L -7,24" />
+      <path d="M 0,-44 C 18,-44 32,-30 32,-14 C 32,-1 20,10 7,17 L -7,24" transform="rotate(60)" />
+      <path d="M 0,-44 C 18,-44 32,-30 32,-14 C 32,-1 20,10 7,17 L -7,24" transform="rotate(120)" />
+      <path d="M 0,-44 C 18,-44 32,-30 32,-14 C 32,-1 20,10 7,17 L -7,24" transform="rotate(180)" />
+      <path d="M 0,-44 C 18,-44 32,-30 32,-14 C 32,-1 20,10 7,17 L -7,24" transform="rotate(240)" />
+      <path d="M 0,-44 C 18,-44 32,-30 32,-14 C 32,-1 20,10 7,17 L -7,24" transform="rotate(300)" />
+    </g>
+    <!-- Central Contactless Pulse Point -->
+    <circle cx="0" cy="0" r="6" class="tf-core" />
   </g>
 </svg>
