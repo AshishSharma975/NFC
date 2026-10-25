@@ -529,7 +529,7 @@ export default function AdminDashboard() {
             onClick={() => setActiveTab("bulk")}
           >
             <Layers size={15} />
-            <span>Bulk Generator & Export</span>
+            <span>Bulk Generator</span>
           </button>
 
           <button
@@ -538,7 +538,7 @@ export default function AdminDashboard() {
             onClick={() => setActiveTab("directory")}
           >
             <QrCode size={15} />
-            <span>Live Stands Directory ({stats.total || cards.length})</span>
+            <span>Stands ({stats.total || cards.length})</span>
           </button>
         </nav>
 
@@ -569,10 +569,10 @@ export default function AdminDashboard() {
             className="admin-action-btn danger"
             onClick={handleLogout}
             title="Lock and Log out of admin console"
-            style={{ display: "inline-flex", alignItems: "center", gap: "6px", padding: "0 12px" }}
+            style={{ display: "inline-flex", alignItems: "center", gap: "6px", padding: "0 10px" }}
           >
             <LogOut size={14} />
-            <span style={{ fontSize: "12px", fontWeight: "600" }}>Lock / Logout</span>
+            <span style={{ fontSize: "12px", fontWeight: "600" }}>Logout</span>
           </button>
         </div>
       </header>
