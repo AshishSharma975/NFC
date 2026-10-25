@@ -4,39 +4,27 @@ import {
   ArrowDownRight,
   ArrowRight,
   ArrowUpRight,
-  Check,
   CheckCircle2,
-  Fingerprint,
-  Link2,
-  QrCode,
-  Smartphone,
-  Star,
-  Sparkles,
-  Zap,
-  TrendingUp,
-  MapPin,
-  Utensils,
   CreditCard,
-  Wifi,
-  RotateCcw,
-  ShieldCheck,
-  Search,
   ExternalLink,
   ChevronDown,
   ChevronUp,
   Loader2,
   AlertCircle,
-  Clock,
-  Layers,
+  Search,
+  Smartphone,
+  Star,
+  Zap,
+  RotateCcw,
   X,
+  Layers,
 } from "lucide-react";
 import { getCardApi } from "../utils/api";
 import "../home.css";
 
 export default function Home() {
-  // Simulator State in Hero
-  const [simMode, setSimMode] = useState("nfc"); // 'nfc' | 'qr'
-  const [simFired, setSimFired] = useState(false);
+  // Interactive Stand Tap State
+  const [standTapped, setStandTapped] = useState(false);
 
   // Stand Checker State (Customer Self-Service)
   const [checkCardId, setCheckCardId] = useState("");
@@ -47,12 +35,11 @@ export default function Home() {
   // FAQ Accordion State
   const [openFaqIndex, setOpenFaqIndex] = useState(0);
 
-  function triggerSim(mode) {
-    setSimMode(mode);
-    setSimFired(true);
+  function handleStandTap() {
+    setStandTapped(true);
     setTimeout(() => {
-      // Keep it visible for inspection
-    }, 500);
+      setStandTapped(false);
+    }, 2500);
   }
 
   // Handle Stand Lookup
@@ -83,24 +70,16 @@ export default function Home() {
 
   const faqData = [
     {
-      q: "Do my customers need to install any app to tap or scan?",
-      a: "No! There is zero app download required. iPhones and Android smartphones have built-in NFC readers and camera QR scanners. When a customer taps or points their camera, the Google Review screen opens instantly in under 1 second.",
+      q: "Do customers need to install any app to tap?",
+      a: "No! There is zero app download required. iPhones and Android smartphones have built-in NFC and camera scanners. Tapping opens your Google Review page in 1 second.",
     },
     {
-      q: "Can I change my Google review destination URL after printing or ordering?",
-      a: "Yes, 100%! All Tapform stands and cards use permanent Dynamic QR & NFC technology. You can change your Google Review link, website URL, or digital menu anytime from our Card Setup page without throwing away your physical stand.",
-    },
-    {
-      q: "How does Tapform help skyrocket my business on Google Maps?",
-      a: "Google's local search algorithm prioritizes businesses with frequent, recent, 5-star verified reviews. By placing an interactive tap stand right on your billing counter or table, asking customers for a review becomes effortless, increasing your review volume by up to 5x.",
+      q: "Can I change my Google review destination URL later?",
+      a: "Yes, 100%! All Tapform stands use permanent dynamic QR & NFC technology. You can change your Google Review link or business URL anytime without reprinting your stand.",
     },
     {
       q: "Does the NFC stand require batteries or charging?",
-      a: "Never! Tapform stands use passive NFC microchips powered by the electromagnetic field of the scanning phone. They require zero batteries, zero cables, and last for 10+ years.",
-    },
-    {
-      q: "What types of businesses can use Tapform?",
-      a: "Restaurants, cafes, dental & medical clinics, hair salons, car dealerships, retail stores, gyms, hotels, and professional freelancers. Any business that benefits from customer trust and online reputation.",
+      a: "Never! Tapform stands use passive NFC microchips powered by the scanning phone. They require zero batteries, zero cables, and last for 10+ years.",
     },
   ];
 
@@ -119,15 +98,12 @@ export default function Home() {
           <h1>
             Turn customer taps
             <br />
-            <span>into 5-star reviews</span>
-            <br />
-            & repeat sales.
+            <span>into 5-star reviews.</span>
           </h1>
 
           <p className="hero-description">
             Smart counter stands & cards for restaurants, clinics, retail stores, and service businesses.
-            Customers tap their phone or scan — your Google Review page opens in 1 second.
-            Update your destination link anytime without reprinting.
+            Customers tap their phone — your Google Review page opens in 1 second. Zero app needed.
           </p>
 
           <div className="hero-actions">
@@ -151,256 +127,146 @@ export default function Home() {
             </div>
             <div className="trust-pill-item">
               <RotateCcw size={13} />
-              <span>Dynamic Links (Edit Anytime)</span>
+              <span>Edit Link Anytime</span>
             </div>
           </div>
         </div>
 
-        {/* Hero Interactive Visual */}
+        {/* Compact Hero Interactive Stand (Clean & Minimal) */}
         <div className="hero-visual">
-          <div className="visual-topline">
-            <span>TRY THE INTERACTIVE DEMO</span>
-            <span>TAP OR SCAN BELOW</span>
-          </div>
-
-          <div className="demo-card">
-            <div className="demo-card-top">
-              <div className="demo-brand-mark"><Fingerprint size={23} /></div>
-              <span className="demo-card-label">SMART TOUCHPOINT</span>
+          <div
+            className={`sleek-stand-preview ${standTapped ? "tapped" : ""}`}
+            onClick={handleStandTap}
+            title="Click to simulate NFC tap"
+          >
+            <div className="stand-acrylic-shine" />
+            <div className="stand-badge">
+              <span className="live-dot" /> SMART TOUCHPOINT
             </div>
 
-            <div className="demo-orbit orbit-one" />
-            <div className="demo-orbit orbit-two" />
-
-            <div className="demo-card-copy">
-              <span>RATE US 5 STARS ON GOOGLE</span>
-              <h2>Tap your phone<br />to review.</h2>
+            <div className="stand-brand-icon">
+              <Star size={24} fill="#f59e0b" color="#f59e0b" />
             </div>
 
-            <div className="demo-card-bottom">
-              <span>NFC + QR DYNAMIC</span>
-              <span className="demo-chip"><Link2 size={16} /></span>
+            <div className="stand-copy">
+              <span className="stand-sub">RATE US 5 STARS ON GOOGLE</span>
+              <h3>Tap Phone Here</h3>
+              <p>Contactless NFC & Dynamic QR Stand</p>
             </div>
-          </div>
 
-          {/* Interactive Trigger Buttons */}
-          <div className="simulator-trigger-bar">
-            <button
-              type="button"
-              className={`sim-btn ${simMode === "nfc" ? "active" : ""}`}
-              onClick={() => triggerSim("nfc")}
-            >
-              <Smartphone size={13} /> Simulate Phone Tap
-            </button>
-            <button
-              type="button"
-              className={`sim-btn ${simMode === "qr" ? "active" : ""}`}
-              onClick={() => triggerSim("qr")}
-            >
-              <QrCode size={13} /> Simulate QR Scan
-            </button>
-          </div>
-
-          {/* Simulated Mobile Pop-up Result */}
-          <div className="sim-phone-notification">
-            <div className="notif-google-icon">
-              <Star size={20} fill="#f59e0b" color="#f59e0b" />
+            <div className="stand-tap-hint">
+              <Smartphone size={14} />
+              <span>{standTapped ? "✓ 5-Star Google Review Triggered!" : "Tap card to simulate"}</span>
             </div>
-            <div className="notif-copy">
-              <strong>Google Maps Review</strong>
-              <span>Rate Your Business on Google (1 Tap)</span>
-              <div className="notif-stars">
-                {[1, 2, 3, 4, 5].map((s) => (
-                  <Star key={s} size={12} fill="#f59e0b" color="#f59e0b" />
-                ))}
+
+            {standTapped && (
+              <div className="stand-success-toast">
+                <CheckCircle2 size={16} color="#16a34a" />
+                <span>Google Review Opened in 1 Sec!</span>
               </div>
-            </div>
-            <CheckCircle2 size={18} color="#16a34a" style={{ marginLeft: "auto" }} />
+            )}
           </div>
-
-          <span className="visual-index">TESTED COMPATIBLE ON ALL SMARTPHONES</span>
         </div>
       </section>
 
       {/* ============================================================== */}
-      {/* SECTION 2: WHAT WE PROVIDE (OUR CORE SOLUTIONS)                */}
+      {/* SECTION 2: WHAT WE PROVIDE (3 CORE SOLUTIONS)                  */}
       {/* ============================================================== */}
       <section className="home-solutions-section" id="solutions">
         <div className="section-header-block">
           <span className="section-eyebrow">WHAT WE PROVIDE</span>
-          <h2 className="section-main-title">Complete Digital Touchpoints for Everyday Business</h2>
+          <h2 className="section-main-title">Smart Touchpoints for Everyday Business</h2>
           <p className="section-sub-desc">
-            Everything you need to collect customer reviews, share digital business profiles, and grow your local presence.
+            Simple, durable, and permanent NFC stands that automate your customer reviews.
           </p>
         </div>
 
-        <div className="solutions-grid">
+        <div className="solutions-grid-compact">
           {/* Solution 1: Google Reviews Stand */}
-          <div className="solution-card featured">
+          <div className="solution-card-compact featured">
             <span className="card-top-tag">MOST POPULAR</span>
             <div className="solution-icon-wrap green">
-              <Star size={24} />
+              <Star size={22} />
             </div>
             <h3>Google Review Stands</h3>
             <p>
-              Place premium NFC acrylic stands on your counter. Customers tap or scan, and your Google 5-star review page pops up immediately.
+              Place on your counter. Diners & clients tap to leave 5-star reviews on Google Maps in 1 second.
             </p>
-            <ul className="solution-features-list">
-              <li><Check size={14} /> Increases reviews by up to 5x on autopilot</li>
-              <li><Check size={14} /> Zero typing needed — opens review box directly</li>
-              <li><Check size={14} /> Boosts your Google Maps ranking in local search</li>
-            </ul>
             <Link to="/activate" className="solution-action-link">
-              Set up a review stand <ArrowRight size={14} />
+              Set up a stand &rarr;
             </Link>
           </div>
 
           {/* Solution 2: Dynamic QR Codes */}
-          <div className="solution-card">
+          <div className="solution-card-compact">
             <div className="solution-icon-wrap">
-              <RotateCcw size={24} />
+              <RotateCcw size={22} />
             </div>
             <h3>Dynamic QR Codes</h3>
             <p>
-              Never reprint your QR codes again. Update your destination link in 5 seconds from anywhere in the world.
+              Never reprint QR codes again. Update your Google Maps, menu, or website destination anytime in 5 seconds.
             </p>
-            <ul className="solution-features-list">
-              <li><Check size={14} /> Change website or Google link without reprinting</li>
-              <li><Check size={14} /> Vector SVG & 1024px print-ready PNG downloads</li>
-              <li><Check size={14} /> Real-time customer scan analytics & tracking</li>
-            </ul>
             <Link to="/qr-generator" className="solution-action-link">
-              Create a free dynamic QR <ArrowRight size={14} />
+              Create free QR &rarr;
             </Link>
           </div>
 
-          {/* Solution 3: Digital Business Cards */}
-          <div className="solution-card">
+          {/* Solution 3: Digital NFC Cards */}
+          <div className="solution-card-compact">
             <div className="solution-icon-wrap">
-              <CreditCard size={24} />
+              <CreditCard size={22} />
             </div>
-            <h3>Digital NFC Business Cards</h3>
+            <h3>Digital NFC Cards</h3>
             <p>
-              Share your contact details, portfolio, WhatsApp, and social profiles with one contactless tap on any phone.
+              Contactless smart cards for networking. 1 tap saves your contact, portfolio, and WhatsApp into customer phones.
             </p>
-            <ul className="solution-features-list">
-              <li><Check size={14} /> Saves your contact directly to their phonebook</li>
-              <li><Check size={14} /> Eco-friendly alternative to paper visiting cards</li>
-              <li><Check size={14} /> Keep details updated without reprinting cards</li>
-            </ul>
             <Link to="/activate" className="solution-action-link">
-              Configure a business card <ArrowRight size={14} />
-            </Link>
-          </div>
-
-          {/* Solution 4: Smart Restaurant Menus */}
-          <div className="solution-card">
-            <div className="solution-icon-wrap">
-              <Utensils size={24} />
-            </div>
-            <h3>Touchless Digital Menus</h3>
-            <p>
-              Fast, hygiene-friendly table dining experience. Diners tap to view your updated food menu or place WhatsApp orders.
-            </p>
-            <ul className="solution-features-list">
-              <li><Check size={14} /> Update prices and seasonal dishes in real time</li>
-              <li><Check size={14} /> High-resolution photos with instant WhatsApp ordering</li>
-              <li><Check size={14} /> Wipe-clean, waterproof acrylic table stands</li>
-            </ul>
-            <Link to="/activate" className="solution-action-link">
-              Get started with menus <ArrowRight size={14} />
-            </Link>
-          </div>
-
-          {/* Solution 5: Wi-Fi & Payment Hub */}
-          <div className="solution-card">
-            <div className="solution-icon-wrap">
-              <Wifi size={24} />
-            </div>
-            <h3>1-Tap Wi-Fi & Payments</h3>
-            <p>
-              Let guests connect to your guest Wi-Fi or view UPI payment links without asking your staff for passwords.
-            </p>
-            <ul className="solution-features-list">
-              <li><Check size={14} /> No need to spell out long Wi-Fi passwords</li>
-              <li><Check size={14} /> Instant UPI & payment redirection</li>
-              <li><Check size={14} /> Saves staff time and reduces customer wait times</li>
-            </ul>
-            <Link to="/activate" className="solution-action-link">
-              Connect a Wi-Fi stand <ArrowRight size={14} />
-            </Link>
-          </div>
-
-          {/* Solution 6: Bulk Factory Production */}
-          <div className="solution-card">
-            <div className="solution-icon-wrap">
-              <Layers size={24} />
-            </div>
-            <h3>Bulk Factory Orders</h3>
-            <p>
-              Need 100 to 500+ pre-numbered stands for a franchise or event? We generate bulk unique dynamic QRs with export manifests.
-            </p>
-            <ul className="solution-features-list">
-              <li><Check size={14} /> Auto-sequential numbered IDs (e.g. TF-01001 to TF-01500)</li>
-              <li><Check size={14} /> High-res 1024×1024 PNGs + SVGs + CSV manifest in 1 ZIP</li>
-              <li><Check size={14} /> Unclaimed landing pages ready for end-user activation</li>
-            </ul>
-            <Link to="/activate" className="solution-action-link">
-              Explore batch setups <ArrowRight size={14} />
+              Configure card &rarr;
             </Link>
           </div>
         </div>
       </section>
 
       {/* ============================================================== */}
-      {/* SECTION 3: HOW IT WORKS                                        */}
+      {/* SECTION 3: HOW IT WORKS (3 SIMPLE STEPS)                       */}
       {/* ============================================================== */}
       <section className="home-how-section" id="how-it-works">
         <div className="section-header-block">
-          <span className="section-eyebrow">SIMPLE 3-STEP PROCESS</span>
-          <h2 className="section-main-title">How It Works in 3 Simple Steps</h2>
-          <p className="section-sub-desc">
-            No technical knowledge or coding needed. From setup to customer reviews in under 2 minutes.
-          </p>
+          <span className="section-eyebrow">SIMPLE PROCESS</span>
+          <h2 className="section-main-title">How It Works</h2>
         </div>
 
-        <div className="how-steps-grid">
-          <div className="how-step-card">
+        <div className="how-steps-grid-compact">
+          <div className="how-step-card-compact">
             <div className="step-num-badge">01</div>
-            <h3>Get Your Stand or Card</h3>
-            <p>
-              Receive your premium NFC acrylic counter stand or pocket card. Each product comes with a unique permanent Card ID printed on it.
-            </p>
+            <h3>Get Your Stand</h3>
+            <p>Each acrylic stand arrives with a permanent unique Card ID printed on it.</p>
           </div>
 
-          <div className="how-step-card">
+          <div className="how-step-card-compact">
             <div className="step-num-badge">02</div>
-            <h3>Connect Your Link in 30 Seconds</h3>
-            <p>
-              Go to our Card Setup page, enter your Card ID, and paste your Google Review link or business URL. Click generate — that's it!
-            </p>
+            <h3>Connect Your Link</h3>
+            <p>Paste your Google Review link or business URL in 30 seconds.</p>
           </div>
 
-          <div className="how-step-card">
+          <div className="how-step-card-compact">
             <div className="step-num-badge">03</div>
-            <h3>Customers Tap & Review Autopilot</h3>
-            <p>
-              Place the stand on your counter. When customers tap their iPhone or Android, your review page opens instantly. Watch your 5-star ratings grow!
-            </p>
+            <h3>Collect Reviews</h3>
+            <p>Place on your counter. Customers tap and review on autopilot.</p>
           </div>
         </div>
       </section>
 
       {/* ============================================================== */}
-      {/* SECTION 4: LIVE STAND CHECKER (Customer Self-Service Tool)     */}
+      {/* SECTION 4: STAND CHECKER (Customer Self-Service Tool)          */}
       {/* ============================================================== */}
       <section className="home-lookup-section" id="check-stand">
         <div className="stand-checker-card">
           <div className="checker-header">
-            <span className="section-eyebrow">SELF-SERVICE PORTAL</span>
-            <h3>Already Have a Tapform Stand?</h3>
+            <span className="section-eyebrow">SELF-SERVICE</span>
+            <h3>Check Stand Status</h3>
             <p>
-              Enter the Card ID printed on your stand to check your live destination link, total scans, or update your destination.
+              Enter the Card ID printed on your stand to check live destination link, total scans, or update your destination.
             </p>
           </div>
 
@@ -470,11 +336,11 @@ export default function Home() {
               type="button"
               className="chip-tag"
               onClick={() => {
-                setCheckCardId("TF-01101");
+                setCheckCardId("TF-01096");
                 setCheckError("");
               }}
             >
-              TF-01101
+              TF-01096
             </button>
           </div>
 
@@ -531,15 +397,12 @@ export default function Home() {
       </section>
 
       {/* ============================================================== */}
-      {/* SECTION 5: COMPARISON (TRADITIONAL VS TAPFORM DYNAMIC)          */}
+      {/* SECTION 5: WHY TAPFORM? (COMPACT COMPARISON)                    */}
       {/* ============================================================== */}
       <section className="home-comparison-section">
         <div className="section-header-block">
           <span className="section-eyebrow">WHY TAPFORM?</span>
           <h2 className="section-main-title">Traditional Paper QR vs Tapform Smart NFC</h2>
-          <p className="section-sub-desc">
-            See why leading modern businesses are switching from static paper flyers to permanent dynamic touchpoints.
-          </p>
         </div>
 
         <div className="comparison-table-wrap">
@@ -548,34 +411,24 @@ export default function Home() {
               <tr>
                 <th>Feature</th>
                 <th>Old Paper QR Print</th>
-                <th className="tapform-col">Tapform Smart NFC & Dynamic QR</th>
+                <th className="tapform-col">Tapform Smart NFC Stand</th>
               </tr>
             </thead>
             <tbody>
               <tr>
                 <td><strong>Customer Action</strong></td>
                 <td>Must unlock phone, open camera, align QR</td>
-                <td className="tapform-col"><strong>1-Tap contactless tap OR instant camera scan</strong></td>
+                <td className="tapform-col"><strong>1-Tap contactless touch (instant)</strong></td>
               </tr>
               <tr>
                 <td><strong>Update Link Later?</strong></td>
                 <td>Impossible — Must throw away & reprint</td>
-                <td className="tapform-col"><strong>Update link anytime in 5 seconds for free</strong></td>
+                <td className="tapform-col"><strong>Edit link anytime in 5 seconds for free</strong></td>
               </tr>
               <tr>
                 <td><strong>Durability & Look</strong></td>
                 <td>Paper tears, fades, gets dirty quickly</td>
-                <td className="tapform-col"><strong>Premium shatterproof acrylic & 10+ year chip</strong></td>
-              </tr>
-              <tr>
-                <td><strong>Analytics & Scan Tracking</strong></td>
-                <td>Zero data on how many customers scanned</td>
-                <td className="tapform-col"><strong>Real-time scan counter & live activity logs</strong></td>
-              </tr>
-              <tr>
-                <td><strong>Google Review Conversion</strong></td>
-                <td>Low (customer must type business name)</td>
-                <td className="tapform-col"><strong>Highest (direct 5-star pop-up in 1 second)</strong></td>
+                <td className="tapform-col"><strong>Premium shatterproof acrylic (10+ years)</strong></td>
               </tr>
             </tbody>
           </table>
@@ -583,15 +436,12 @@ export default function Home() {
       </section>
 
       {/* ============================================================== */}
-      {/* SECTION 6: FREQUENTLY ASKED QUESTIONS (FAQ)                     */}
+      {/* SECTION 6: FAQ (3 ESSENTIAL QUESTIONS)                         */}
       {/* ============================================================== */}
       <section className="home-faq-section">
         <div className="section-header-block">
           <span className="section-eyebrow">HAVE QUESTIONS?</span>
           <h2 className="section-main-title">Frequently Asked Questions</h2>
-          <p className="section-sub-desc">
-            Everything you need to know about setting up and using your Tapform stands.
-          </p>
         </div>
 
         <div className="faq-list">
@@ -619,13 +469,13 @@ export default function Home() {
       </section>
 
       {/* ============================================================== */}
-      {/* SECTION 7: FINAL HIGH CONVERSION CALL TO ACTION                */}
+      {/* SECTION 7: FINAL CALL TO ACTION                                */}
       {/* ============================================================== */}
       <section className="home-cta-banner">
         <div className="cta-banner-content">
-          <h2>Ready to turn every visitor into a 5-star customer review?</h2>
+          <h2>Ready to get more 5-star customer reviews?</h2>
           <p>
-            Get your business connected with Tapform today. Set up your card in 30 seconds or generate a high-resolution dynamic QR code for print.
+            Set up your smart NFC stand in 30 seconds or generate a dynamic QR code.
           </p>
           <div className="cta-banner-actions">
             <Link to="/activate" className="btn-white-cta">
