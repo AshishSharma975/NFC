@@ -58,12 +58,12 @@ const cardSchema = new mongoose.Schema(
   }
 );
 
-// Virtual for permanent redirect path
+
 cardSchema.virtual("redirectPath").get(function () {
   return `/c/${this.cardId}`;
 });
 
-// JSON serialization transform
+
 cardSchema.set("toJSON", {
   virtuals: true,
   transform: (doc, ret) => {

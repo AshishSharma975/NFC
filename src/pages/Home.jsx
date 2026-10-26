@@ -18,13 +18,22 @@ import {
   RotateCcw,
   X,
   Layers,
+  Fingerprint,
+  Link2,
+  QrCode,
 } from "lucide-react";
 import { getCardApi } from "../utils/api";
 import "../home.css";
 
 export default function Home() {
-  // Interactive Stand Tap State
-  const [standTapped, setStandTapped] = useState(false);
+  // Simulator State in Hero
+  const [simMode, setSimMode] = useState("nfc"); // 'nfc' | 'qr'
+  const [simFired, setSimFired] = useState(false);
+
+  function triggerSim(mode) {
+    setSimMode(mode);
+    setSimFired(true);
+  }
 
   // Stand Checker State (Customer Self-Service)
   const [checkCardId, setCheckCardId] = useState("");
@@ -34,13 +43,6 @@ export default function Home() {
 
   // FAQ Accordion State
   const [openFaqIndex, setOpenFaqIndex] = useState(0);
-
-  function handleStandTap() {
-    setStandTapped(true);
-    setTimeout(() => {
-      setStandTapped(false);
-    }, 2500);
-  }
 
   // Handle Stand Lookup
   async function handleCheckStand(e) {
@@ -132,40 +134,69 @@ export default function Home() {
           </div>
         </div>
 
-        {/* Compact Hero Interactive Stand (Clean & Minimal) */}
+        {/* Hero Interactive Visual */}
         <div className="hero-visual">
-          <div
-            className={`sleek-stand-preview ${standTapped ? "tapped" : ""}`}
-            onClick={handleStandTap}
-            title="Click to simulate NFC tap"
-          >
-            <div className="stand-acrylic-shine" />
-            <div className="stand-badge">
-              <span className="live-dot" /> SMART TOUCHPOINT
-            </div>
-
-            <div className="stand-brand-icon">
-              <Star size={24} fill="#f59e0b" color="#f59e0b" />
-            </div>
-
-            <div className="stand-copy">
-              <span className="stand-sub">RATE US 5 STARS ON GOOGLE</span>
-              <h3>Tap Phone Here</h3>
-              <p>Contactless NFC & Dynamic QR Stand</p>
-            </div>
-
-            <div className="stand-tap-hint">
-              <Smartphone size={14} />
-              <span>{standTapped ? "✓ 5-Star Google Review Triggered!" : "Tap card to simulate"}</span>
-            </div>
-
-            {standTapped && (
-              <div className="stand-success-toast">
-                <CheckCircle2 size={16} color="#16a34a" />
-                <span>Google Review Opened in 1 Sec!</span>
-              </div>
-            )}
+          <div className="visual-topline">
+            <span>TRY THE INTERACTIVE DEMO</span>
+            <span>TAP OR SCAN BELOW</span>
           </div>
+
+          <div className="demo-card">
+            <div className="demo-card-top">
+              <div className="demo-brand-mark"><Fingerprint size={23} /></div>
+              <span className="demo-card-label">SMART TOUCHPOINT</span>
+            </div>
+
+            <div className="demo-orbit orbit-one" />
+            <div className="demo-orbit orbit-two" />
+
+            <div className="demo-card-copy">
+              <span>RATE US 5 STARS ON GOOGLE</span>
+              <h2>Tap your phone<br />to review.</h2>
+            </div>
+
+            <div className="demo-card-bottom">
+              <span>NFC + QR DYNAMIC</span>
+              <span className="demo-chip"><Link2 size={16} /></span>
+            </div>
+          </div>
+
+          {/* Interactive Trigger Buttons */}
+          <div className="simulator-trigger-bar">
+            <button
+              type="button"
+              className={`sim-btn ${simMode === "nfc" ? "active" : ""}`}
+              onClick={() => triggerSim("nfc")}
+            >
+              <Smartphone size={13} /> Simulate Phone Tap
+            </button>
+            <button
+              type="button"
+              className={`sim-btn ${simMode === "qr" ? "active" : ""}`}
+              onClick={() => triggerSim("qr")}
+            >
+              <QrCode size={13} /> Simulate QR Scan
+            </button>
+          </div>
+
+          {/* Simulated Mobile Pop-up Result */}
+          <div className="sim-phone-notification">
+            <div className="notif-google-icon">
+              <Star size={20} fill="#f59e0b" color="#f59e0b" />
+            </div>
+            <div className="notif-copy">
+              <strong>Google Maps Review</strong>
+              <span>Rate Your Business on Google (1 Tap)</span>
+              <div className="notif-stars">
+                {[1, 2, 3, 4, 5].map((s) => (
+                  <Star key={s} size={12} fill="#f59e0b" color="#f59e0b" />
+                ))}
+              </div>
+            </div>
+            <CheckCircle2 size={18} color="#16a34a" style={{ marginLeft: "auto" }} />
+          </div>
+
+          <span className="visual-index">TESTED COMPATIBLE ON ALL SMARTPHONES</span>
         </div>
       </section>
 
