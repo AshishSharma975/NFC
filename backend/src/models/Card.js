@@ -52,6 +52,10 @@ const cardSchema = new mongoose.Schema(
       type: Date,
       default: null,
     },
+    activatedAt: {
+      type: Date,
+      default: null,
+    },
   },
   {
     timestamps: true,

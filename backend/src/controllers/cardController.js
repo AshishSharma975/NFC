@@ -94,6 +94,9 @@ export async function activateCard(req, res, next) {
       card.destinationUrl = trimmedUrl;
       if (trimmedTitle) card.title = trimmedTitle;
       card.status = "active";
+      if (!card.activatedAt) {
+        card.activatedAt = new Date();
+      }
       await card.save();
 
       const baseUrl = getBaseUrl(req);
@@ -110,6 +113,7 @@ export async function activateCard(req, res, next) {
       destinationUrl: trimmedUrl,
       title: trimmedTitle,
       status: "active",
+      activatedAt: new Date(),
     });
 
     const baseUrl = getBaseUrl(req);

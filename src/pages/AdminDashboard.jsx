@@ -865,12 +865,28 @@ export default function AdminDashboard() {
                             )}
                           </td>
 
-                          {/* Title */}
+                          {/* Title & Timestamps */}
                           <td>
                             <strong className="cell-title-text">{card.title || "NFC Stand"}</strong>
                             {card.batchId && (
                               <div className="batch-tag-sm">{card.batchId}</div>
                             )}
+                            <div className="card-timestamp-meta">
+                              {card.activatedAt ? (
+                                <span title={`First activated: ${new Date(card.activatedAt).toLocaleString()}`}>
+                                  ⚡ Active: {new Date(card.activatedAt).toLocaleDateString([], { month: "short", day: "numeric" })}
+                                </span>
+                              ) : card.createdAt ? (
+                                <span title={`Created: ${new Date(card.createdAt).toLocaleString()}`}>
+                                  🕒 Added: {new Date(card.createdAt).toLocaleDateString([], { month: "short", day: "numeric" })}
+                                </span>
+                              ) : null}
+                              {card.updatedAt && card.updatedAt !== card.createdAt && (
+                                <span className="updated-dot" title={`Last updated: ${new Date(card.updatedAt).toLocaleString()}`}>
+                                  • Edited
+                                </span>
+                              )}
+                            </div>
                           </td>
 
                           {/* Destination */}
@@ -901,11 +917,20 @@ export default function AdminDashboard() {
                             </div>
                           </td>
 
-                          {/* Scans */}
+                          {/* Scans with Last Scan Timestamp */}
                           <td>
                             <span className="scan-count-badge">
-                              {card.scanCount || 0}
+                              {card.scanCount || 0} scans
                             </span>
+                            <div className="last-scan-meta">
+                              {card.lastScannedAt ? (
+                                <small className="last-scan-pill" title={`Last customer scan: ${new Date(card.lastScannedAt).toLocaleString()}`}>
+                                  Last: {new Date(card.lastScannedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                </small>
+                              ) : (
+                                <small className="last-scan-pill muted">No scans yet</small>
+                              )}
+                            </div>
                           </td>
 
                           {/* Status Toggle Switch */}
