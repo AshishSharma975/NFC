@@ -59,7 +59,6 @@ const hasFrontendBuild = fs.existsSync(distPath);
 if (hasFrontendBuild) {
   app.use(express.static(distPath));
 } else {
-  // Root welcome / discovery route when running backend independently
   app.get("/", (req, res) => {
     res.json({
       name: "Tapform NFC & Dynamic QR Backend API",
@@ -95,7 +94,6 @@ if (hasFrontendBuild) {
 app.use(notFoundHandler);
 app.use(errorHandler);
 
-// Start server
 const server = app.listen(PORT, "0.0.0.0", () => {
   console.log(`🚀 NFC Backend server running on:`);
   console.log(`   - Local:   http://localhost:${PORT}`);
