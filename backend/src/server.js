@@ -51,13 +51,34 @@ if (process.env.NODE_ENV !== "test") {
 app.use(express.json({ limit: "256kb" }));
 app.use(express.urlencoded({ extended: true, limit: "256kb" }));
 
+app.disable("x-powered-by");
+
 import fs from "fs";
 
 const distPath = path.resolve(__dirname, "../../dist");
 const hasFrontendBuild = fs.existsSync(distPath);
 
 if (hasFrontendBuild) {
-  app.use(express.static(distPath));
+  // 1. Aggressive immutable caching for Vite's hashed bundles (instant 0ms repeat page loads)
+  app.use(
+    "/assets",
+    express.static(path.resolve(distPath, "assets"), {
+      maxAge: "1y",
+      immutable: true,
+    })
+  );
+
+  // 2. Static root assets (favicon, svg icons, web manifest) with 1 hour caching
+  app.use(
+    express.static(distPath, {
+      maxAge: "1h",
+      setHeaders: (res, filePath) => {
+        if (filePath.endsWith(".html")) {
+          res.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+        }
+      },
+    })
+  );
 } else {
   app.get("/", (req, res) => {
     res.json({
@@ -76,6 +97,12 @@ if (hasFrontendBuild) {
   });
 }
 
+// Ensure API responses are always real-time and never stale
+app.use("/api", (req, res, next) => {
+  res.setHeader("Cache-Control", "no-store, no-cache, must-revalidate, proxy-revalidate");
+  next();
+});
+
 // App Routes
 app.use(healthRoutes);
 app.use(cardRoutes);
@@ -86,6 +113,7 @@ if (hasFrontendBuild) {
     if (req.path.startsWith("/api") || req.path.startsWith("/c/")) {
       return next();
     }
+    res.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
     res.sendFile(path.resolve(distPath, "index.html"));
   });
 }

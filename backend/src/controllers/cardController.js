@@ -199,7 +199,7 @@ export async function getCard(req, res, next) {
     const { cardId } = req.params;
     const normalizedId = normalizeCardId(cardId);
 
-    const card = await Card.findOne({ cardId: normalizedId });
+    const card = await Card.findOne({ cardId: normalizedId }).lean();
 
     if (!card) {
       return res.status(404).json({
@@ -245,7 +245,7 @@ export async function getAllCards(req, res, next) {
       ];
     }
 
-    const query = Card.find(filter).sort({ cardNumber: -1, createdAt: -1 });
+    const query = Card.find(filter).sort({ cardNumber: -1, createdAt: -1 }).lean();
 
     if (limit && !isNaN(parseInt(limit, 10)) && parseInt(limit, 10) > 0) {
       query.limit(parseInt(limit, 10));
@@ -323,7 +323,9 @@ export async function redirectScan(req, res, next) {
     const { cardId } = req.params;
     const normalizedId = normalizeCardId(cardId);
 
-    const card = await Card.findOne({ cardId: normalizedId });
+    const card = await Card.findOne({ cardId: normalizedId })
+      .select("cardId destinationUrl status _id")
+      .lean();
 
     // Handle unknown card -> direct to setup landing page with cardId prefilled
     if (!card) {
@@ -640,10 +642,11 @@ export async function getAdminStats(req, res, next) {
           },
         },
       ]),
-      Card.find({}).sort({ createdAt: -1 }).limit(10),
+      Card.find({}).sort({ createdAt: -1 }).limit(10).lean(),
       Card.find({ lastScannedAt: { $ne: null } })
         .sort({ lastScannedAt: -1 })
-        .limit(10),
+        .limit(10)
+        .lean(),
       Card.aggregate([
         { $match: { batchId: { $ne: "" } } },
         {
@@ -721,7 +724,8 @@ export async function bulkGenerateCards(req, res, next) {
     } else {
       const highestCard = await Card.findOne({ cardNumber: { $ne: null } })
         .sort({ cardNumber: -1 })
-        .select("cardNumber");
+        .select("cardNumber")
+        .lean();
       currentNumber = highestCard && highestCard.cardNumber ? highestCard.cardNumber + 1 : 1001;
     }
 

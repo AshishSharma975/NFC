@@ -62,7 +62,11 @@ const cardSchema = new mongoose.Schema(
   }
 );
 
-
+// Production Indexes for high-performance sorting and sub-millisecond lookups
+cardSchema.index({ createdAt: -1 });
+cardSchema.index({ lastScannedAt: -1 });
+cardSchema.index({ status: 1, createdAt: -1 });
+cardSchema.index({ batchId: 1, createdAt: -1 });
 cardSchema.virtual("redirectPath").get(function () {
   return `/c/${this.cardId}`;
 });
