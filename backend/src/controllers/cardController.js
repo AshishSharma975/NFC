@@ -321,54 +321,34 @@ export async function redirectScan(req, res, next) {
 
     const card = await Card.findOne({ cardId: normalizedId });
 
-    // Handle unknown card
+    // Handle unknown card -> direct to setup landing page with cardId prefilled
     if (!card) {
-      return res.status(404).send(
-        renderScanStatusHtml({
-          status: 404,
-          badge: "UNREGISTERED CARD",
-          title: "Card Not Activated",
-          cardId: normalizedId,
-          description:
-            "This NFC card or QR code has not been connected to a destination yet.",
-          buttonText: "Activate This Card",
-          buttonLink: `/activate?cardId=${encodeURIComponent(normalizedId)}`,
-        })
-      );
+      return res.redirect(`/activate?cardId=${encodeURIComponent(normalizedId)}`);
     }
 
-    // Handle inactive card or pending activation
+    // Handle pending activation (brand new stand scanned by shop owner)
+    if (!card.destinationUrl || card.destinationUrl.trim() === "") {
+      return res.redirect(`/activate?cardId=${encodeURIComponent(normalizedId)}`);
+    }
+
+    // Handle paused card (temporarily disabled by owner)
     if (card.status !== "active") {
-      const isPendingActivation = !card.destinationUrl || card.destinationUrl.trim() === "";
       return res.status(200).send(
         renderScanStatusHtml({
-          status: isPendingActivation ? "SETUP" : 403,
-          badge: isPendingActivation ? "READY FOR ACTIVATION" : "PAUSED",
-          title: isPendingActivation ? "Card Ready for Setup" : "Card Is Currently Disabled",
+          status: 403,
+          badge: "PAUSED",
+          title: "Card Is Currently Disabled",
           cardId: normalizedId,
-          description: isPendingActivation
-            ? "This dynamic NFC card / QR stand has been issued. Tap below to link your Google Review or business destination!"
-            : "The owner of this card has temporarily paused this link.",
-          buttonText: isPendingActivation ? "Activate This Card" : "Manage / Reactivate Link",
+          description: "The owner of this card has temporarily paused this link.",
+          buttonText: "Manage / Reactivate Link",
           buttonLink: `/activate?cardId=${encodeURIComponent(normalizedId)}`,
         })
       );
     }
 
     // Handle invalid destination
-    if (!card.destinationUrl || !isValidHttpUrl(card.destinationUrl)) {
-      return res.status(200).send(
-        renderScanStatusHtml({
-          status: "SETUP",
-          badge: "SETUP REQUIRED",
-          title: "Destination Link Not Connected",
-          cardId: normalizedId,
-          description:
-            "This NFC stand has not been connected to a Google Review destination yet.",
-          buttonText: "Activate This Card",
-          buttonLink: `/activate?cardId=${encodeURIComponent(normalizedId)}`,
-        })
-      );
+    if (!isValidHttpUrl(card.destinationUrl)) {
+      return res.redirect(`/activate?cardId=${encodeURIComponent(normalizedId)}`);
     }
 
     // If destination URL is still a short link, resolve it to canonical Google Maps URL on the fly
