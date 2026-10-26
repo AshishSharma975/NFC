@@ -301,7 +301,7 @@ export async function deleteCard(req, res, next) {
 
     return res.status(200).json({
       success: true,
-      message: `Card '${normalizedId}' deleted successfully.`,
+      message: `Card '${normalizedId}' deleted successfully...`,
       data: { cardId: normalizedId },
     });
   } catch (error) {
