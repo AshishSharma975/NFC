@@ -48,6 +48,7 @@ async function simulateFrontendUserJourney() {
   });
 
   const updateResult = await updateResponse.json();
+  // update response
   console.log("   Update Response:", updateResult);
   if (!updateResult.success) throw new Error("Update failed");
 

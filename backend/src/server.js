@@ -1,4 +1,5 @@
 import express from "express";
+import compression from "compression";
 import cors from "cors";
 import morgan from "morgan";
 import dotenv from "dotenv";
@@ -52,6 +53,7 @@ app.use(express.json({ limit: "256kb" }));
 app.use(express.urlencoded({ extended: true, limit: "256kb" }));
 
 app.disable("x-powered-by");
+app.use(compression());
 
 import fs from "fs";
 
