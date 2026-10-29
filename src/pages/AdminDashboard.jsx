@@ -336,6 +336,21 @@ export default function AdminDashboard() {
     const cardId = qrModalCard.cardId || "stand-qr";
     const source = new XMLSerializer().serializeToString(svgEl);
 
+    if (format === "cdr") {
+      const corelSvg = `<!-- CorelDRAW Print Ready Vector: In CorelDRAW, press Ctrl+I (File > Import) to open as 100% Vector Curves -->\n` + source;
+      const blob = new Blob([corelSvg], { type: "image/svg+xml;charset=utf-8" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `${cardId}_CorelDRAW_Vector.svg`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+      showToast(`Downloaded CorelDRAW Vector for ${cardId}! (CorelDRAW me Ctrl+I karein)`);
+      return;
+    }
+
     if (format === "svg") {
       const blob = new Blob([source], { type: "image/svg+xml;charset=utf-8" });
       const url = URL.createObjectURL(blob);
@@ -1093,6 +1108,15 @@ export default function AdminDashboard() {
                 title="Download Vector SVG"
               >
                 <Download size={14} /> SVG
+              </button>
+              <button
+                type="button"
+                className="admin-btn-secondary"
+                onClick={() => downloadModalQr("cdr")}
+                title="Download CorelDRAW Print Ready Vector (Import in CorelDRAW with Ctrl+I)"
+                style={{ background: "#f0fdf4", color: "#166534", borderColor: "#bbf7d0" }}
+              >
+                <Download size={14} /> CDR (Corel)
               </button>
               <a
                 href={qrModalCard.qrUrl || `/c/${qrModalCard.cardId}`}

@@ -140,7 +140,7 @@ function getLocalIp() {
 
 const server = app.listen(PORT, "0.0.0.0", () => {
   const ip = getLocalIp();
-  console.log(`🚀 NFC Backend server running on:`);
+  console.log(` NFC Backend server running on:`);
   console.log(`   - Local:   http://localhost:${PORT}`);
   if (ip !== "localhost") {
     console.log(`   - Network: http://${ip}:${PORT}`);

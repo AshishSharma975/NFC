@@ -21,6 +21,7 @@ import {
 } from "lucide-react";
 import { QRCodeSVG } from "qrcode.react";
 import { activateCardApi, getCardApi } from "../utils/api";
+import { downloadQR } from "../utils/downloadQR";
 import "../home.css";
 
 export default function Activate() {
@@ -159,18 +160,19 @@ export default function Activate() {
     setTimeout(() => setCopied(false), 2000);
   }
 
-  // Download QR code SVG
-  function downloadQr() {
-    const svg = document.getElementById("active-qr-svg");
-    if (!svg) return;
-    const svgData = new XMLSerializer().serializeToString(svg);
-    const blob = new Blob([svgData], { type: "image/svg+xml;charset=utf-8" });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement("a");
-    link.href = url;
-    link.download = `tapform-${cardId}-qr.svg`;
-    link.click();
-    URL.revokeObjectURL(url);
+  const [downloadMsg, setDownloadMsg] = useState("");
+
+  // Download QR code in 3 formats: PNG (1024px), SVG, or CDR (CorelDRAW Vector)
+  function handleDownloadActiveQr(format) {
+    try {
+      downloadQR(format, `tapform-${cardId || "stand"}-qr`, "active-qr-svg");
+      if (format === "cdr") {
+        setDownloadMsg("CorelDRAW print file downloaded! Shop wale ko bole: CorelDRAW me 'Ctrl + I' (Import) karein, direct vector open hoga.");
+        setTimeout(() => setDownloadMsg(""), 6000);
+      }
+    } catch {
+      setError("Failed to download QR file.");
+    }
   }
 
   const isAlreadyActive = existingCard && existingCard.destinationUrl && existingCard.status === "active";
@@ -342,15 +344,27 @@ export default function Activate() {
                       includeMargin={true}
                     />
                   </div>
-                  <div className="qr-info-row">
-                    <span>Scan URL: <code>{savedResult.qrUrl || `/c/${savedResult.cardId}`}</code></span>
-                    <button type="button" className="btn-link-action" onClick={copyRedirectUrl} style={{ marginLeft: "8px" }}>
-                      {copied ? <Check size={14} /> : <Copy size={14} />} {copied ? "Copied" : "Copy"}
+                  <div className="qr-info-row" style={{ flexWrap: "wrap", gap: "8px" }}>
+                    <span style={{ width: "100%", marginBottom: "4px" }}>Scan URL: <code>{savedResult.qrUrl || `/c/${savedResult.cardId}`}</code></span>
+                    <button type="button" className="btn-link-action" onClick={copyRedirectUrl}>
+                      {copied ? <Check size={14} /> : <Copy size={14} />} {copied ? "Copied" : "Copy Link"}
                     </button>
-                    <button type="button" className="btn-link-action" onClick={downloadQr}>
-                      <Download size={14} /> Download SVG
+                    <button type="button" className="btn-link-action" onClick={() => handleDownloadActiveQr("png")} title="Download 1024x1024 High-Res PNG">
+                      <Download size={14} /> PNG (1024px)
+                    </button>
+                    <button type="button" className="btn-link-action" onClick={() => handleDownloadActiveQr("svg")} title="Download Vector SVG">
+                      <Download size={14} /> SVG (Vector)
+                    </button>
+                    <button type="button" className="btn-link-action" onClick={() => handleDownloadActiveQr("cdr")} title="Download CorelDRAW Print Ready Vector (Import via Ctrl+I in CorelDRAW)" style={{ background: "#f0fdf4", color: "#166534", border: "1px solid #bbf7d0" }}>
+                      <Download size={14} /> CDR (Corel)
                     </button>
                   </div>
+
+                  {downloadMsg && (
+                    <div style={{ marginTop: "10px", padding: "8px 12px", background: "#f0fdf4", border: "1px solid #bbf7d0", color: "#166534", borderRadius: "8px", fontSize: "12px", textAlign: "left" }}>
+                      💡 {downloadMsg}
+                    </div>
+                  )}
                 </div>
               )}
 

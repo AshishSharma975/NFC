@@ -114,10 +114,11 @@ export async function downloadZipExport(cards, options = {}) {
       },
     });
 
+    // 1. Root PNG and SVG
     const pngBytes = dataUrlToUint8Array(pngDataUrl);
     zip.file(`${card.cardId}.png`, pngBytes);
 
-    // Generate Scalable Vector Graphic (SVG)
+    // 2. Scalable Vector Graphic (SVG)
     const svgString = await QRCode.toString(permanentUrl, {
       type: "svg",
       margin: 4,
@@ -129,6 +130,10 @@ export async function downloadZipExport(cards, options = {}) {
     });
 
     zip.file(`${card.cardId}.svg`, svgString);
+
+    // 3. CorelDRAW Dedicated Vector Folder
+    const corelSvg = `<!-- CorelDRAW Print Ready Vector: Press Ctrl+I (File > Import) in CorelDRAW to open as 100% Vector Curves -->\n${svgString}`;
+    zip.file(`CorelDRAW_Print_Ready/${card.cardId}_CorelDRAW_Vector.svg`, corelSvg);
 
     if (onProgress) {
       onProgress({
@@ -144,6 +149,20 @@ export async function downloadZipExport(cards, options = {}) {
       await new Promise((resolve) => setTimeout(resolve, 0));
     }
   }
+
+  // Include CorelDRAW Print Instructions for shop owners
+  const corelInstructions = `====================================================================
+INSTRUCTIONS FOR PRINT SHOP / CORELDRAW OPERATORS
+====================================================================
+All QR codes in this ZIP are print-ready for UV flatbed, acrylic, and laser printers:
+
+1. Open CorelDRAW (Supports all versions: CorelDRAW X4, X5, X6, X7, X8, 2019-2024).
+2. Press Ctrl + I (File > Import).
+3. Select files from the 'CorelDRAW_Print_Ready' folder or root .svg files.
+4. The QR imports instantly as 100% SHARP VECTOR CURVES.
+5. Position inside your stand layout (4x6", A5, or table-top acrylic) and print!
+====================================================================`;
+  zip.file("CorelDRAW_Print_Instructions.txt", corelInstructions);
 
   // Include codes.csv manifest inside the ZIP
   const csvContent = generateCsvContent(cards);

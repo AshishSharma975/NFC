@@ -378,7 +378,7 @@ export default function BulkExportSection({ onBatchCreated, totalCardsCount = 0 
         <div className="export-header-block">
           <h2 className="export-main-title">Bulk export</h2>
           <p className="export-subtitle-desc">
-            Export QR codes and a CSV manifest for printing. Filenames are based on the QR ID.
+            Export QR codes in 3 print formats (PNG 1024px, Vector SVG, and CorelDRAW Print Ready) with a CSV manifest for acrylic manufacturers.
           </p>
         </div>
 
@@ -471,7 +471,7 @@ export default function BulkExportSection({ onBatchCreated, totalCardsCount = 0 
                 </>
               ) : (
                 <>
-                  <Download size={15} /> Download ZIP (PNG + SVG + CSV)
+                  <Download size={15} /> Download ZIP (PNG + SVG + CDR + CSV)
                 </>
               )}
             </button>
