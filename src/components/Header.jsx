@@ -10,7 +10,6 @@ import {
   Search,
   RotateCcw,
   Lock,
-  Layers,
 } from "lucide-react";
 import { getAdminToken } from "../utils/api";
 
@@ -21,8 +20,13 @@ export default function Header() {
 
   // Close mobile menu whenever navigation occurs
   useEffect(() => {
-    setMobileMenuOpen(false);
-    document.body.style.overflow = "unset";
+    setMobileMenuOpen((prev) => {
+      if (prev) {
+        document.body.style.overflow = "unset";
+        return false;
+      }
+      return prev;
+    });
   }, [location.pathname, location.hash]);
 
   // Toggle mobile menu and lock background body scroll

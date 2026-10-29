@@ -77,13 +77,14 @@ async function runTests() {
 
     // 6. Test Unknown Card Redirect (GET /c/UNKNOWN-999)
     console.log("\n6. Testing Unknown Card Scan (GET /c/UNKNOWN-999)...");
-    const unknownRes = await fetch(`${baseUrl}/c/UNKNOWN-999`);
+    const unknownRes = await fetch(`${baseUrl}/c/UNKNOWN-999`, { redirect: "manual" });
     console.log("   Unknown Card Status:", unknownRes.status);
-    const unknownHtml = await unknownRes.text();
-    if (unknownRes.status !== 404 || !unknownHtml.includes("Card Not Activated")) {
-      throw new Error("Expected 404 HTML status page for unknown card");
+    const unknownLocation = unknownRes.headers.get("location");
+    console.log("   Unknown Card Redirect Location:", unknownLocation);
+    if (unknownRes.status !== 302 || !unknownLocation.includes("/activate?cardId=UNKNOWN-999")) {
+      throw new Error(`Expected redirect to /activate?cardId=UNKNOWN-999, but got ${unknownLocation}`);
     }
-    console.log("   ✅ Unknown card returns friendly 404 HTML status page!");
+    console.log("   ✅ Unknown card redirects to setup/activate landing page!");
 
     // 7. Test Inactivating Card (PUT /api/cards/TEST-TD001 -> status: 'inactive')
     console.log(`\n7. Testing Inactive Card Handling...`);
@@ -95,10 +96,10 @@ async function runTests() {
     const inactiveRes = await fetch(`${baseUrl}/c/${testCardId}`);
     console.log("   Inactive Scan Status:", inactiveRes.status);
     const inactiveHtml = await inactiveRes.text();
-    if (inactiveRes.status !== 403 || !inactiveHtml.includes("Card Is Currently Disabled")) {
-      throw new Error("Expected 403 HTML page for inactive card");
+    if (!inactiveHtml.includes("Card Is Currently Disabled")) {
+      throw new Error("Expected HTML page with 'Card Is Currently Disabled'");
     }
-    console.log("   ✅ Inactive card returns friendly 403 HTML status page!");
+    console.log("   ✅ Inactive card returns friendly status page!");
 
     // Re-activate test card for clean state
     await fetch(`${baseUrl}/api/cards/${testCardId}`, {

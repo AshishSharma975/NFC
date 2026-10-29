@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import {
   ArrowLeft,
@@ -13,7 +13,6 @@ import {
   HelpCircle,
   ChevronDown,
   ChevronUp,
-  Search,
   Copy,
   Check,
   QrCode,
@@ -35,7 +34,6 @@ export default function Activate() {
   // Existing card metadata from DB
   const [existingCard, setExistingCard] = useState(null);
   const [fetchingCard, setFetchingCard] = useState(false);
-  const [lookupError, setLookupError] = useState("");
 
   // Submit / Save state
   const [loading, setLoading] = useState(false);
@@ -47,23 +45,12 @@ export default function Activate() {
   const [copied, setCopied] = useState(false);
   const [showQrModal, setShowQrModal] = useState(false);
 
-  // 1. On page load, read ?cardId= from URL (e.g. from physical QR scan or homepage checker)
-  useEffect(() => {
-    const paramId = searchParams.get("cardId");
-    if (paramId && paramId.trim()) {
-      const cleanId = paramId.trim().toUpperCase();
-      setCardId(cleanId);
-      lookupCard(cleanId);
-    }
-  }, [searchParams]);
-
   // Lookup Card ID in MongoDB
-  async function lookupCard(idToLookup) {
+  const lookupCard = useCallback(async (idToLookup) => {
     const clean = (idToLookup || cardId).trim().toUpperCase();
     if (!clean || clean.length < 3) return;
 
     setFetchingCard(true);
-    setLookupError("");
 
     try {
       const res = await getCardApi(clean);
@@ -85,7 +72,18 @@ export default function Activate() {
     } finally {
       setFetchingCard(false);
     }
-  }
+  }, [cardId, reviewUrl, businessTitle]);
+
+  // 1. On page load, read ?cardId= from URL (e.g. from physical QR scan or homepage checker)
+  useEffect(() => {
+    const paramId = searchParams.get("cardId");
+    if (paramId && paramId.trim()) {
+      const cleanId = paramId.trim().toUpperCase();
+      setCardId(cleanId);
+      lookupCard(cleanId);
+    }
+  }, [searchParams, lookupCard]);
+
 
   // Handle Card ID change with auto-debounce
   function handleCardIdChange(e) {
@@ -346,6 +344,9 @@ export default function Activate() {
                   </div>
                   <div className="qr-info-row">
                     <span>Scan URL: <code>{savedResult.qrUrl || `/c/${savedResult.cardId}`}</code></span>
+                    <button type="button" className="btn-link-action" onClick={copyRedirectUrl} style={{ marginLeft: "8px" }}>
+                      {copied ? <Check size={14} /> : <Copy size={14} />} {copied ? "Copied" : "Copy"}
+                    </button>
                     <button type="button" className="btn-link-action" onClick={downloadQr}>
                       <Download size={14} /> Download SVG
                     </button>

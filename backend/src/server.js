@@ -124,11 +124,28 @@ if (hasFrontendBuild) {
 app.use(notFoundHandler);
 app.use(errorHandler);
 
+import os from "os";
+
+function getLocalIp() {
+  const interfaces = os.networkInterfaces();
+  for (const name of Object.keys(interfaces)) {
+    for (const iface of interfaces[name]) {
+      if (iface.family === "IPv4" && !iface.internal) {
+        return iface.address;
+      }
+    }
+  }
+  return "localhost";
+}
+
 const server = app.listen(PORT, "0.0.0.0", () => {
+  const ip = getLocalIp();
   console.log(`🚀 NFC Backend server running on:`);
   console.log(`   - Local:   http://localhost:${PORT}`);
-  console.log(`   - Network: http://172.20.10.5:${PORT}`);
-  console.log(`📡 Redirect scanner ready at: http://172.20.10.5:${PORT}/c/:cardId`);
+  if (ip !== "localhost") {
+    console.log(`   - Network: http://${ip}:${PORT}`);
+  }
+  console.log(`📡 Redirect scanner ready at: http://localhost:${PORT}/c/:cardId`);
 });
 
 

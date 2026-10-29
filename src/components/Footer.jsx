@@ -1,16 +1,12 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Lock, ScanLine, Star } from "lucide-react";
 import { getAdminToken } from "../utils/api";
 
 export default function Footer() {
-  const [isAdminLoggedIn, setIsAdminLoggedIn] = useState(false);
+  const isAdminLoggedIn = Boolean(getAdminToken());
   const [tapCount, setTapCount] = useState(0);
   const navigate = useNavigate();
-
-  useEffect(() => {
-    setIsAdminLoggedIn(Boolean(getAdminToken()));
-  }, []);
 
   const handleSecretTripleTap = () => {
     const next = tapCount + 1;

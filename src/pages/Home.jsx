@@ -17,7 +17,6 @@ import {
   Zap,
   RotateCcw,
   X,
-  Layers,
   Fingerprint,
   Link2,
   QrCode,
@@ -28,11 +27,9 @@ import "../home.css";
 export default function Home() {
   // Simulator State in Hero
   const [simMode, setSimMode] = useState("nfc"); // 'nfc' | 'qr'
-  const [simFired, setSimFired] = useState(false);
 
   function triggerSim(mode) {
     setSimMode(mode);
-    setSimFired(true);
   }
 
   // Stand Checker State (Customer Self-Service)

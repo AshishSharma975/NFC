@@ -50,12 +50,13 @@ async function runTest() {
 
   console.log("\n=== TEST 4: Customer Scans Unactivated Card ===");
   const scanUnactivated = await fetch(`${baseUrl}/c/TEST-09001`, { redirect: "manual" });
-  const htmlUnactivated = await scanUnactivated.text();
   console.log("Scan unactivated HTTP status:", scanUnactivated.status);
-  console.log("Contains 'Activate This Card' button?", htmlUnactivated.includes("Activate This Card"));
-  if (!htmlUnactivated.includes("Activate This Card")) {
-    throw new Error("Unactivated scan did not display activation page");
+  const unactivatedLoc = scanUnactivated.headers.get("location");
+  console.log("Redirect location:", unactivatedLoc);
+  if (scanUnactivated.status !== 302 || !unactivatedLoc.includes("/activate?cardId=TEST-09001")) {
+    throw new Error(`Expected redirect to /activate?cardId=TEST-09001, got ${unactivatedLoc}`);
   }
+  console.log("  ✅ Unactivated scan properly redirects to /activate setup page!");
 
   console.log("\n=== TEST 5: Customer Activates Card with Google Review Link ===");
   const testReviewUrl = "https://g.page/r/test-business-review";

@@ -569,6 +569,15 @@ export default function DynamicQRSection() {
                     >
                       <Edit3 size={13} /> Edit Link
                     </button>
+
+                    <button
+                      className="link-btn link-btn-danger"
+                      onClick={() => handleDeleteCard(card.cardId)}
+                      title="Delete Card"
+                      style={{ color: "#ef4444" }}
+                    >
+                      Delete
+                    </button>
                   </div>
                 </div>
 

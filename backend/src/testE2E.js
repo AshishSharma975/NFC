@@ -71,7 +71,8 @@ async function simulateFrontendUserJourney() {
   }
   console.log("   ✅ DYNAMIC REDIRECTION CONFIRMED! Target URL updated dynamically without changing physical QR!");
 
-  // Step 6: Verify scan count
+  // Step 6: Verify scan count (wait 200ms for fire-and-forget async DB update to persist to Atlas)
+  await new Promise((r) => setTimeout(r, 200));
   const cardDetails = await fetch(`${backendBase}/api/cards/${userCardId}`).then((r) => r.json());
   console.log(`\n7. Card Scan Statistics in MongoDB:`);
   console.log(`   Total Scans Tracked: ${cardDetails.data.scanCount}`);

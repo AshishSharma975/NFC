@@ -8,13 +8,8 @@ import {
   Loader2,
   Sparkles,
   Layers,
-  ArrowRight,
-  Printer,
   FileArchive,
-  RefreshCw,
   Hash,
-  Sliders,
-  Check,
   X,
 } from "lucide-react";
 import { bulkGenerateCardsApi, getAllCardsApi } from "../utils/api";
@@ -290,6 +285,20 @@ export default function BulkExportSection({ onBatchCreated, totalCardsCount = 0 
               <span className="field-hint">
                 Inactive cards show setup landing page when scanned until activated
               </span>
+            </div>
+
+            {/* Batch Identifier Tag */}
+            <div className="form-group-item">
+              <label className="form-item-label">Batch Tag / Identifier (Optional)</label>
+              <input
+                type="text"
+                value={batchTag}
+                onChange={(e) => setBatchTag(e.target.value)}
+                className="admin-input-styled"
+                placeholder="e.g. BATCH-APR-RESTAURANT"
+                maxLength="32"
+              />
+              <span className="field-hint">Optional tag to label and group this print run</span>
             </div>
           </div>
 
