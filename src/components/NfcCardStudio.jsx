@@ -1,16 +1,12 @@
 import { useState, useMemo } from "react";
 import {
   Download,
-  RotateCw,
   Printer,
-  Sparkles,
   CreditCard,
-  Layers,
   ZoomIn,
   ZoomOut,
   Check,
   Smartphone,
-  Eye,
   FileCode,
 } from "lucide-react";
 import {
@@ -22,7 +18,8 @@ import {
 } from "../utils/cardDesignSvgs";
 
 export default function NfcCardStudio({
-  cardId = "TF-01100",
+  cardId = "TF-01",
+  cardNumber = null,
   title = "Our Business",
   destinationUrl = "",
   qrUrl = "",
@@ -34,11 +31,8 @@ export default function NfcCardStudio({
   // Format: 'nfc-card' | 'table-stand'
   const [format, setFormat] = useState(initialFormat);
 
-  // Theme: 'matte-black' | 'minimal-white'
+  // Theme: 'matte-black' | 'minimal-white' | 'sunset-split'
   const [theme, setTheme] = useState(initialTheme);
-
-  // Side: 'front' | 'back' (applicable for 'nfc-card')
-  const [side, setSide] = useState("front");
 
   // Zoom: 1 | 1.25 | 0.85
   const [zoom, setZoom] = useState(1);
@@ -49,57 +43,57 @@ export default function NfcCardStudio({
 
   const effectiveQrValue = qrUrl || (cardId ? `${window.location.origin}/c/${cardId}` : "https://tapform.me");
 
-  // Generate SVG string dynamically
+  // Generate SVG string dynamically (Single-Sided Complete Layout)
   const svgString = useMemo(() => {
     return generateCardSvgString({
       format,
       theme,
-      side: format === "table-stand" ? "stand" : side,
       cardType,
       title: title || "Your Business Name",
       cardId,
+      cardNumber,
       qrValue: effectiveQrValue,
       socialLinks,
     });
-  }, [format, theme, side, cardType, title, cardId, effectiveQrValue, socialLinks]);
+  }, [format, theme, cardType, title, cardId, cardNumber, effectiveQrValue, socialLinks]);
 
-  // Handle SVG download
+  // Handle SVG download (Infinite resolution vector)
   function handleDownloadSvg() {
     try {
-      const filename = `${cardId || "stand"}_${format}_${theme}_${format === "table-stand" ? "stand" : side}_vector`;
+      const filename = `${cardId || "card"}_${format}_${theme}_vector`;
       downloadCardSvg(
         {
           format,
           theme,
-          side: format === "table-stand" ? "stand" : side,
           cardType,
           title,
           cardId,
+          cardNumber,
           qrValue: effectiveQrValue,
           socialLinks,
         },
         filename
       );
-      setDownloadSuccess("Vector SVG Downloaded! (Infinite Scale)");
+      setDownloadSuccess("Vector SVG Downloaded! (Infinite Scale & Crisp Details)");
       setTimeout(() => setDownloadSuccess(""), 4000);
     } catch (err) {
       alert("Download failed: " + err.message);
     }
   }
 
-  // Handle High-Res PNG download (300 DPI)
+  // Handle High-Res PNG download (300 DPI Ultra High-Res)
   async function handleDownloadPng() {
     setDownloading(true);
     try {
-      const filename = `${cardId || "stand"}_${format}_${theme}_${format === "table-stand" ? "stand" : side}_300dpi`;
+      const filename = `${cardId || "card"}_${format}_${theme}_300dpi`;
       await downloadCardPng(
         {
           format,
           theme,
-          side: format === "table-stand" ? "stand" : side,
           cardType,
           title,
           cardId,
+          cardNumber,
           qrValue: effectiveQrValue,
           socialLinks,
         },
@@ -118,15 +112,15 @@ export default function NfcCardStudio({
   // Handle CorelDRAW Vector download
   function handleDownloadCdr() {
     try {
-      const filename = `${cardId || "stand"}_${format}_${theme}_CorelDRAW`;
+      const filename = `${cardId || "card"}_${format}_${theme}_CorelDRAW`;
       downloadCardCorelDraw(
         {
           format,
           theme,
-          side: format === "table-stand" ? "stand" : side,
           cardType,
           title,
           cardId,
+          cardNumber,
           qrValue: effectiveQrValue,
           socialLinks,
         },
@@ -159,12 +153,9 @@ export default function NfcCardStudio({
             <button
               type="button"
               className={`pill-btn ${format === "nfc-card" ? "active" : ""}`}
-              onClick={() => {
-                setFormat("nfc-card");
-                setSide("front");
-              }}
+              onClick={() => setFormat("nfc-card")}
             >
-              <CreditCard size={14} /> NFC Pocket Card (CR80)
+              <CreditCard size={14} /> NFC Pocket Card (85.6 × 54mm)
             </button>
             <button
               type="button"
@@ -176,40 +167,36 @@ export default function NfcCardStudio({
           </div>
         </div>
 
-        {/* Theme Selector */}
+        {/* Theme Selector for Pocket Card */}
         {format === "nfc-card" && (
           <div className="toolbar-group">
-            <span className="toolbar-label">THEME:</span>
+            <span className="toolbar-label">MINIMAL THEME:</span>
             <div className="pill-toggle-group">
               <button
                 type="button"
                 className={`pill-btn ${theme === "matte-black" ? "active" : ""}`}
                 onClick={() => setTheme("matte-black")}
+                title="Pinterest Luxury Matte Black Aesthetic"
               >
-                🖤 Matte Black Luxury
+                🖤 Matte Obsidian Luxury
               </button>
               <button
                 type="button"
                 className={`pill-btn ${theme === "minimal-white" ? "active" : ""}`}
                 onClick={() => setTheme("minimal-white")}
+                title="Scandinavian Minimalist Studio White"
               >
-                🤍 Porcelain White
+                🤍 Studio Porcelain Pearl
+              </button>
+              <button
+                type="button"
+                className={`pill-btn ${theme === "sunset-split" ? "active" : ""}`}
+                onClick={() => setTheme("sunset-split")}
+                title="Modern Asymmetric Amber Split (Reference Design 1)"
+              >
+                ✨ Modern Split (Amber Curve)
               </button>
             </div>
-          </div>
-        )}
-
-        {/* Front / Back Side Flip (for Pocket Card) */}
-        {format === "nfc-card" && (
-          <div className="toolbar-group">
-            <button
-              type="button"
-              className="flip-side-btn"
-              onClick={() => setSide(side === "front" ? "back" : "front")}
-              title="Flip to opposite side"
-            >
-              <RotateCw size={14} /> View {side === "front" ? "Back Side" : "Front Side"}
-            </button>
           </div>
         )}
       </div>
@@ -220,8 +207,8 @@ export default function NfcCardStudio({
         <div className="stage-spec-badge">
           <span>
             {format === "nfc-card"
-              ? `Standard CR80 Size: 85.6mm × 54mm • ${side.toUpperCase()} VIEW`
-              : "Countertop Acrylic Plaque: 100mm × 100mm • STAND VIEW"}
+              ? "Standard CR80 Pocket Card: 85.6mm × 54mm • SINGLE-SIDED ALL-IN-ONE PRINT"
+              : "Countertop Acrylic Plaque: 100mm × 100mm • ACRYLIC DISPLAY STAND"}
           </span>
           <span className="spec-vector-pill">100% Vector Scalable</span>
         </div>
@@ -263,10 +250,10 @@ export default function NfcCardStudio({
         </div>
       )}
 
-      {/* Download & Export Action Strip ("Bada Chota Dono me") */}
+      {/* Download & Export Action Strip ("Bada Chota Dono me aache se ho jaye") */}
       <div className="studio-export-footer">
         <div className="export-hint">
-          <strong>Print-Ready Vector Files:</strong> Scalable for both small cards (8.5cm) and large shop signs (100cm+) with zero blur.
+          <strong>Single-Sided Print Vector:</strong> Scalable for both small pocket cards (8.5cm) and large countertop acrylic stands (100cm+) with zero blur and integrated QR code.
         </div>
 
         <div className="export-buttons-row">
@@ -274,7 +261,7 @@ export default function NfcCardStudio({
             type="button"
             className="studio-btn btn-svg"
             onClick={handleDownloadSvg}
-            title="Download true SVG vector file - scales to any size"
+            title="Download true SVG vector file - scales to any size infinitely"
           >
             <Download size={14} /> Vector SVG (Infinite Scale)
           </button>

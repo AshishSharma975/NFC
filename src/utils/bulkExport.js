@@ -1,5 +1,6 @@
 import JSZip from "jszip";
 import QRCode from "qrcode";
+import { generateCardSvgString } from "./cardDesignSvgs";
 
 /**
  * Generate CSV text content from an array of card objects
@@ -134,6 +135,23 @@ export async function downloadZipExport(cards, options = {}) {
     // 3. CorelDRAW Dedicated Vector Folder
     const corelSvg = `<!-- CorelDRAW Print Ready Vector: Press Ctrl+I (File > Import) in CorelDRAW to open as 100% Vector Curves -->\n${svgString}`;
     zip.file(`CorelDRAW_Print_Ready/${card.cardId}_CorelDRAW_Vector.svg`, corelSvg);
+
+    // 4. Complete Designed Vector Card with Unique Corner Number (#01, #02... #100)
+    try {
+      const cardDesignSvg = generateCardSvgString({
+        format: "nfc-card",
+        theme: card.designTheme || "matte-black",
+        cardType: card.cardType || "review",
+        title: card.title || "Your Business Name",
+        cardId: card.cardId,
+        cardNumber: card.cardNumber,
+        qrValue: permanentUrl,
+        socialLinks: card.socialLinks || {},
+      });
+      zip.file(`Designed_Cards_Print_Ready/${card.cardId}_Designed_Card.svg`, cardDesignSvg);
+    } catch (e) {
+      console.warn("Card design SVG export warning:", e);
+    }
 
     if (onProgress) {
       onProgress({

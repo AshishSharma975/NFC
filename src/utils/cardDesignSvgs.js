@@ -1,19 +1,16 @@
 import QRCode from "qrcode";
 
 /**
- * PRODUCTION-GRADE VECTOR CARD & STAND SVG GENERATOR
- * Inspired by modern minimal NFC cards & countertop acrylic stands:
- * - Matte Black Luxury (Google 4-color, gold stars, rainbow QR border)
- * - Porcelain Minimalist White (Warm amber-yellow curved stripe, vertical social badges)
- * - Countertop Acrylic Stand (Dual Tap Phone & Scan QR zones)
+ * PURE VECTOR SVG CARD & ACRYLIC STAND GENERATOR (PINTEREST MINIMAL AESTHETIC)
  * 
- * Scalability:
- * 100% pure SVG mathematical vector paths. Scales from 1-inch keychain to 10-foot billboard
- * with zero blur or quality loss.
+ * Features:
+ * - Unique Corner Serial Number Badge (#01, #02, #42, #100) on every card for easy warehouse & physical sorting
+ * - 100% Single-sided print-ready layout
+ * - Infinite scalability (Vector SVG, 300 DPI PNG, CorelDRAW, Print)
  */
 
 // Helper to generate pure SVG path string for QR code modules
-export function generateQrPath(text, x, y, width, height, fill = "#ffffff") {
+export function generateQrPath(text, x, y, width, height, fill = "#0f172a") {
   try {
     const qr = QRCode.create(text || "https://tapform.me", { errorCorrectionLevel: "H" });
     const size = qr.modules.size;
@@ -56,21 +53,18 @@ const ICONS = {
       <path d="M7 11a8 8 0 0 1 0 6" />
     </g>
   `,
-  nfcPhoneHand: (color = "#ffffff") => `
+  nfcPhoneHand: (color = "#38bdf8") => `
     <g stroke="${color}" stroke-width="3.5" fill="none" stroke-linecap="round" stroke-linejoin="round">
-      <!-- Phone outline -->
       <rect x="25" y="10" width="46" height="78" rx="8" />
       <line x1="42" y1="18" x2="54" y2="18" />
       <circle cx="48" cy="78" r="3" fill="${color}" />
-      <!-- Radiating NFC waves -->
       <path d="M12 36a22 22 0 0 0 0 26" />
       <path d="M17 41a15 15 0 0 0 0 16" />
-      <!-- Hand holding phone -->
       <path d="M68 56l14 8a6 6 0 0 1 3 5v18H58" />
     </g>
   `,
   fiveStars: `
-    <g fill="#FBBC04" transform="scale(1.1)">
+    <g fill="#FBBC04" transform="scale(1.05)">
       ${[0, 1, 2, 3, 4]
         .map(
           (i) =>
@@ -104,38 +98,53 @@ function escapeXml(str = "") {
 }
 
 /**
- * GENERATE SVG STRING
+ * GENERATE SVG STRING (SINGLE-SIDED DESIGN WITH CORNER SERIAL NUMBER)
  * @param {Object} options
  * @param {'nfc-card' | 'table-stand'} options.format - Card vs Countertop stand
- * @param {'matte-black' | 'minimal-white' | 'table-stand'} options.theme - Design aesthetic
- * @param {'front' | 'back' | 'stand'} options.side - Side to render
+ * @param {'matte-black' | 'minimal-white' | 'sunset-split'} options.theme - Design aesthetic
  * @param {'review' | 'connect'} options.cardType - Review card vs Multi-link connect card
  * @param {string} options.title - Shop or business name
- * @param {string} options.cardId - Card ID (e.g. TF-01100)
+ * @param {string} options.cardId - Card ID (e.g. TF-01)
+ * @param {number|string} options.cardNumber - Unique corner sequence number (e.g. 1 -> #01)
  * @param {string} options.qrValue - Redirect URL encoded in QR code
  * @param {Object} options.socialLinks - { instagram, whatsapp, facebook }
  */
 export function generateCardSvgString({
   format = "nfc-card",
   theme = "matte-black",
-  side = "front",
   cardType = "review",
   title = "Our Business",
-  cardId = "TF-01100",
-  qrValue = "https://tapform.me/c/TF-01100",
+  cardId = "TF-01",
+  cardNumber = null,
+  qrValue = "https://tapform.me/c/TF-01",
   socialLinks = {},
 }) {
   const safeTitle = escapeXml(title || "Your Business Name");
-  const safeCardId = escapeXml(cardId || "TF-01100");
+  const safeCardId = escapeXml(cardId || "TF-01");
   const isConnect = cardType === "connect";
 
-  // Active social platforms
+  // Calculate formatted corner serial number (#01, #02, #42, #100)
+  let cornerNumber = "";
+  if (cardNumber !== undefined && cardNumber !== null && !isNaN(parseInt(cardNumber, 10))) {
+    const rawNum = parseInt(cardNumber, 10);
+    cornerNumber = `#${String(rawNum).padStart(2, "0")}`;
+  } else {
+    const digitMatch = safeCardId.match(/\d+$/);
+    if (digitMatch) {
+      const rawNum = parseInt(digitMatch[0], 10);
+      cornerNumber = !isNaN(rawNum) ? `#${String(rawNum).padStart(2, "0")}` : `#${digitMatch[0]}`;
+    } else {
+      cornerNumber = `#01`;
+    }
+  }
+
   const hasInsta = Boolean(socialLinks?.instagram);
   const hasWa = Boolean(socialLinks?.whatsapp);
   const hasFb = Boolean(socialLinks?.facebook);
 
   // =========================================================================
-  // 1. FORMAT: NFC POCKET CARD (CR80 RATIO: 638 x 1012 px Vertical)
+  // 1. FORMAT: NFC POCKET CARD (CR80 RATIO: 638 x 1012 px Vertical, SINGLE-SIDED)
+  // Everything is integrated on one sleek face with Corner Serial Number!
   // =========================================================================
   if (format === "nfc-card") {
     const W = 638;
@@ -143,223 +152,328 @@ export function generateCardSvgString({
     const R = 36; // Card corner radius
 
     // -----------------------------------------------------------------------
-    // THEME A: MATTE BLACK LUXURY (Photo 3 & Photo 5 aesthetic)
+    // THEME 1: MATTE OBSIDIAN NOIR (Pinterest Luxury Dark Minimal)
     // -----------------------------------------------------------------------
     if (theme === "matte-black") {
-      if (side === "front") {
-        return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}">
-          <defs>
-            <radialGradient id="cardGlow" cx="50%" cy="30%" r="70%">
-              <stop offset="0%" stop-color="#1e222b"/>
-              <stop offset="100%" stop-color="#0a0c10"/>
-            </radialGradient>
-            <linearGradient id="goldText" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stop-color="#fbbf24"/>
-              <stop offset="100%" stop-color="#f59e0b"/>
-            </linearGradient>
-          </defs>
+      const qrBoxSize = 340;
+      const qrBoxX = (W - qrBoxSize) / 2;
+      const qrBoxY = 285;
+      const qrCodeSize = 280;
+      const qrCodeX = (W - qrCodeSize) / 2;
+      const qrCodeY = qrBoxY + (qrBoxSize - qrCodeSize) / 2;
 
-          <!-- Card Base with Hairline Border -->
-          <rect x="2" y="2" width="${W - 4}" height="${H - 4}" rx="${R}" fill="url(#cardGlow)" stroke="#262b36" stroke-width="3"/>
+      return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}">
+        <defs>
+          <radialGradient id="luxeMatteBg" cx="50%" cy="20%" r="85%">
+            <stop offset="0%" stop-color="#141822"/>
+            <stop offset="60%" stop-color="#0c0e14"/>
+            <stop offset="100%" stop-color="#07080b"/>
+          </radialGradient>
+          <linearGradient id="qrFrameGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#4285F4"/>
+            <stop offset="35%" stop-color="#EA4335"/>
+            <stop offset="70%" stop-color="#FBBC05"/>
+            <stop offset="100%" stop-color="#34A853"/>
+          </linearGradient>
+        </defs>
 
-          <!-- Top Header: NFC Contactless Waves -->
-          <g transform="translate(${W - 90}, 50) scale(1.6)">
+        <!-- Outer Card Base with Crisp Chamfered Border -->
+        <rect x="2" y="2" width="${W - 4}" height="${H - 4}" rx="${R}" fill="url(#luxeMatteBg)" stroke="#232834" stroke-width="2.5"/>
+
+        <!-- Subtle Inner Hairline Border (Luxury Detail) -->
+        <rect x="16" y="16" width="${W - 32}" height="${H - 32}" rx="${R - 8}" fill="none" stroke="#ffffff" stroke-opacity="0.05" stroke-width="1.2"/>
+
+        <!-- TOP HEADER BAR: CORNER NUMBER + GOOGLE REVIEW PILL + NFC WAVE -->
+        <!-- 1. Prominent Corner Serial Badge (Top-Left) -->
+        <g transform="translate(46, 48)">
+          <rect x="0" y="0" width="86" height="40" rx="12" fill="#141822" stroke="#d4af37" stroke-width="1.8"/>
+          <text x="43" y="26" font-family="monospace, 'Plus Jakarta Sans', sans-serif" font-size="18" font-weight="900" fill="#fbbf24" text-anchor="middle" letter-spacing="1">${cornerNumber}</text>
+        </g>
+
+        <!-- 2. Google Review Emblem Pill -->
+        <g transform="translate(142, 48)">
+          <rect x="0" y="0" width="126" height="40" rx="20" fill="#151a24" stroke="#2c3444" stroke-width="1.2"/>
+          <g transform="translate(10, 8) scale(0.85)">${ICONS.googleG}</g>
+          <text x="44" y="25" font-family="-apple-system, BlinkMacSystemFont, 'Inter', sans-serif" font-size="12" font-weight="700" fill="#e2e8f0" letter-spacing="1">REVIEW</text>
+        </g>
+
+        <!-- 3. Top Right: NFC Contactless Wave Indicator -->
+        <g transform="translate(${W - 96}, 46)">
+          <g transform="scale(1.5)">
             ${ICONS.nfcWave("#ffffff")}
           </g>
+          <text x="-8" y="44" font-family="-apple-system, BlinkMacSystemFont, 'Inter', sans-serif" font-size="10" font-weight="800" fill="#94a3b8" letter-spacing="1.5">TAP HERE</text>
+        </g>
 
-          <!-- Central Branding: Authentic Google G Logo -->
-          <g transform="translate(${W / 2 - 58}, 280) scale(4)">
-            ${ICONS.googleG}
-          </g>
+        <!-- Business Name -->
+        <text x="${W / 2}" y="152" font-family="-apple-system, BlinkMacSystemFont, 'Plus Jakarta Sans', 'Inter', 'Segoe UI', sans-serif" font-size="32" font-weight="800" fill="#ffffff" text-anchor="middle" letter-spacing="-0.3">${safeTitle}</text>
 
-          <!-- Golden 5 Stars -->
-          <g transform="translate(${W / 2 - 76}, 450) scale(1.1)">
-            ${ICONS.fiveStars}
-          </g>
+        <!-- Google 5-Star Rating Element -->
+        <g transform="translate(${W / 2 - 68}, 175) scale(1.05)">
+          ${ICONS.fiveStars}
+        </g>
 
-          <!-- Business Name -->
-          <text x="${W / 2}" y="560" font-family="-apple-system, BlinkMacSystemFont, 'Outfit', 'Inter', sans-serif" font-size="34" font-weight="800" fill="#ffffff" text-anchor="middle" letter-spacing="-0.5">${safeTitle}</text>
+        <!-- Subtitle Callout -->
+        <text x="${W / 2}" y="235" font-family="-apple-system, BlinkMacSystemFont, 'Inter', sans-serif" font-size="13" font-weight="700" fill="#94a3b8" text-anchor="middle" letter-spacing="3.5">${isConnect ? "TAP PHONE OR SCAN QR TO CONNECT" : "SHARE YOUR VALUABLE REVIEW"}</text>
 
-          <!-- Subtitle / Action Callout -->
-          <text x="${W / 2}" y="610" font-family="-apple-system, BlinkMacSystemFont, 'Inter', sans-serif" font-size="19" font-weight="700" fill="#94a3b8" text-anchor="middle" letter-spacing="3">${isConnect ? "TAP OR SCAN TO CONNECT" : "REVIEW US ON GOOGLE"}</text>
+        <!-- HERO ELEMENT: PURE WHITE CERAMIC TILE WITH CRISP QR CODE -->
+        <g filter="drop-shadow(0 14px 24px rgba(0,0,0,0.6))">
+          <rect x="${qrBoxX}" y="${qrBoxY}" width="${qrBoxSize}" height="${qrBoxSize}" rx="26" fill="#ffffff" stroke="url(#qrFrameGrad)" stroke-width="4.5"/>
+          ${generateQrPath(qrValue, qrCodeX, qrCodeY, qrCodeSize, qrCodeSize, "#090b0e")}
+        </g>
 
-          <!-- Multi-Link Social Icon Badges (if Connect Card) -->
-          ${
-            isConnect
-              ? `
-              <g transform="translate(${W / 2 - 110}, 690)">
-                <!-- Google Badge -->
-                <circle cx="30" cy="30" r="26" fill="#1e2430" stroke="#334155" stroke-width="2"/>
-                <g transform="translate(18, 18) scale(1.0)">${ICONS.googleG}</g>
-                <!-- Instagram Badge -->
-                <circle cx="90" cy="30" r="26" fill="${hasInsta ? "#833ab4" : "#1e2430"}" stroke="${hasInsta ? "#e1306c" : "#334155"}" stroke-width="2"/>
-                <g transform="translate(76, 16) scale(1.0)">${ICONS.instagram}</g>
-                <!-- WhatsApp Badge -->
-                <circle cx="150" cy="30" r="26" fill="${hasWa ? "#16a34a" : "#1e2430"}" stroke="${hasWa ? "#22c55e" : "#334155"}" stroke-width="2"/>
-                <g transform="translate(136, 16) scale(1.0)">${ICONS.whatsapp}</g>
-                <!-- Facebook Badge -->
-                <circle cx="210" cy="30" r="26" fill="${hasFb ? "#1d4ed8" : "#1e2430"}" stroke="${hasFb ? "#3b82f6" : "#334155"}" stroke-width="2"/>
-                <g transform="translate(198, 18) scale(1.0)">${ICONS.facebook}</g>
+        <!-- Action Capsule Pill Below QR -->
+        <g transform="translate(${W / 2 - 130}, 652)">
+          <rect x="0" y="0" width="260" height="38" rx="19" fill="#151a24" stroke="#2c3444" stroke-width="1.2"/>
+          <circle cx="22" cy="19" r="6" fill="#22c55e" />
+          <text x="140" y="24" font-family="-apple-system, BlinkMacSystemFont, 'Inter', sans-serif" font-size="11" font-weight="800" fill="#f1f5f9" text-anchor="middle" letter-spacing="2">1-TAP NFC  •  SCAN CAMERA</text>
+        </g>
+
+        <!-- MULTI-LINK SOCIAL PILLS (If Connect Card) OR WARM THANK YOU -->
+        ${
+          isConnect
+            ? `
+            <g transform="translate(${W / 2}, 740)">
+              <text x="0" y="0" font-family="-apple-system, BlinkMacSystemFont, 'Inter', sans-serif" font-size="11" font-weight="700" fill="#64748b" text-anchor="middle" letter-spacing="2">CONNECT WITH US ON</text>
+              
+              <g transform="translate(-105, 16)">
+                <!-- Google -->
+                <circle cx="25" cy="25" r="22" fill="#181e28" stroke="#2f394a" stroke-width="1.5"/>
+                <g transform="translate(15, 15) scale(0.85)">${ICONS.googleG}</g>
+
+                <!-- Instagram -->
+                <circle cx="80" cy="25" r="22" fill="${hasInsta ? "#833ab4" : "#181e28"}" stroke="${hasInsta ? "#e1306c" : "#2f394a"}" stroke-width="1.5"/>
+                <g transform="translate(68, 13) scale(0.9)">${ICONS.instagram}</g>
+
+                <!-- WhatsApp -->
+                <circle cx="135" cy="25" r="22" fill="${hasWa ? "#16a34a" : "#181e28"}" stroke="${hasWa ? "#22c55e" : "#2f394a"}" stroke-width="1.5"/>
+                <g transform="translate(123, 13) scale(0.9)">${ICONS.whatsapp}</g>
+
+                <!-- Facebook -->
+                <circle cx="190" cy="25" r="22" fill="${hasFb ? "#1d4ed8" : "#181e28"}" stroke="${hasFb ? "#3b82f6" : "#2f394a"}" stroke-width="1.5"/>
+                <g transform="translate(180, 15) scale(0.85)">${ICONS.facebook}</g>
               </g>
-              `
-              : `
-              <!-- Micro Text for Review Card -->
-              <text x="${W / 2}" y="670" font-family="-apple-system, BlinkMacSystemFont, 'Inter', sans-serif" font-size="14" font-weight="500" fill="#64748b" text-anchor="middle">Instant 1-Second Google Review Tap</text>
-              `
-          }
+            </g>
+            `
+            : `
+            <g transform="translate(${W / 2}, 745)">
+              <text x="0" y="0" font-family="-apple-system, BlinkMacSystemFont, 'Inter', sans-serif" font-size="15" font-weight="600" fill="#cbd5e1" text-anchor="middle">Your reviews tell us what matters to you.</text>
+              <text x="0" y="26" font-family="-apple-system, BlinkMacSystemFont, 'Inter', sans-serif" font-size="13" font-weight="400" fill="#64748b" text-anchor="middle">We are proud and grateful to serve you.</text>
+            </g>
+            `
+        }
 
-          <!-- Footer: Brand & Verification -->
-          <g transform="translate(${W / 2}, 930)">
-            <text x="0" y="0" font-family="-apple-system, BlinkMacSystemFont, 'Inter', sans-serif" font-size="12" font-weight="700" fill="#475569" text-anchor="middle" letter-spacing="4">POWERED BY TAPFORM SMART NFC</text>
-          </g>
-        </svg>`;
-      }
+        <!-- Bottom Footer with Card ID & Authentic Badge -->
+        <g transform="translate(${W / 2}, 915)">
+          <rect x="-85" y="-18" width="170" height="34" rx="17" fill="#121620" stroke="#242b38" stroke-width="1.2"/>
+          <text x="0" y="4" font-family="monospace, -apple-system, sans-serif" font-size="14" font-weight="700" fill="#94a3b8" text-anchor="middle" letter-spacing="2">${safeCardId}</text>
 
-      // BACK SIDE: Matte Black Luxury (Google Rainbow Frame QR Code)
-      if (side === "back") {
-        const qrSize = 380;
-        const qrX = (W - qrSize) / 2;
-        const qrY = 240;
-
-        return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}">
-          <defs>
-            <radialGradient id="cardGlowBack" cx="50%" cy="50%" r="70%">
-              <stop offset="0%" stop-color="#181c24"/>
-              <stop offset="100%" stop-color="#0a0c10"/>
-            </radialGradient>
-            <!-- Google 4-Color Gradient Border for QR Code -->
-            <linearGradient id="googleBorder" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stop-color="#4285F4"/>
-              <stop offset="33%" stop-color="#EA4335"/>
-              <stop offset="66%" stop-color="#FBBC05"/>
-              <stop offset="100%" stop-color="#34A853"/>
-            </linearGradient>
-          </defs>
-
-          <!-- Card Base -->
-          <rect x="2" y="2" width="${W - 4}" height="${H - 4}" rx="${R}" fill="url(#cardGlowBack)" stroke="#262b36" stroke-width="3"/>
-
-          <!-- Header Text -->
-          <text x="${W / 2}" y="120" font-family="-apple-system, BlinkMacSystemFont, 'Inter', sans-serif" font-size="16" font-weight="700" fill="#94a3b8" text-anchor="middle" letter-spacing="4">${isConnect ? "SCAN QR CODE TO CONNECT" : "REVIEW US ON"}</text>
-          <text x="${W / 2}" y="170" font-family="-apple-system, BlinkMacSystemFont, 'Outfit', 'Inter', sans-serif" font-size="34" font-weight="800" fill="#ffffff" text-anchor="middle">${isConnect ? safeTitle : "Google Reviews"}</text>
-
-          <!-- Rainbow Gradient Framed QR Card Container -->
-          <rect x="${qrX - 20}" y="${qrY - 20}" width="${qrSize + 40}" height="${qrSize + 40}" rx="28" fill="#ffffff" stroke="url(#googleBorder)" stroke-width="6"/>
-
-          <!-- Crisp High-Precision Vector QR Code -->
-          ${generateQrPath(qrValue, qrX, qrY, qrSize, qrSize, "#0f172a")}
-
-          <!-- Stand ID Pill Badge -->
-          <rect x="${W / 2 - 85}" y="695" width="170" height="42" rx="10" fill="#1e2430" stroke="#334155" stroke-width="1.5"/>
-          <text x="${W / 2}" y="722" font-family="monospace, -apple-system, sans-serif" font-size="16" font-weight="700" fill="#e2e8f0" text-anchor="middle" letter-spacing="2">${safeCardId}</text>
-
-          <!-- Warm Customer Prompt Message -->
-          <text x="${W / 2}" y="800" font-family="-apple-system, BlinkMacSystemFont, 'Inter', sans-serif" font-size="16" font-weight="600" fill="#cbd5e1" text-anchor="middle">Your reviews tell us what matters to you.</text>
-          <text x="${W / 2}" y="830" font-family="-apple-system, BlinkMacSystemFont, 'Inter', sans-serif" font-size="14" font-weight="400" fill="#64748b" text-anchor="middle">We are proud and grateful to serve you.</text>
-
-          <!-- Footer NFC Hint -->
-          <text x="${W / 2}" y="930" font-family="-apple-system, BlinkMacSystemFont, 'Inter', sans-serif" font-size="12" font-weight="700" fill="#475569" text-anchor="middle" letter-spacing="3">TAP PHONE OR SCAN CAMERA</text>
-        </svg>`;
-      }
+          <text x="0" y="42" font-family="-apple-system, BlinkMacSystemFont, 'Inter', sans-serif" font-size="10" font-weight="800" fill="#475569" text-anchor="middle" letter-spacing="3.5">SMART NFC &bull; ZERO APP NEEDED</text>
+        </g>
+      </svg>`;
     }
 
     // -----------------------------------------------------------------------
-    // THEME B: PORCELAIN MINIMALIST WHITE (Photo 1 aesthetic)
-    // Warm amber-yellow curved accent strip, column of colorful social icons
+    // THEME 2: STUDIO PORCELAIN PEARL (Pinterest Scandinavian Minimalist White)
     // -----------------------------------------------------------------------
     if (theme === "minimal-white") {
-      if (side === "front") {
-        return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}">
-          <!-- White Card Base -->
-          <rect x="2" y="2" width="${W - 4}" height="${H - 4}" rx="${R}" fill="#ffffff" stroke="#e2e8f0" stroke-width="3"/>
+      const qrBoxSize = 340;
+      const qrBoxX = (W - qrBoxSize) / 2;
+      const qrBoxY = 285;
+      const qrCodeSize = 280;
+      const qrCodeX = (W - qrCodeSize) / 2;
+      const qrCodeY = qrBoxY + (qrBoxSize - qrCodeSize) / 2;
 
-          <!-- Warm Amber-Yellow Right Stripe (Photo 1 exact styling) -->
-          <path d="M470 2 C 450 300, 490 700, 470 1010 L ${W - 2} 1010 L ${W - 2} 2 Z" fill="#f59e0b" />
+      return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}">
+        <defs>
+          <linearGradient id="whiteCardGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stop-color="#ffffff"/>
+            <stop offset="100%" stop-color="#f8fafc"/>
+          </linearGradient>
+          <linearGradient id="goldBorderGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#f59e0b"/>
+            <stop offset="50%" stop-color="#fbbf24"/>
+            <stop offset="100%" stop-color="#d97706"/>
+          </linearGradient>
+        </defs>
 
-          <!-- Left Section: Typography -->
-          <text x="65" y="140" font-family="-apple-system, BlinkMacSystemFont, 'Outfit', 'Playfair Display', serif" font-size="52" font-weight="800" fill="#0f172a" line-height="1.1">Tap</text>
-          <text x="65" y="200" font-family="-apple-system, BlinkMacSystemFont, 'Outfit', 'Playfair Display', serif" font-size="52" font-weight="800" fill="#0f172a">or</text>
-          <text x="65" y="260" font-family="-apple-system, BlinkMacSystemFont, 'Outfit', 'Playfair Display', serif" font-size="52" font-weight="800" fill="#0f172a">Scan</text>
+        <!-- White Card Base -->
+        <rect x="2" y="2" width="${W - 4}" height="${H - 4}" rx="${R}" fill="url(#whiteCardGrad)" stroke="#e2e8f0" stroke-width="2.5"/>
 
-          <text x="65" y="325" font-family="-apple-system, BlinkMacSystemFont, 'Inter', sans-serif" font-size="22" font-weight="600" fill="#475569">to connect</text>
-          <text x="65" y="355" font-family="-apple-system, BlinkMacSystemFont, 'Inter', sans-serif" font-size="22" font-weight="600" fill="#475569">with us!</text>
+        <!-- Subtle Inner Platinum Border -->
+        <rect x="16" y="16" width="${W - 32}" height="${H - 32}" rx="${R - 8}" fill="none" stroke="#f1f5f9" stroke-width="1.5"/>
 
-          <!-- Business Name -->
-          <text x="65" y="470" font-family="-apple-system, BlinkMacSystemFont, 'Outfit', 'Inter', sans-serif" font-size="28" font-weight="800" fill="#0f172a">${safeTitle}</text>
+        <!-- TOP HEADER BAR: CORNER NUMBER + GOOGLE REVIEW PILL + NFC WAVE -->
+        <!-- 1. Corner Serial Badge (Top-Left) -->
+        <g transform="translate(46, 48)">
+          <rect x="0" y="0" width="86" height="40" rx="12" fill="#f8fafc" stroke="#f59e0b" stroke-width="2"/>
+          <text x="43" y="26" font-family="monospace, 'Plus Jakarta Sans', sans-serif" font-size="18" font-weight="900" fill="#0f172a" text-anchor="middle" letter-spacing="1">${cornerNumber}</text>
+        </g>
 
-          <!-- 5 Golden Stars -->
-          <g transform="translate(65, 500) scale(0.95)">
-            ${ICONS.fiveStars}
+        <!-- 2. Google Review Emblem Pill -->
+        <g transform="translate(142, 48)">
+          <rect x="0" y="0" width="126" height="40" rx="20" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1.2"/>
+          <g transform="translate(10, 7) scale(0.85)">${ICONS.googleG}</g>
+          <text x="44" y="24" font-family="-apple-system, BlinkMacSystemFont, 'Inter', sans-serif" font-size="12" font-weight="700" fill="#0f172a" letter-spacing="1">REVIEW</text>
+        </g>
+
+        <!-- 3. Top Right: NFC Contactless Wave Indicator -->
+        <g transform="translate(${W - 96}, 46)">
+          <g transform="scale(1.5)">
+            ${ICONS.nfcWave("#0f172a")}
+          </g>
+          <text x="-8" y="44" font-family="-apple-system, BlinkMacSystemFont, 'Inter', sans-serif" font-size="10" font-weight="800" fill="#64748b" letter-spacing="1.5">TAP HERE</text>
+        </g>
+
+        <!-- Business Name -->
+        <text x="${W / 2}" y="152" font-family="-apple-system, BlinkMacSystemFont, 'Plus Jakarta Sans', 'Inter', sans-serif" font-size="32" font-weight="800" fill="#0f172a" text-anchor="middle" letter-spacing="-0.3">${safeTitle}</text>
+
+        <!-- Google 5-Star Rating Element -->
+        <g transform="translate(${W / 2 - 68}, 175) scale(1.05)">
+          ${ICONS.fiveStars}
+        </g>
+
+        <!-- Subtitle Callout -->
+        <text x="${W / 2}" y="235" font-family="-apple-system, BlinkMacSystemFont, 'Inter', sans-serif" font-size="13" font-weight="700" fill="#64748b" text-anchor="middle" letter-spacing="3.5">${isConnect ? "TAP PHONE OR SCAN QR TO CONNECT" : "LEAVE US A GOOGLE REVIEW"}</text>
+
+        <!-- HERO ELEMENT: CLEAN CERAMIC QR CODE TILE -->
+        <g filter="drop-shadow(0 10px 18px rgba(0,0,0,0.08))">
+          <rect x="${qrBoxX}" y="${qrBoxY}" width="${qrBoxSize}" height="${qrBoxSize}" rx="26" fill="#ffffff" stroke="url(#goldBorderGrad)" stroke-width="4.5"/>
+          ${generateQrPath(qrValue, qrCodeX, qrCodeY, qrCodeSize, qrCodeSize, "#0f172a")}
+        </g>
+
+        <!-- Action Capsule Pill Below QR -->
+        <g transform="translate(${W / 2 - 130}, 652)">
+          <rect x="0" y="0" width="260" height="38" rx="19" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1.2"/>
+          <circle cx="22" cy="19" r="6" fill="#16a34a" />
+          <text x="140" y="24" font-family="-apple-system, BlinkMacSystemFont, 'Inter', sans-serif" font-size="11" font-weight="800" fill="#0f172a" text-anchor="middle" letter-spacing="2">1-TAP NFC  •  SCAN CAMERA</text>
+        </g>
+
+        <!-- MULTI-LINK SOCIAL PILLS OR WARM PROMPT -->
+        ${
+          isConnect
+            ? `
+            <g transform="translate(${W / 2}, 740)">
+              <text x="0" y="0" font-family="-apple-system, BlinkMacSystemFont, 'Inter', sans-serif" font-size="11" font-weight="700" fill="#64748b" text-anchor="middle" letter-spacing="2">CONNECT WITH US ON</text>
+              
+              <g transform="translate(-105, 16)">
+                <!-- Google -->
+                <circle cx="25" cy="25" r="22" fill="#ffffff" stroke="#e2e8f0" stroke-width="1.5" filter="drop-shadow(0 2px 4px rgba(0,0,0,0.06))"/>
+                <g transform="translate(15, 15) scale(0.85)">${ICONS.googleG}</g>
+
+                <!-- Instagram -->
+                <circle cx="80" cy="25" r="22" fill="${hasInsta ? "#833ab4" : "#f1f5f9"}" stroke="${hasInsta ? "#e1306c" : "#e2e8f0"}" stroke-width="1.5" filter="drop-shadow(0 2px 4px rgba(0,0,0,0.06))"/>
+                <g transform="translate(68, 13) scale(0.9)">${ICONS.instagram}</g>
+
+                <!-- WhatsApp -->
+                <circle cx="135" cy="25" r="22" fill="${hasWa ? "#16a34a" : "#f1f5f9"}" stroke="${hasWa ? "#22c55e" : "#e2e8f0"}" stroke-width="1.5" filter="drop-shadow(0 2px 4px rgba(0,0,0,0.06))"/>
+                <g transform="translate(123, 13) scale(0.9)">${ICONS.whatsapp}</g>
+
+                <!-- Facebook -->
+                <circle cx="190" cy="25" r="22" fill="${hasFb ? "#1d4ed8" : "#f1f5f9"}" stroke="${hasFb ? "#3b82f6" : "#e2e8f0"}" stroke-width="1.5" filter="drop-shadow(0 2px 4px rgba(0,0,0,0.06))"/>
+                <g transform="translate(180, 15) scale(0.85)">${ICONS.facebook}</g>
+              </g>
+            </g>
+            `
+            : `
+            <g transform="translate(${W / 2}, 745)">
+              <text x="0" y="0" font-family="-apple-system, BlinkMacSystemFont, 'Inter', sans-serif" font-size="15" font-weight="600" fill="#0f172a" text-anchor="middle">Your reviews tell us what matters to you.</text>
+              <text x="0" y="26" font-family="-apple-system, BlinkMacSystemFont, 'Inter', sans-serif" font-size="13" font-weight="400" fill="#64748b" text-anchor="middle">We are proud and grateful to serve you.</text>
+            </g>
+            `
+        }
+
+        <!-- Bottom Footer with Card ID & Micro Tag -->
+        <g transform="translate(${W / 2}, 915)">
+          <rect x="-85" y="-18" width="170" height="34" rx="17" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1.2"/>
+          <text x="0" y="4" font-family="monospace, -apple-system, sans-serif" font-size="14" font-weight="700" fill="#334155" text-anchor="middle" letter-spacing="2">${safeCardId}</text>
+          <text x="0" y="42" font-family="-apple-system, BlinkMacSystemFont, 'Inter', sans-serif" font-size="10" font-weight="800" fill="#94a3b8" text-anchor="middle" letter-spacing="3.5">SMART NFC &bull; ZERO APP NEEDED</text>
+        </g>
+      </svg>`;
+    }
+
+    // -----------------------------------------------------------------------
+    // THEME 3: SUNSET SPLIT (Photo 1 Aesthetic, COMPLETE SINGLE-SIDED)
+    // -----------------------------------------------------------------------
+    if (theme === "sunset-split") {
+      const qrSizeSplit = 270;
+      const qrXSplit = 65;
+      const qrYSplit = 430;
+
+      return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}">
+        <!-- White Card Base -->
+        <rect x="2" y="2" width="${W - 4}" height="${H - 4}" rx="${R}" fill="#ffffff" stroke="#e2e8f0" stroke-width="2.5"/>
+
+        <!-- Warm Amber-Yellow Asymmetric Curved Pillar on the Right -->
+        <path d="M 450 2 C 430 300, 475 700, 450 1010 L ${W - 2} 1010 L ${W - 2} 2 Z" fill="#f59e0b" />
+
+        <!-- Corner Serial Badge (Top-Left) -->
+        <g transform="translate(65, 46)">
+          <rect x="0" y="0" width="86" height="38" rx="10" fill="#fef3c7" stroke="#f59e0b" stroke-width="2"/>
+          <text x="43" y="25" font-family="monospace, 'Plus Jakarta Sans', sans-serif" font-size="17" font-weight="900" fill="#92400e" text-anchor="middle" letter-spacing="1">${cornerNumber}</text>
+        </g>
+
+        <!-- LEFT SECTION: Editorial Typography & Business Name -->
+        <g transform="translate(65, 120)">
+          <text x="0" y="0" font-family="-apple-system, BlinkMacSystemFont, 'Playfair Display', Georgia, serif" font-size="44" font-weight="800" fill="#0f172a">Tap</text>
+          <text x="0" y="44" font-family="-apple-system, BlinkMacSystemFont, 'Playfair Display', Georgia, serif" font-size="44" font-weight="800" fill="#0f172a">or</text>
+          <text x="0" y="88" font-family="-apple-system, BlinkMacSystemFont, 'Playfair Display', Georgia, serif" font-size="44" font-weight="800" fill="#0f172a">Scan</text>
+          <text x="0" y="128" font-family="-apple-system, BlinkMacSystemFont, 'Inter', sans-serif" font-size="18" font-weight="600" fill="#475569">to connect with us!</text>
+        </g>
+
+        <!-- Business Name & 5 Gold Stars -->
+        <text x="65" y="300" font-family="-apple-system, BlinkMacSystemFont, 'Plus Jakarta Sans', 'Inter', sans-serif" font-size="24" font-weight="800" fill="#0f172a">${safeTitle}</text>
+        <g transform="translate(65, 320) scale(0.85)">
+          ${ICONS.fiveStars}
+        </g>
+
+        <!-- Subtitle instruction -->
+        <text x="65" y="390" font-family="-apple-system, BlinkMacSystemFont, 'Inter', sans-serif" font-size="13" font-weight="700" fill="#64748b" letter-spacing="1">OR SCAN CAMERA DIRECTLY</text>
+
+        <!-- SINGLE-SIDED INTEGRATED QR CODE TILE -->
+        <g filter="drop-shadow(0 6px 12px rgba(0,0,0,0.06))">
+          <rect x="${qrXSplit - 12}" y="${qrYSplit - 12}" width="${qrSizeSplit + 24}" height="${qrSizeSplit + 24}" rx="18" fill="#ffffff" stroke="#f59e0b" stroke-width="4"/>
+          ${generateQrPath(qrValue, qrXSplit, qrYSplit, qrSizeSplit, qrSizeSplit, "#0f172a")}
+        </g>
+
+        <!-- Left Bottom: NFC Tap Area -->
+        <g transform="translate(65, 780)">
+          <g transform="scale(1.4)">${ICONS.nfcWave("#0f172a")}</g>
+          <text x="44" y="16" font-family="-apple-system, BlinkMacSystemFont, 'Inter', sans-serif" font-size="13" font-weight="800" fill="#0f172a" letter-spacing="1">NFC TAP HERE</text>
+          <text x="44" y="34" font-family="-apple-system, BlinkMacSystemFont, 'Inter', sans-serif" font-size="11" font-weight="500" fill="#64748b">Hold phone over card</text>
+          
+          <!-- Card ID -->
+          <text x="0" y="85" font-family="monospace, -apple-system, sans-serif" font-size="13" font-weight="700" fill="#94a3b8" letter-spacing="2">${safeCardId}</text>
+        </g>
+
+        <!-- RIGHT AMBER PILLAR: STACKED SOCIAL ICONS -->
+        <g transform="translate(535, 140)">
+          <!-- Google G -->
+          <circle cx="0" cy="0" r="30" fill="#ffffff" filter="drop-shadow(0 4px 6px rgba(0,0,0,0.12))"/>
+          <g transform="translate(-13, -13) scale(1.1)">${ICONS.googleG}</g>
+
+          <!-- Instagram -->
+          <circle cx="0" cy="115" r="30" fill="#ffffff" filter="drop-shadow(0 4px 6px rgba(0,0,0,0.12))"/>
+          <g transform="translate(-16, 99) scale(1.1)">
+            <rect x="3" y="3" width="22" height="22" rx="6" fill="#e1306c"/>
+            ${ICONS.instagram}
           </g>
 
-          <!-- NFC Tap Zone at Left Bottom -->
-          <g transform="translate(65, 830)">
-            <g transform="scale(1.3)">${ICONS.nfcWave("#0f172a")}</g>
-            <text x="50" y="20" font-family="-apple-system, BlinkMacSystemFont, 'Inter', sans-serif" font-size="14" font-weight="800" fill="#0f172a" letter-spacing="1">NFC TAP</text>
-            <text x="50" y="38" font-family="-apple-system, BlinkMacSystemFont, 'Inter', sans-serif" font-size="12" font-weight="500" fill="#64748b">Hold phone here</text>
+          <!-- WhatsApp -->
+          <circle cx="0" cy="230" r="30" fill="#ffffff" filter="drop-shadow(0 4px 6px rgba(0,0,0,0.12))"/>
+          <g transform="translate(-16, 214) scale(1.1)">
+            <rect x="2" y="2" width="24" height="24" rx="12" fill="#25D366"/>
+            ${ICONS.whatsapp}
           </g>
 
-          <!-- Right Column on Yellow Band: Social Icon Badges (Photo 1) -->
-          <g transform="translate(540, 160)">
-            <!-- Google G -->
-            <circle cx="0" cy="0" r="32" fill="#ffffff" filter="drop-shadow(0 4px 6px rgba(0,0,0,0.1))"/>
-            <g transform="translate(-14, -14) scale(1.2)">${ICONS.googleG}</g>
-
-            <!-- Instagram -->
-            <circle cx="0" cy="110" r="32" fill="#ffffff" filter="drop-shadow(0 4px 6px rgba(0,0,0,0.1))"/>
-            <g transform="translate(-16, 94) scale(1.1)">
-              <rect x="3" y="3" width="22" height="22" rx="6" fill="#e1306c"/>
-              ${ICONS.instagram}
-            </g>
-
-            <!-- WhatsApp -->
-            <circle cx="0" cy="220" r="32" fill="#ffffff" filter="drop-shadow(0 4px 6px rgba(0,0,0,0.1))"/>
-            <g transform="translate(-16, 204) scale(1.1)">
-              <rect x="2" y="2" width="24" height="24" rx="12" fill="#25D366"/>
-              ${ICONS.whatsapp}
-            </g>
-
-            <!-- Facebook -->
-            <circle cx="0" cy="330" r="32" fill="#ffffff" filter="drop-shadow(0 4px 6px rgba(0,0,0,0.1))"/>
-            <g transform="translate(-16, 314) scale(1.1)">
-              <rect x="2" y="2" width="24" height="24" rx="12" fill="#1877F2"/>
-              ${ICONS.facebook}
-            </g>
+          <!-- Facebook -->
+          <circle cx="0" cy="345" r="30" fill="#ffffff" filter="drop-shadow(0 4px 6px rgba(0,0,0,0.12))"/>
+          <g transform="translate(-16, 329) scale(1.1)">
+            <rect x="2" y="2" width="24" height="24" rx="12" fill="#1877F2"/>
+            ${ICONS.facebook}
           </g>
-        </svg>`;
-      }
-
-      // BACK SIDE: Porcelain Minimalist White
-      if (side === "back") {
-        const qrSize = 380;
-        const qrX = (W - qrSize) / 2;
-        const qrY = 240;
-
-        return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}">
-          <!-- White Card Base -->
-          <rect x="2" y="2" width="${W - 4}" height="${H - 4}" rx="${R}" fill="#ffffff" stroke="#e2e8f0" stroke-width="3"/>
-
-          <!-- Top Section -->
-          <text x="${W / 2}" y="120" font-family="-apple-system, BlinkMacSystemFont, 'Outfit', 'Playfair Display', serif" font-size="34" font-weight="800" fill="#0f172a" text-anchor="middle">Scan QR</text>
-          <text x="${W / 2}" y="160" font-family="-apple-system, BlinkMacSystemFont, 'Inter', sans-serif" font-size="18" font-weight="500" fill="#64748b" text-anchor="middle">to connect</text>
-
-          <!-- QR Box with Yellow Gold Border (Photo 1 Back side) -->
-          <rect x="${qrX - 16}" y="${qrY - 16}" width="${qrSize + 32}" height="${qrSize + 32}" rx="20" fill="#ffffff" stroke="#f59e0b" stroke-width="5"/>
-
-          <!-- Pure Vector QR Code -->
-          ${generateQrPath(qrValue, qrX, qrY, qrSize, qrSize, "#0f172a")}
-
-          <!-- Stand ID Underneath -->
-          <text x="${W / 2}" y="690" font-family="monospace, -apple-system, sans-serif" font-size="18" font-weight="800" fill="#0f172a" text-anchor="middle" letter-spacing="3">${safeCardId}</text>
-
-          <!-- Store Name & Info -->
-          <text x="${W / 2}" y="770" font-family="-apple-system, BlinkMacSystemFont, 'Outfit', sans-serif" font-size="22" font-weight="800" fill="#0f172a" text-anchor="middle">${safeTitle}</text>
-          <text x="${W / 2}" y="805" font-family="-apple-system, BlinkMacSystemFont, 'Inter', sans-serif" font-size="14" font-weight="500" fill="#64748b" text-anchor="middle">Tap NFC with your phone or scan QR code</text>
-
-          <!-- Footer -->
-          <text x="${W / 2}" y="930" font-family="-apple-system, BlinkMacSystemFont, 'Inter', sans-serif" font-size="11" font-weight="700" fill="#94a3b8" text-anchor="middle" letter-spacing="3">TAPFORM SMART NFC</text>
-        </svg>`;
-      }
+        </g>
+      </svg>`;
     }
   }
 
@@ -371,9 +485,9 @@ export function generateCardSvgString({
   const SH = 1000;
   const SR = 44;
 
-  const qrSizeStand = 320;
-  const qrXStand = 560;
-  const qrYStand = 470;
+  const qrSizeStand = 280;
+  const qrXStand = 590;
+  const qrYStand = 450;
 
   return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${SW} ${SH}" width="${SW}" height="${SH}">
     <defs>
@@ -392,6 +506,12 @@ export function generateCardSvgString({
     <!-- Stand Plaque Outer Base -->
     <rect x="4" y="4" width="${SW - 8}" height="${SH - 8}" rx="${SR}" fill="url(#standBg)" stroke="#2d3340" stroke-width="4"/>
 
+    <!-- Prominent Corner Serial Badge (Top-Left) -->
+    <g transform="translate(60, 60)">
+      <rect x="0" y="0" width="120" height="52" rx="16" fill="#14171f" stroke="#38bdf8" stroke-width="2.5"/>
+      <text x="60" y="34" font-family="monospace, sans-serif" font-size="24" font-weight="900" fill="#ffffff" text-anchor="middle" letter-spacing="2">${cornerNumber}</text>
+    </g>
+
     <!-- Header: Official Google G Logo & Title -->
     <g transform="translate(${SW / 2 - 38}, 80) scale(2.8)">
       ${ICONS.googleG}
@@ -403,7 +523,7 @@ export function generateCardSvgString({
     </g>
 
     <!-- Header Catchline (Photo 5) -->
-    <text x="${SW / 2}" y="255" font-family="-apple-system, BlinkMacSystemFont, 'Outfit', 'Inter', sans-serif" font-size="34" font-weight="800" fill="#ffffff" text-anchor="middle" letter-spacing="-0.5">Your Feedback Matters to us!</text>
+    <text x="${SW / 2}" y="255" font-family="-apple-system, BlinkMacSystemFont, 'Plus Jakarta Sans', 'Inter', sans-serif" font-size="34" font-weight="800" fill="#ffffff" text-anchor="middle" letter-spacing="-0.5">Your Feedback Matters to us!</text>
     <text x="${SW / 2}" y="295" font-family="-apple-system, BlinkMacSystemFont, 'Inter', sans-serif" font-size="20" font-weight="700" fill="#94a3b8" text-anchor="middle">${safeTitle}</text>
 
     <!-- DUAL ACTION BOXES (Photo 5 Exact Design) -->
@@ -429,8 +549,8 @@ export function generateCardSvgString({
       <text x="190" y="55" font-family="-apple-system, BlinkMacSystemFont, 'Inter', sans-serif" font-size="18" font-weight="800" fill="#ffffff" text-anchor="middle" letter-spacing="2">SCAN CODE</text>
 
       <!-- QR Box with Google Rainbow Border -->
-      <rect x="40" y="90" width="300" height="300" rx="20" fill="#ffffff" stroke="url(#rainbowBorder)" stroke-width="5"/>
-      ${generateQrPath(qrValue, 560, 470, 260, 260, "#0f172a")}
+      <rect x="35" y="75" width="310" height="310" rx="22" fill="#ffffff" stroke="url(#rainbowBorder)" stroke-width="5"/>
+      ${generateQrPath(qrValue, qrXStand, qrYStand, qrSizeStand, qrSizeStand, "#0f172a")}
 
       <!-- Stand Code Underneath -->
       <text x="190" y="435" font-family="monospace, -apple-system, sans-serif" font-size="18" font-weight="800" fill="#ffffff" text-anchor="middle" letter-spacing="3">${safeCardId}</text>
@@ -491,7 +611,6 @@ export async function downloadCardPng(options, filename = "nfc-card-print-300dpi
         canvas.height = targetH;
         const ctx = canvas.getContext("2d");
 
-        // High quality smoothing
         ctx.imageSmoothingEnabled = true;
         ctx.imageSmoothingQuality = "high";
 
@@ -527,7 +646,7 @@ export async function downloadCardPng(options, filename = "nfc-card-print-300dpi
 
 /**
  * 3. DOWNLOAD AS CORELDRAW VECTOR PRINT READY FILE (.SVG)
- * Includes CorelDRAW import instructions for Indian & global print vendors (Ctrl + I)
+ * Includes CorelDRAW import instructions for print vendors (Ctrl + I)
  */
 export function downloadCardCorelDraw(options, filename = "nfc-card-coreldraw") {
   const svgString = generateCardSvgString(options);
@@ -536,7 +655,7 @@ export function downloadCardCorelDraw(options, filename = "nfc-card-coreldraw") 
   CORELDRAW 100% VECTOR PRINT READY SPECIFICATION
   Vendor Instruction: In CorelDRAW, press Ctrl + I (File > Import)
   All text, QR codes, icons and curves are mathematical vectors.
-  Aspect Ratio: ${options.format === "table-stand" ? "100mm x 100mm (Square Stand)" : "85.6mm x 54mm (CR80 Standard NFC Card)"}
+  Aspect Ratio: ${options.format === "table-stand" ? "100mm x 100mm (Square Stand)" : "85.6mm x 54mm (CR80 Standard NFC Card, Single-Sided)"}
   =============================================================================
 -->\n`;
   const blob = new Blob([cdrHeader + svgString], { type: "image/svg+xml;charset=utf-8" });

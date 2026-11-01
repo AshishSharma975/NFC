@@ -784,7 +784,7 @@ export default function AdminDashboard() {
                   type="text"
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
-                  placeholder="Search by Card ID, Stand Title, or Destination URL..."
+                  placeholder="Search by Card # (#01, #42, 5), Card ID, or Business Title..."
                   className="search-input"
                 />
                 {search && (
@@ -852,7 +852,7 @@ export default function AdminDashboard() {
                 <table className="admin-data-table">
                   <thead>
                     <tr>
-                      <th>Card ID</th>
+                      <th>Card # &amp; ID</th>
                       <th>Stand Name / Title</th>
                       <th>Destination Link</th>
                       <th>Scans</th>
@@ -864,25 +864,30 @@ export default function AdminDashboard() {
                     {cards.map((card) => {
                       const permanentUrl = card.qrUrl || `/c/${card.cardId}`;
                       const isUnassigned = !card.destinationUrl || card.destinationUrl.trim() === "";
+                      const displayNum = card.cardNumber != null
+                        ? String(card.cardNumber).padStart(2, "0")
+                        : (card.cardId.match(/\d+$/)?.[0] || "01");
 
                       return (
                         <tr key={card.cardId}>
-                          {/* Card ID */}
+                          {/* Card Serial Number & ID */}
                           <td>
-                            <div className="card-id-cell">
-                              <code>{card.cardId}</code>
-                              <button
-                                type="button"
-                                className="cell-copy-btn"
-                                onClick={() => copyToClipboard(card.cardId, `id-${card.cardId}`)}
-                                title="Copy Card ID"
-                              >
-                                {copiedMap[`id-${card.cardId}`] ? <Check size={12} /> : <Copy size={12} />}
-                              </button>
+                            <div className="card-serial-id-group">
+                              <span className="card-serial-pill-badge" title="Unique Card Number on physical card">
+                                #{displayNum}
+                              </span>
+                              <div className="card-id-cell">
+                                <code>{card.cardId}</code>
+                                <button
+                                  type="button"
+                                  className="cell-copy-btn"
+                                  onClick={() => copyToClipboard(card.cardId, `id-${card.cardId}`)}
+                                  title="Copy Card ID"
+                                >
+                                  {copiedMap[`id-${card.cardId}`] ? <Check size={12} /> : <Copy size={12} />}
+                                </button>
+                              </div>
                             </div>
-                            {card.cardNumber && (
-                              <span className="card-sub-num">#{card.cardNumber}</span>
-                            )}
                           </td>
 
                           {/* Title & Timestamps */}
@@ -912,9 +917,23 @@ export default function AdminDashboard() {
                           {/* Destination */}
                           <td>
                             {isUnassigned ? (
-                              <span className="unassigned-badge">
-                                Pending Customer Activation
-                              </span>
+                              <button
+                                type="button"
+                                className="quick-activate-action-btn"
+                                onClick={() => {
+                                  setEditingCard(card);
+                                  setEditUrl(card.destinationUrl || "");
+                                  setEditTitle(card.title || "");
+                                  setEditStatus("active");
+                                  setEditCardType(card.cardType || "review");
+                                  setEditInstagram(card.socialLinks?.instagram || "");
+                                  setEditWhatsapp(card.socialLinks?.whatsapp || "");
+                                  setEditFacebook(card.socialLinks?.facebook || "");
+                                }}
+                                title="Click to activate and set Google / Social links"
+                              >
+                                ⚡ Activate &amp; Set Link
+                              </button>
                             ) : (
                               <div className="destination-cell">
                                 <a
@@ -1043,6 +1062,7 @@ export default function AdminDashboard() {
             <div className="modal-body">
               <NfcCardStudio
                 cardId={qrModalCard.cardId}
+                cardNumber={qrModalCard.cardNumber}
                 title={qrModalCard.title}
                 destinationUrl={qrModalCard.destinationUrl}
                 qrUrl={qrModalCard.qrUrl}

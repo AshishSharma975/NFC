@@ -266,9 +266,9 @@ export default function BulkExportSection({ onBatchCreated, totalCardsCount = 0 
                 value={startNumber}
                 onChange={(e) => setStartNumber(e.target.value)}
                 className="admin-input-styled"
-                placeholder="Auto (next available in DB)"
+                placeholder="1 (creates #01, #02... #100)"
               />
-              <span className="field-hint">Leave blank to auto-detect highest card number</span>
+              <span className="field-hint">Starts at 1 by default for clean single/double-digit corner numbering (#01 - #100)</span>
             </div>
 
             {/* Initial Status */}

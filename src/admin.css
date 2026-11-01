@@ -1279,6 +1279,52 @@
   background: #e5e7eb;
 }
 
+.card-serial-id-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.card-serial-pill-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 42px;
+  height: 28px;
+  padding: 0 8px;
+  background: #fef3c7;
+  color: #92400e;
+  font-family: monospace, sans-serif;
+  font-size: 13px;
+  font-weight: 800;
+  border: 1.5px solid #f59e0b;
+  border-radius: 8px;
+  letter-spacing: 0.5px;
+  box-shadow: 0 1px 3px rgba(245, 158, 11, 0.15);
+}
+
+.quick-activate-action-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 6px 12px;
+  background: #16a34a;
+  color: #ffffff;
+  font-size: 12px;
+  font-weight: 700;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 6px rgba(22, 163, 74, 0.25);
+}
+
+.quick-activate-action-btn:hover {
+  background: #15803d;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 10px rgba(22, 163, 74, 0.35);
+}
+
 .card-sub-num {
   font-size: 11px;
   color: #9ca3af;

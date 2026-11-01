@@ -672,7 +672,16 @@ export async function getCard(req, res, next) {
     const { cardId } = req.params;
     const normalizedId = normalizeCardId(cardId);
 
-    const card = await Card.findOne({ cardId: normalizedId }).lean();
+    let card = await Card.findOne({ cardId: normalizedId }).lean();
+
+    // Fallback: If not found by cardId, search by numeric cardNumber (e.g. "01", "1", "#15")
+    if (!card) {
+      const numMatch = cardId.replace(/^[^\d]*/, "");
+      const parsedNum = parseInt(numMatch, 10);
+      if (!isNaN(parsedNum)) {
+        card = await Card.findOne({ cardNumber: parsedNum }).lean();
+      }
+    }
 
     if (!card) {
       return res.status(404).json({
@@ -710,15 +719,23 @@ export async function getAllCards(req, res, next) {
     }
 
     if (search && search.trim()) {
-      const regex = new RegExp(search.trim(), "i");
+      const cleanSearch = search.trim();
+      const regex = new RegExp(cleanSearch, "i");
+      const numMatch = cleanSearch.replace(/^#/, "");
+      const parsedNum = parseInt(numMatch, 10);
+
       filter.$or = [
         { cardId: regex },
         { title: regex },
         { destinationUrl: regex },
       ];
+
+      if (!isNaN(parsedNum)) {
+        filter.$or.push({ cardNumber: parsedNum });
+      }
     }
 
-    const query = Card.find(filter).sort({ cardNumber: -1, createdAt: -1 }).lean();
+    const query = Card.find(filter).sort({ cardNumber: 1, createdAt: -1 }).lean();
 
     // High scale limit capping & pagination to prevent memory overload
     const parsedLimit = limit && !isNaN(parseInt(limit, 10)) && parseInt(limit, 10) > 0
@@ -1184,7 +1201,7 @@ export async function bulkGenerateCards(req, res, next) {
       cleanPrefix = `${cleanPrefix}-`;
     }
 
-    // Determine starting sequence number
+    // Determine starting sequence number (Default is 1 for clean #01 to #100 numbering)
     let currentNumber;
     if (startNumber !== undefined && !isNaN(parseInt(startNumber, 10))) {
       currentNumber = parseInt(startNumber, 10);
@@ -1193,7 +1210,7 @@ export async function bulkGenerateCards(req, res, next) {
         .sort({ cardNumber: -1 })
         .select("cardNumber")
         .lean();
-      currentNumber = highestCard && highestCard.cardNumber ? highestCard.cardNumber + 1 : 1001;
+      currentNumber = highestCard && highestCard.cardNumber ? highestCard.cardNumber + 1 : 1;
     }
 
     const todayStr = new Date().toISOString().slice(0, 10).replace(/-/g, "");
@@ -1201,16 +1218,20 @@ export async function bulkGenerateCards(req, res, next) {
       ? batchId.trim().toUpperCase()
       : `BATCH-${todayStr}-${Math.random().toString(36).substring(2, 6).toUpperCase()}`;
 
+    const maxNumber = currentNumber + count - 1;
+    const padLen = Math.max(2, String(maxNumber).length);
+
     const cardsToInsert = [];
     for (let i = 0; i < count; i++) {
       const num = currentNumber + i;
-      const cardId = `${cleanPrefix}${String(num).padStart(5, "0")}`;
+      const formattedNum = String(num).padStart(padLen, "0");
+      const cardId = `${cleanPrefix}${formattedNum}`;
 
       cardsToInsert.push({
         cardId,
         cardNumber: num,
         destinationUrl: "",
-        title: `NFC Stand #${num}`,
+        title: `Card #${formattedNum}`,
         status: status === "active" ? "active" : "inactive",
         batchId: generatedBatchId,
         scanCount: 0,
