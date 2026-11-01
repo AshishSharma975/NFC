@@ -3,6 +3,7 @@ import { QRCodeSVG } from "qrcode.react";
 import { Check, Copy, Download, ExternalLink, Edit3, Save, X, Loader2 } from "lucide-react";
 import { downloadQR } from "../utils/downloadQR";
 import { updateCardApi, getCardApi } from "../utils/api";
+import NfcCardStudio from "./NfcCardStudio";
 
 export default function QRCodeDisplay({ qrUrl, destinationUrl, value, cardId }) {
   const [liveQrUrl, setLiveQrUrl] = useState(qrUrl || value);
@@ -14,16 +15,21 @@ export default function QRCodeDisplay({ qrUrl, destinationUrl, value, cardId }) 
   const [updateSuccess, setUpdateSuccess] = useState(false);
   const [copiedPermanent, setCopiedPermanent] = useState(false);
   const [error, setError] = useState("");
+  const [cardData, setCardData] = useState(null);
+  const [showStudio, setShowStudio] = useState(false);
 
   useEffect(() => {
     if (cardId) {
       getCardApi(cardId)
         .then((res) => {
-          if (res?.data?.qrUrl) {
-            setLiveQrUrl(res.data.qrUrl);
-          }
-          if (res?.data?.destinationUrl) {
-            setCurrentDestination(res.data.destinationUrl);
+          if (res?.data) {
+            setCardData(res.data);
+            if (res.data.qrUrl) {
+              setLiveQrUrl(res.data.qrUrl);
+            }
+            if (res.data.destinationUrl) {
+              setCurrentDestination(res.data.destinationUrl);
+            }
           }
         })
         .catch(() => {});
@@ -278,6 +284,30 @@ export default function QRCodeDisplay({ qrUrl, destinationUrl, value, cardId }) 
         {copiedPermanent ? <Check size={15} /> : <Copy size={15} />}
         {copiedPermanent ? "Copied permanent redirect link" : "Copy permanent QR / NFC link"}
       </button>
+
+      <div style={{ marginTop: "16px", borderTop: "1px solid #e7e8e0", paddingTop: "14px", width: "100%" }}>
+        <button
+          type="button"
+          className="button button-outline"
+          onClick={() => setShowStudio(!showStudio)}
+          style={{ width: "100%", justifyContent: "center" }}
+        >
+          {showStudio ? "▲ Hide Card & Stand Designer" : "🎨 Open Print-Ready Card & Stand Studio"}
+        </button>
+
+        {showStudio && (
+          <div style={{ marginTop: "14px" }}>
+            <NfcCardStudio
+              cardId={cardId}
+              title={cardData?.title || "Your Business Name"}
+              destinationUrl={currentDestination}
+              qrUrl={permanentQrValue}
+              cardType={cardData?.cardType || "review"}
+              socialLinks={cardData?.socialLinks || {}}
+            />
+          </div>
+        )}
+      </div>
     </div>
   );
 }

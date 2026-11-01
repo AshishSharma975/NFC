@@ -148,7 +148,337 @@ function renderRedirectHtml(targetUrl) {
 </body>
 </html>`;
 }
+ 
+function normalizeSocialLinks(links = {}) {
+  const normalized = {
+    instagram: "",
+    whatsapp: "",
+    facebook: "",
+  };
 
+  if (!links || typeof links !== "object") return normalized;
+
+  if (links.instagram && typeof links.instagram === "string") {
+    let insta = links.instagram.trim();
+    if (insta) {
+      if (insta.startsWith("@")) insta = insta.substring(1);
+      if (!insta.startsWith("http://") && !insta.startsWith("https://")) {
+        insta = `https://instagram.com/${insta}`;
+      }
+      normalized.instagram = insta;
+    }
+  }
+
+  if (links.whatsapp && typeof links.whatsapp === "string") {
+    let wa = links.whatsapp.trim();
+    if (wa) {
+      if (!wa.startsWith("http://") && !wa.startsWith("https://")) {
+        const cleanNumber = wa.replace(/[^0-9]/g, "");
+        wa = `https://wa.me/${cleanNumber}`;
+      }
+      normalized.whatsapp = wa;
+    }
+  }
+
+  if (links.facebook && typeof links.facebook === "string") {
+    let fb = links.facebook.trim();
+    if (fb) {
+      if (!fb.startsWith("http://") && !fb.startsWith("https://")) {
+        fb = `https://facebook.com/${fb}`;
+      }
+      normalized.facebook = fb;
+    }
+  }
+
+  return normalized;
+}
+
+function renderConnectProfileHtml({ cardId, title, destinationUrl, socialLinks = {}, baseUrl }) {
+  const shopName = title && title.trim() ? title.trim() : "Our Business & Store";
+  const initial = shopName.charAt(0).toUpperCase();
+
+  const linksHtml = [];
+
+  // 1. Google Review & Maps (Mandatory & Prominently Highlighted)
+  linksHtml.push(`
+    <a href="${destinationUrl}" target="_blank" rel="noopener noreferrer" class="link-card google-card">
+      <div class="card-icon google-icon">
+        <svg viewBox="0 0 24 24" width="26" height="26">
+          <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.66-5.17 3.66-9.17z"/>
+          <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.25v3.15C3.26 21.36 7.33 24 12 24z"/>
+          <path fill="#FBBC05" d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.13-1.55.38-2.27V6.58H1.25C.45 8.18 0 9.98 0 12s.45 3.82 1.25 5.42l4.03-3.15z"/>
+          <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.33 0 3.26 2.64 1.25 6.58l4.03 3.15c.95-2.83 3.6-4.98 6.72-4.98z"/>
+        </svg>
+      </div>
+      <div class="card-text">
+        <span class="card-badge">RECOMMENDED</span>
+        <strong class="card-title">Leave a Review on Google</strong>
+        <span class="card-sub">&#11088;&#11088;&#11088;&#11088;&#11088; Rate your experience & location</span>
+      </div>
+      <div class="card-arrow">&rarr;</div>
+    </a>
+  `);
+
+  // 2. Instagram
+  if (socialLinks.instagram) {
+    linksHtml.push(`
+      <a href="${socialLinks.instagram}" target="_blank" rel="noopener noreferrer" class="link-card insta-card">
+        <div class="card-icon insta-icon">
+          <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
+            <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
+            <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
+          </svg>
+        </div>
+        <div class="card-text">
+          <strong class="card-title">Follow on Instagram</strong>
+          <span class="card-sub">Photos, reels & stories</span>
+        </div>
+        <div class="card-arrow">&rarr;</div>
+      </a>
+    `);
+  }
+
+  // 3. WhatsApp Business
+  if (socialLinks.whatsapp) {
+    linksHtml.push(`
+      <a href="${socialLinks.whatsapp}" target="_blank" rel="noopener noreferrer" class="link-card wa-card">
+        <div class="card-icon wa-icon">
+          <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
+            <path d="M12.04 2c-5.46 0-9.91 4.45-9.91 9.91 0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.816 9.816 0 0 0 12.04 2zm0 18.15c-1.48 0-2.93-.4-4.2-1.15l-.3-.18-3.12.82.83-3.04-.2-.31c-.82-1.31-1.26-2.83-1.26-4.38 0-4.54 3.7-8.24 8.24-8.24 2.2 0 4.27.86 5.82 2.42a8.18 8.18 0 0 1 2.41 5.83c.02 4.54-3.68 8.23-8.22 8.23zm4.52-6.16c-.25-.12-1.47-.72-1.7-.81-.23-.08-.39-.12-.56.12-.17.25-.64.81-.79.97-.14.17-.29.19-.54.06-.25-.12-1.05-.39-1.99-1.23-.74-.66-1.23-1.47-1.38-1.72-.14-.25-.02-.38.11-.5.11-.11.25-.29.37-.43.12-.14.17-.25.25-.41.08-.17.04-.31-.02-.43s-.56-1.34-.76-1.84c-.2-.48-.41-.42-.56-.43h-.48c-.17 0-.43.06-.66.31-.22.25-.86.84-.86 2.05s.88 2.38 1 2.54c.12.17 1.73 2.64 4.2 3.7.59.25 1.05.4 1.41.51.59.19 1.13.16 1.56.1.48-.07 1.47-.6 1.68-1.18.21-.58.21-1.07.14-1.18-.06-.11-.22-.17-.47-.29z"/>
+          </svg>
+        </div>
+        <div class="card-text">
+          <strong class="card-title">Chat on WhatsApp</strong>
+          <span class="card-sub">Direct chat & orders</span>
+        </div>
+        <div class="card-arrow">&rarr;</div>
+      </a>
+    `);
+  }
+
+  // 4. Facebook
+  if (socialLinks.facebook) {
+    linksHtml.push(`
+      <a href="${socialLinks.facebook}" target="_blank" rel="noopener noreferrer" class="link-card fb-card">
+        <div class="card-icon fb-icon">
+          <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
+            <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+          </svg>
+        </div>
+        <div class="card-text">
+          <strong class="card-title">Connect on Facebook</strong>
+          <span class="card-sub">Follow our official page</span>
+        </div>
+        <div class="card-arrow">&rarr;</div>
+      </a>
+    `);
+  }
+
+  return `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>${shopName} — Connect & Reviews</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+    body {
+      background: #0d0f12;
+      color: #f1f5f9;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 32px 18px 48px;
+    }
+    .profile-container {
+      width: 100%;
+      max-width: 440px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .avatar-wrapper {
+      position: relative;
+      margin-bottom: 14px;
+    }
+    .avatar {
+      width: 76px;
+      height: 76px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #1e293b, #0f172a);
+      border: 3px solid #334155;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 30px;
+      font-weight: 800;
+      color: #ffffff;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+    }
+    .nfc-badge {
+      position: absolute;
+      bottom: -2px;
+      right: -2px;
+      background: #10b981;
+      color: #0f1218;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      border: 2px solid #0d0f12;
+    }
+    .shop-title {
+      font-size: 22px;
+      font-weight: 800;
+      text-align: center;
+      color: #ffffff;
+      letter-spacing: -0.02em;
+      margin-bottom: 6px;
+    }
+    .shop-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 5px 14px;
+      border-radius: 100px;
+      font-size: 12px;
+      color: #94a3b8;
+      margin-bottom: 24px;
+    }
+    .shop-pill strong { color: #fbbf24; }
+    .links-list {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+    .link-card {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 16px 18px;
+      border-radius: 16px;
+      text-decoration: none;
+      color: inherit;
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+      position: relative;
+      overflow: hidden;
+    }
+    .link-card:active {
+      transform: scale(0.98);
+    }
+    .google-card {
+      background: #171a21;
+      border: 2px solid #fbbf24;
+      box-shadow: 0 8px 30px rgba(251, 191, 36, 0.12);
+    }
+    .card-badge {
+      display: inline-block;
+      font-size: 9px;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      color: #fbbf24;
+      margin-bottom: 2px;
+    }
+    .insta-card {
+      background: linear-gradient(135deg, rgba(188, 24, 136, 0.15), rgba(240, 148, 51, 0.15));
+      border: 1px solid rgba(220, 39, 67, 0.4);
+    }
+    .wa-card {
+      background: linear-gradient(135deg, rgba(37, 211, 102, 0.15), rgba(18, 140, 126, 0.15));
+      border: 1px solid rgba(37, 211, 102, 0.4);
+    }
+    .fb-card {
+      background: linear-gradient(135deg, rgba(24, 119, 242, 0.15), rgba(24, 119, 242, 0.05));
+      border: 1px solid rgba(24, 119, 242, 0.4);
+    }
+    .card-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      background: rgba(255, 255, 255, 0.06);
+    }
+    .insta-icon { background: linear-gradient(45deg, #f09433, #dc2743, #bc1888); color: #fff; }
+    .wa-icon { background: #25D366; color: #fff; }
+    .fb-icon { background: #1877F2; color: #fff; }
+    .card-text {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+    .card-title {
+      font-size: 15px;
+      font-weight: 700;
+      color: #ffffff;
+    }
+    .card-sub {
+      font-size: 12px;
+      color: #94a3b8;
+      margin-top: 2px;
+    }
+    .card-arrow {
+      font-size: 18px;
+      color: #64748b;
+      padding-left: 6px;
+    }
+    .footer-meta {
+      margin-top: 36px;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+    }
+    .meta-id {
+      font-size: 11px;
+      letter-spacing: 0.08em;
+      color: #64748b;
+      font-family: monospace;
+      background: rgba(255, 255, 255, 0.05);
+      padding: 3px 10px;
+      border-radius: 6px;
+    }
+    .meta-powered {
+      font-size: 11px;
+      color: #475569;
+    }
+  </style>
+</head>
+<body>
+  <div class="profile-container">
+    <div class="avatar-wrapper">
+      <div class="avatar">${initial}</div>
+      <div class="nfc-badge">&#9889;</div>
+    </div>
+    <h1 class="shop-title">${shopName}</h1>
+    <div class="shop-pill">
+      <span>Official Stand</span> &bull; <strong>&#11088;&#11088;&#11088;&#11088;&#11088; Verified</strong>
+    </div>
+
+    <div class="links-list">
+      ${linksHtml.join("\n")}
+    </div>
+
+    <div class="footer-meta">
+      <span class="meta-id">STAND ID: ${cardId}</span>
+      <span class="meta-powered">Tapform Smart NFC &bull; Direct Touch</span>
+    </div>
+  </div>
+</body>
+</html>`;
+}
 
 /**
  * Activate or Register a Card
@@ -156,7 +486,15 @@ function renderRedirectHtml(targetUrl) {
  */
 export async function activateCard(req, res, next) {
   try {
-    const { cardId, destinationUrl, title } = req.body;
+    const {
+      cardId,
+      destinationUrl,
+      title,
+      cardType,
+      socialLinks,
+      designTheme,
+      cardFormat,
+    } = req.body;
 
     if (!cardId || !isValidCardId(cardId)) {
       return res.status(400).json({
@@ -175,6 +513,13 @@ export async function activateCard(req, res, next) {
     const normalizedId = normalizeCardId(cardId);
     const rawUrl = destinationUrl.trim();
     const trimmedTitle = typeof title === "string" ? title.trim() : "";
+    const normalizedSocial = normalizeSocialLinks(socialLinks);
+
+    // Determine cardType: default is review, or connect if socialLinks has any values or explicitly set
+    const hasSocialValues = normalizedSocial.instagram || normalizedSocial.whatsapp || normalizedSocial.facebook;
+    const effectiveCardType = cardType === "connect" || hasSocialValues ? "connect" : "review";
+    const effectiveTheme = designTheme || "matte-black";
+    const effectiveFormat = cardFormat || "nfc-card";
 
     // Automatically unshorten Google Maps short URLs (maps.app.goo.gl, goo.gl) for instant loading
     const trimmedUrl = await resolveGoogleMapsUrl(rawUrl);
@@ -186,6 +531,10 @@ export async function activateCard(req, res, next) {
       // Update existing card destination and reactivate
       card.destinationUrl = trimmedUrl;
       if (trimmedTitle) card.title = trimmedTitle;
+      card.cardType = effectiveCardType;
+      card.socialLinks = normalizedSocial;
+      card.designTheme = effectiveTheme;
+      card.cardFormat = effectiveFormat;
       card.status = "active";
       if (!card.activatedAt) {
         card.activatedAt = new Date();
@@ -206,6 +555,10 @@ export async function activateCard(req, res, next) {
       cardId: normalizedId,
       destinationUrl: trimmedUrl,
       title: trimmedTitle,
+      cardType: effectiveCardType,
+      socialLinks: normalizedSocial,
+      designTheme: effectiveTheme,
+      cardFormat: effectiveFormat,
       status: "active",
       activatedAt: new Date(),
     });
@@ -229,7 +582,15 @@ export async function activateCard(req, res, next) {
 export async function updateCard(req, res, next) {
   try {
     const { cardId } = req.params;
-    const { destinationUrl, title, status } = req.body;
+    const {
+      destinationUrl,
+      title,
+      status,
+      cardType,
+      socialLinks,
+      designTheme,
+      cardFormat,
+    } = req.body;
 
     if (!isValidCardId(cardId)) {
       return res.status(400).json({
@@ -260,6 +621,22 @@ export async function updateCard(req, res, next) {
 
     if (title !== undefined) {
       card.title = typeof title === "string" ? title.trim() : "";
+    }
+
+    if (cardType !== undefined) {
+      card.cardType = cardType === "connect" ? "connect" : "review";
+    }
+
+    if (socialLinks !== undefined) {
+      card.socialLinks = normalizeSocialLinks(socialLinks);
+    }
+
+    if (designTheme !== undefined) {
+      card.designTheme = designTheme;
+    }
+
+    if (cardFormat !== undefined) {
+      card.cardFormat = cardFormat;
     }
 
     if (status !== undefined) {
@@ -439,13 +816,24 @@ export async function redirectScan(req, res, next) {
           { $inc: { scanCount: 1 }, $set: { lastScannedAt: new Date() } }
         ).exec().catch(() => {});
       }
+      const hasSocial = cached.socialLinks && (cached.socialLinks.instagram || cached.socialLinks.whatsapp || cached.socialLinks.facebook);
+      if (cached.cardType === "connect" && hasSocial) {
+        res.setHeader("Content-Type", "text/html; charset=utf-8");
+        return res.status(200).send(renderConnectProfileHtml({
+          cardId: normalizedId,
+          title: cached.title,
+          destinationUrl: cached.targetUrl,
+          socialLinks: cached.socialLinks,
+          baseUrl: getBaseUrl(req),
+        }));
+      }
       res.setHeader("Location", cached.targetUrl);
       res.setHeader("Content-Type", "text/html; charset=utf-8");
       return res.status(302).send(renderRedirectHtml(cached.targetUrl));
     }
 
     const card = await Card.findOne({ cardId: normalizedId })
-      .select("cardId destinationUrl status _id")
+      .select("cardId destinationUrl title cardType socialLinks status _id")
       .lean();
 
     // Handle unknown card -> direct to setup landing page with cardId prefilled
@@ -493,6 +881,9 @@ export async function redirectScan(req, res, next) {
     // Cache verified destination in memory for future scans
     setScanCacheEntry(normalizedId, {
       targetUrl,
+      cardType: card.cardType || "review",
+      socialLinks: card.socialLinks || {},
+      title: card.title || "",
       _id: card._id,
       status: card.status,
     });
@@ -506,7 +897,20 @@ export async function redirectScan(req, res, next) {
       }
     ).exec().catch((err) => console.error("Failed to update scan count:", err));
 
-    // Send HTTP 302 Location header AND instant client-side fallback redirect payload
+    // If Connect Card with social links, display the responsive mobile Shop Connect Profile
+    const hasSocial = card.socialLinks && (card.socialLinks.instagram || card.socialLinks.whatsapp || card.socialLinks.facebook);
+    if (card.cardType === "connect" && hasSocial) {
+      res.setHeader("Content-Type", "text/html; charset=utf-8");
+      return res.status(200).send(renderConnectProfileHtml({
+        cardId: normalizedId,
+        title: card.title,
+        destinationUrl: targetUrl,
+        socialLinks: card.socialLinks,
+        baseUrl: getBaseUrl(req),
+      }));
+    }
+
+    // Direct Single-Review Card: Send HTTP 302 Location header AND instant redirect
     res.setHeader("Location", targetUrl);
     res.setHeader("Content-Type", "text/html; charset=utf-8");
     return res.status(302).send(renderRedirectHtml(targetUrl));

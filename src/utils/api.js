@@ -20,7 +20,15 @@ function getHeaders() {
 /**
  * Activate or update a card destination in MongoDB
  */
-export async function activateCardApi({ cardId, destinationUrl, title = "" }) {
+export async function activateCardApi({
+  cardId,
+  destinationUrl,
+  title = "",
+  cardType = "review",
+  socialLinks = {},
+  designTheme = "matte-black",
+  cardFormat = "nfc-card",
+}) {
   const response = await fetch(`${API_BASE_URL}/api/cards/activate`, {
     method: "POST",
     headers: getHeaders(),
@@ -28,6 +36,10 @@ export async function activateCardApi({ cardId, destinationUrl, title = "" }) {
       cardId: cardId.trim(),
       destinationUrl: destinationUrl.trim(),
       title: title.trim(),
+      cardType,
+      socialLinks,
+      designTheme,
+      cardFormat,
     }),
   });
 

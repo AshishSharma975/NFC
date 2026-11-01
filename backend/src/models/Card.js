@@ -43,6 +43,30 @@ const cardSchema = new mongoose.Schema(
       default: "active",
       index: true,
     },
+    cardType: {
+      type: String,
+      enum: {
+        values: ["review", "connect"],
+        message: "cardType must be 'review' or 'connect'",
+      },
+      default: "review",
+      index: true,
+    },
+    socialLinks: {
+      instagram: { type: String, trim: true, default: "" },
+      whatsapp: { type: String, trim: true, default: "" },
+      facebook: { type: String, trim: true, default: "" },
+    },
+    designTheme: {
+      type: String,
+      enum: ["matte-black", "minimal-white", "table-stand"],
+      default: "matte-black",
+    },
+    cardFormat: {
+      type: String,
+      enum: ["nfc-card", "table-stand"],
+      default: "nfc-card",
+    },
     scanCount: {
       type: Number,
       default: 0,

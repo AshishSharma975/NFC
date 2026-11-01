@@ -43,6 +43,7 @@ import {
   clearAdminToken,
 } from "../utils/api";
 import BulkExportSection from "../components/BulkExportSection";
+import NfcCardStudio from "../components/NfcCardStudio";
 import "../admin.css";
 
 export default function AdminDashboard() {
@@ -86,6 +87,10 @@ export default function AdminDashboard() {
   const [editUrl, setEditUrl] = useState("");
   const [editTitle, setEditTitle] = useState("");
   const [editStatus, setEditStatus] = useState("active");
+  const [editCardType, setEditCardType] = useState("review");
+  const [editInstagram, setEditInstagram] = useState("");
+  const [editWhatsapp, setEditWhatsapp] = useState("");
+  const [editFacebook, setEditFacebook] = useState("");
   const [savingEdit, setSavingEdit] = useState(false);
   const [editError, setEditError] = useState("");
 
@@ -256,6 +261,12 @@ export default function AdminDashboard() {
         destinationUrl: editUrl.trim(),
         title: editTitle.trim(),
         status: editStatus,
+        cardType: editCardType,
+        socialLinks: {
+          instagram: editInstagram.trim(),
+          whatsapp: editWhatsapp.trim(),
+          facebook: editFacebook.trim(),
+        },
       };
 
       const res = await updateCardApi(editingCard.cardId, updates);
@@ -977,6 +988,10 @@ export default function AdminDashboard() {
                                   setEditUrl(card.destinationUrl || "");
                                   setEditTitle(card.title || "");
                                   setEditStatus(card.status || "active");
+                                  setEditCardType(card.cardType || "review");
+                                  setEditInstagram(card.socialLinks?.instagram || "");
+                                  setEditWhatsapp(card.socialLinks?.whatsapp || "");
+                                  setEditFacebook(card.socialLinks?.facebook || "");
                                 }}
                                 title="Edit Destination"
                               >
@@ -1025,106 +1040,34 @@ export default function AdminDashboard() {
               </button>
             </div>
 
-            <div className="modal-body text-center">
-              <div className="qr-preview-card">
-                <QRCodeSVG
-                  id="modal-qr-svg"
-                  value={qrModalCard.qrUrl || `${window.location.origin}/c/${qrModalCard.cardId}`}
-                  size={240}
-                  level="M"
-                  marginSize={4}
-                />
-              </div>
-
-              <div className="qr-modal-meta">
-                <div className="meta-line">
-                  <span>CARD IDENTIFIER</span>
-                  <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-                    <strong>{qrModalCard.cardId}</strong>
-                    <span className={`status-pill ${qrModalCard.status === "active" ? "pill-active" : "pill-inactive"}`}>
-                      {qrModalCard.status === "active" ? "LIVE & REDIRECTING" : "PENDING SETUP"}
-                    </span>
-                  </div>
-                </div>
-
-                <div className="meta-line">
-                  <span>PERMANENT SCAN LINK (PRINT & NFC URL)</span>
-                  <div className="url-copy-box">
-                    <code>{qrModalCard.qrUrl || `${window.location.origin}/c/${qrModalCard.cardId}`}</code>
-                    <button
-                      type="button"
-                      className="cell-copy-btn"
-                      onClick={() =>
-                        copyToClipboard(
-                          qrModalCard.qrUrl || `${window.location.origin}/c/${qrModalCard.cardId}`,
-                          "modal-qr"
-                        )
-                      }
-                      title="Copy URL"
-                    >
-                      {copiedMap["modal-qr"] ? <Check size={13} /> : <Copy size={13} />}
-                    </button>
-                  </div>
-                </div>
-
-                {qrModalCard.destinationUrl && (
-                  <div className="meta-line">
-                    <span>CONNECTED DESTINATION (GOOGLE REVIEWS / MAPS)</span>
-                    <a
-                      href={qrModalCard.destinationUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="dest-url-link"
-                      style={{ marginTop: "4px" }}
-                    >
-                      <span>{qrModalCard.destinationUrl}</span>
-                      <ExternalLink size={12} />
-                    </a>
-                  </div>
-                )}
-              </div>
+            <div className="modal-body">
+              <NfcCardStudio
+                cardId={qrModalCard.cardId}
+                title={qrModalCard.title}
+                destinationUrl={qrModalCard.destinationUrl}
+                qrUrl={qrModalCard.qrUrl}
+                cardType={qrModalCard.cardType || "review"}
+                socialLinks={qrModalCard.socialLinks || {}}
+              />
             </div>
 
-            <div className="modal-footer" style={{ flexWrap: "wrap" }}>
-              <button
-                type="button"
-                className="admin-btn-secondary"
-                onClick={() => setQrModalCard(null)}
-              >
-                Close
-              </button>
-              <button
-                type="button"
-                className="admin-btn-secondary"
-                onClick={() => downloadModalQr("png")}
-                title="Download 1024x1024 Print Ready PNG"
-              >
-                <Download size={14} /> PNG (1024px)
-              </button>
-              <button
-                type="button"
-                className="admin-btn-secondary"
-                onClick={() => downloadModalQr("svg")}
-                title="Download Vector SVG"
-              >
-                <Download size={14} /> SVG
-              </button>
-              <button
-                type="button"
-                className="admin-btn-secondary"
-                onClick={() => downloadModalQr("cdr")}
-                title="Download CorelDRAW Print Ready Vector (Import in CorelDRAW with Ctrl+I)"
-                style={{ background: "#f0fdf4", color: "#166534", borderColor: "#bbf7d0" }}
-              >
-                <Download size={14} /> CDR (Corel)
-              </button>
+            <div className="modal-footer" style={{ flexWrap: "wrap", justifyContent: "space-between" }}>
+              <div style={{ display: "flex", gap: "8px" }}>
+                <button
+                  type="button"
+                  className="admin-btn-secondary"
+                  onClick={() => setQrModalCard(null)}
+                >
+                  Close Studio
+                </button>
+              </div>
               <a
                 href={qrModalCard.qrUrl || `/c/${qrModalCard.cardId}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="admin-btn-primary"
               >
-                <ExternalLink size={14} /> Test Redirection
+                <ExternalLink size={14} /> Test Live Redirection
               </a>
             </div>
           </div>
@@ -1166,20 +1109,66 @@ export default function AdminDashboard() {
 
                 <div className="form-group-item mt-16">
                   <label className="form-item-label">
-                    Google Review / Destination URL <span className="req-star">*</span>
+                    Shop Location / Google Review URL <span className="req-star">* (Mandatory)</span>
                   </label>
                   <input
                     type="url"
                     value={editUrl}
                     onChange={(e) => setEditUrl(e.target.value)}
                     className="admin-input-styled"
-                    placeholder="https://g.page/r/..."
+                    placeholder="https://g.page/r/... or https://maps.app.goo.gl/..."
                     required
                   />
                   <span className="field-hint">
-                    This is where customers land when they tap the NFC card or scan the QR.
+                    Mandatory shop location / Google review link for this stand.
                   </span>
                 </div>
+
+                <div className="form-group-item mt-16">
+                  <label className="form-item-label">Card Functionality</label>
+                  <select
+                    value={editCardType}
+                    onChange={(e) => setEditCardType(e.target.value)}
+                    className="admin-select-styled"
+                  >
+                    <option value="review">Google Review Card (Direct redirect to review link)</option>
+                    <option value="connect">Social Connect Card (Location + Social Links)</option>
+                  </select>
+                </div>
+
+                {editCardType === "connect" && (
+                  <div style={{ background: "#f8fafc", padding: "12px", borderRadius: "10px", marginTop: "14px", border: "1px solid #e2e8f0" }}>
+                    <span style={{ fontSize: "12px", fontWeight: 700, color: "#1e293b", display: "block", marginBottom: "8px" }}>
+                      Optional Social Channels
+                    </span>
+                    <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+                      <input
+                        type="text"
+                        value={editInstagram}
+                        onChange={(e) => setEditInstagram(e.target.value)}
+                        className="admin-input-styled"
+                        placeholder="Instagram handle (@myshop) or URL"
+                        style={{ fontSize: "12px" }}
+                      />
+                      <input
+                        type="text"
+                        value={editWhatsapp}
+                        onChange={(e) => setEditWhatsapp(e.target.value)}
+                        className="admin-input-styled"
+                        placeholder="WhatsApp Business (+91 9876543210)"
+                        style={{ fontSize: "12px" }}
+                      />
+                      <input
+                        type="text"
+                        value={editFacebook}
+                        onChange={(e) => setEditFacebook(e.target.value)}
+                        className="admin-input-styled"
+                        placeholder="Facebook page URL"
+                        style={{ fontSize: "12px" }}
+                      />
+                    </div>
+                  </div>
+                )}
 
                 <div className="form-group-item mt-16">
                   <label className="form-item-label">Status</label>

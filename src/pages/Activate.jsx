@@ -18,11 +18,35 @@ import {
   QrCode,
   Smartphone,
   Download,
+  Share2,
+  MapPin,
+  MessageCircle,
+  Eye,
+  Sliders,
+  Palette,
+  Store,
 } from "lucide-react";
-import { QRCodeSVG } from "qrcode.react";
 import { activateCardApi, getCardApi } from "../utils/api";
-import { downloadQR } from "../utils/downloadQR";
+import NfcCardStudio from "../components/NfcCardStudio";
 import "../home.css";
+
+function InstagramIcon({ size = 16, ...props }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}>
+      <rect x="2" y="2" width="20" height="20" rx="5" ry="5" />
+      <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
+      <line x1="17.5" y1="6.5" x2="17.51" y2="6.5" />
+    </svg>
+  );
+}
+
+function FacebookIcon({ size = 16, ...props }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor" {...props}>
+      <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
+    </svg>
+  );
+}
 
 export default function Activate() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -31,6 +55,17 @@ export default function Activate() {
   const [cardId, setCardId] = useState("");
   const [reviewUrl, setReviewUrl] = useState("");
   const [businessTitle, setBusinessTitle] = useState("");
+
+  // Card Mode / Type: 'review' | 'connect'
+  const [cardType, setCardType] = useState("review");
+
+  // Optional Social Links
+  const [instagram, setInstagram] = useState("");
+  const [whatsapp, setWhatsapp] = useState("");
+  const [facebook, setFacebook] = useState("");
+
+  // Live Studio Preview toggle
+  const [showLiveStudio, setShowLiveStudio] = useState(true);
 
   // Existing card metadata from DB
   const [existingCard, setExistingCard] = useState(null);
@@ -44,7 +79,6 @@ export default function Activate() {
   // UI state
   const [showGuide, setShowGuide] = useState(false);
   const [copied, setCopied] = useState(false);
-  const [showQrModal, setShowQrModal] = useState(false);
 
   // Lookup Card ID in MongoDB
   const lookupCard = useCallback(async (idToLookup) => {
@@ -64,6 +98,17 @@ export default function Activate() {
         if (res.data.title && !businessTitle) {
           setBusinessTitle(res.data.title);
         }
+        if (res.data.cardType) {
+          setCardType(res.data.cardType);
+        }
+        if (res.data.socialLinks) {
+          if (res.data.socialLinks.instagram) setInstagram(res.data.socialLinks.instagram);
+          if (res.data.socialLinks.whatsapp) setWhatsapp(res.data.socialLinks.whatsapp);
+          if (res.data.socialLinks.facebook) setFacebook(res.data.socialLinks.facebook);
+          if (res.data.socialLinks.instagram || res.data.socialLinks.whatsapp || res.data.socialLinks.facebook) {
+            setCardType("connect");
+          }
+        }
       } else {
         setExistingCard(null);
       }
@@ -75,7 +120,7 @@ export default function Activate() {
     }
   }, [cardId, reviewUrl, businessTitle]);
 
-  // 1. On page load, read ?cardId= from URL (e.g. from physical QR scan or homepage checker)
+  // On page load, read ?cardId= from URL
   useEffect(() => {
     const paramId = searchParams.get("cardId");
     if (paramId && paramId.trim()) {
@@ -84,7 +129,6 @@ export default function Activate() {
       lookupCard(cleanId);
     }
   }, [searchParams, lookupCard]);
-
 
   // Handle Card ID change with auto-debounce
   function handleCardIdChange(e) {
@@ -115,7 +159,7 @@ export default function Activate() {
     }
 
     if (!cleanUrl) {
-      setError("Please enter your Google Review or business destination link.");
+      setError("Shop Location / Google Review link is mandatory. Please enter your shop location link.");
       return;
     }
 
@@ -137,6 +181,12 @@ export default function Activate() {
         cardId: cleanCardId,
         destinationUrl: cleanUrl,
         title: businessTitle.trim(),
+        cardType,
+        socialLinks: {
+          instagram: instagram.trim(),
+          whatsapp: whatsapp.trim(),
+          facebook: facebook.trim(),
+        },
       });
 
       if (response && response.success && response.data) {
@@ -158,21 +208,6 @@ export default function Activate() {
     navigator.clipboard.writeText(savedResult.qrUrl);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
-  }
-
-  const [downloadMsg, setDownloadMsg] = useState("");
-
-  // Download QR code in 3 formats: PNG (1024px), SVG, or CDR (CorelDRAW Vector)
-  function handleDownloadActiveQr(format) {
-    try {
-      downloadQR(format, `tapform-${cardId || "stand"}-qr`, "active-qr-svg");
-      if (format === "cdr") {
-        setDownloadMsg("CorelDRAW print file downloaded! Shop wale ko bole: CorelDRAW me 'Ctrl + I' (Import) karein, direct vector open hoga.");
-        setTimeout(() => setDownloadMsg(""), 6000);
-      }
-    } catch {
-      setError("Failed to download QR file.");
-    }
   }
 
   const isAlreadyActive = existingCard && existingCard.destinationUrl && existingCard.status === "active";
@@ -199,10 +234,10 @@ export default function Activate() {
           <p>
             {isAlreadyActive
               ? "Change your Google Review or business link anytime for free. No reprinting needed — changes take effect immediately on all customer taps."
-              : "Connect your Google Review link to your physical stand or card. Once activated, every customer tap or scan opens your review page in 1 second."}
+              : "Connect your Google Review link to your physical stand or card. Once activated, every customer tap or scan opens your review page or connect profile."}
           </p>
 
-          {/* Real-time Card Status Card (if card identified) */}
+          {/* Real-time Card Status Card */}
           {cardId.trim() && (
             <div className="owner-card-status-box">
               <div className="status-box-header">
@@ -224,6 +259,10 @@ export default function Activate() {
 
               {isAlreadyActive && (
                 <div className="status-box-details">
+                  <div className="meta-row">
+                    <span>Card Mode:</span>
+                    <strong>{existingCard.cardType === "connect" ? "🌐 Social Connect Card" : "📍 Google Review Card"}</strong>
+                  </div>
                   <div className="meta-row">
                     <span>Total Customer Scans:</span>
                     <strong>{existingCard.scanCount || 0} Scans</strong>
@@ -271,7 +310,7 @@ export default function Activate() {
                 </div>
                 <div className="guide-step-item">
                   <span className="guide-step-badge">3</span>
-                  <p>Copy the review link (e.g. <code>https://g.page/r/...</code> or <code>https://maps.app.goo.gl/...</code>) and paste it on this page!</p>
+                  <p>Copy the review link (e.g. <code>https://g.page/r/...</code> or <code>https://maps.app.goo.gl/...</code>) and paste it below!</p>
                 </div>
               </div>
             )}
@@ -281,7 +320,7 @@ export default function Activate() {
             <ShieldCheck size={20} />
             <span>
               <strong>100% Dynamic Link Technology</strong>
-              <small>You can update, pause, or switch your link anytime without replacing your physical acrylic stand.</small>
+              <small>You can update, pause, or switch your links anytime without replacing your physical acrylic stand or card.</small>
             </span>
           </div>
         </div>
@@ -292,7 +331,7 @@ export default function Activate() {
         <div className="form-panel shop-owner-panel">
           {savedResult ? (
             /* ============================================================ */
-            /* SUCCESS CONFIRMATION SCREEN (IN-PAGE DELIGHT)               */
+            /* SUCCESS CONFIRMATION SCREEN                                  */
             /* ============================================================ */
             <div className="owner-success-view">
               <div className="success-icon-badge">
@@ -301,8 +340,8 @@ export default function Activate() {
 
               <h2>Your Stand is LIVE!</h2>
               <p className="success-subtitle">
-                Stand <strong>{savedResult.cardId}</strong> has been successfully updated.
-                When customers tap or scan this stand, they will immediately open your link:
+                Stand <strong>{savedResult.cardId}</strong> has been successfully configured.
+                When customers tap or scan this stand, they will immediately open your {savedResult.cardType === "connect" ? "Shop Connect Profile" : "Google Review Page"}:
               </p>
 
               <div className="success-destination-card">
@@ -320,53 +359,34 @@ export default function Activate() {
                   rel="noopener noreferrer"
                   className="button button-dark test-scan-cta"
                 >
-                  <Smartphone size={16} /> Test Live Scan Redirect <ExternalLink size={14} />
+                  <Smartphone size={16} /> Test Live Scan ({savedResult.cardType === "connect" ? "Connect Profile" : "Google Review"}) <ExternalLink size={14} />
                 </a>
 
                 <button
                   type="button"
                   className="button button-outline"
-                  onClick={() => setShowQrModal(!showQrModal)}
+                  onClick={copyRedirectUrl}
                 >
-                  <QrCode size={16} /> {showQrModal ? "Hide QR Code" : "View / Download QR Code"}
+                  {copied ? <Check size={16} /> : <Copy size={16} />} {copied ? "Link Copied!" : "Copy Redirect Link"}
                 </button>
               </div>
 
-              {/* Expandable QR Code Preview & Download */}
-              {showQrModal && (
-                <div className="success-qr-wrap">
-                  <div className="qr-preview-box">
-                    <QRCodeSVG
-                      id="active-qr-svg"
-                      value={savedResult.qrUrl || `${window.location.origin}/c/${savedResult.cardId}`}
-                      size={180}
-                      level="H"
-                      includeMargin={true}
-                    />
-                  </div>
-                  <div className="qr-info-row" style={{ flexWrap: "wrap", gap: "8px" }}>
-                    <span style={{ width: "100%", marginBottom: "4px" }}>Scan URL: <code>{savedResult.qrUrl || `/c/${savedResult.cardId}`}</code></span>
-                    <button type="button" className="btn-link-action" onClick={copyRedirectUrl}>
-                      {copied ? <Check size={14} /> : <Copy size={14} />} {copied ? "Copied" : "Copy Link"}
-                    </button>
-                    <button type="button" className="btn-link-action" onClick={() => handleDownloadActiveQr("png")} title="Download 1024x1024 High-Res PNG">
-                      <Download size={14} /> PNG (1024px)
-                    </button>
-                    <button type="button" className="btn-link-action" onClick={() => handleDownloadActiveQr("svg")} title="Download Vector SVG">
-                      <Download size={14} /> SVG (Vector)
-                    </button>
-                    <button type="button" className="btn-link-action" onClick={() => handleDownloadActiveQr("cdr")} title="Download CorelDRAW Print Ready Vector (Import via Ctrl+I in CorelDRAW)" style={{ background: "#f0fdf4", color: "#166534", border: "1px solid #bbf7d0" }}>
-                      <Download size={14} /> CDR (Corel)
-                    </button>
-                  </div>
-
-                  {downloadMsg && (
-                    <div style={{ marginTop: "10px", padding: "8px 12px", background: "#f0fdf4", border: "1px solid #bbf7d0", color: "#166534", borderRadius: "8px", fontSize: "12px", textAlign: "left" }}>
-                      💡 {downloadMsg}
-                    </div>
-                  )}
+              {/* Embedded NfcCardStudio with Live Vector Card/Stand Download */}
+              <div className="mt-24">
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "8px" }}>
+                  <span className="form-label" style={{ margin: 0, display: "flex", alignItems: "center", gap: "6px" }}>
+                    <Sparkles size={15} color="#f59e0b" /> Print-Ready Card & Counter Stand Studio
+                  </span>
                 </div>
-              )}
+                <NfcCardStudio
+                  cardId={savedResult.cardId}
+                  title={savedResult.title || businessTitle}
+                  destinationUrl={savedResult.destinationUrl}
+                  qrUrl={savedResult.qrUrl}
+                  cardType={savedResult.cardType || cardType}
+                  socialLinks={savedResult.socialLinks || { instagram, whatsapp, facebook }}
+                />
+              </div>
 
               {/* Option to Edit Again */}
               <div className="success-footer-actions">
@@ -390,11 +410,11 @@ export default function Activate() {
                 <span className="eyebrow">
                   {isAlreadyActive ? "UPDATE DESTINATION" : "STEP 01 — EASY SETUP"}
                 </span>
-                <h2>{isAlreadyActive ? "Change Your Review Link" : "Connect Your Stand"}</h2>
+                <h2>{isAlreadyActive ? "Change Your Link & Stand" : "Connect Your Stand"}</h2>
                 <p>
                   {isAlreadyActive
-                    ? "Enter your new Google Review URL below to update where customers are redirected."
-                    : "Enter your Card ID and paste your Google Review link to activate your stand."}
+                    ? "Choose your card functionality, update your destination links, and preview your print-ready card design below."
+                    : "Enter your Card ID, choose your card type, paste your shop location, and add optional social links."}
                 </p>
               </div>
 
@@ -419,7 +439,6 @@ export default function Activate() {
                   </div>
                   <div className="input-helper-row">
                     <span className="input-help">Printed on your acrylic stand or QR card.</span>
-                    {/* Quick Sample IDs */}
                     {!cardId && (
                       <div className="sample-chips">
                         <span>Try:</span>
@@ -448,11 +467,46 @@ export default function Activate() {
                   </div>
                 </div>
 
-                {/* 2. Destination URL Input */}
+                {/* 2. Card Functionality / Type Selection (Review vs Social Connect) */}
+                <div className="form-group-block mt-16">
+                  <label className="form-label">
+                    Card Functionality <span className="required">*</span>
+                  </label>
+                  <div className="card-type-selector">
+                    {/* Option 1: Direct Google Review Card */}
+                    <div
+                      className={`card-type-card ${cardType === "review" ? "selected" : ""}`}
+                      onClick={() => setCardType("review")}
+                    >
+                      <div className="type-radio-dot" />
+                      <div className="type-content">
+                        <span className="type-title">Google Review Card</span>
+                        <span className="type-sub">
+                          Direct 1-tap redirect to Google Maps / Reviews. Ideal for pure review collection.
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Option 2: Social Connect Card (Multi-Link) */}
+                    <div
+                      className={`card-type-card ${cardType === "connect" ? "selected" : ""}`}
+                      onClick={() => setCardType("connect")}
+                    >
+                      <div className="type-radio-dot" />
+                      <div className="type-content">
+                        <span className="type-title">Social Connect Card</span>
+                        <span className="type-sub">
+                          Multi-channel card: Shop location is mandatory + optional Instagram, WhatsApp & Facebook.
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* 3. Shop Location / Google Review URL Input (MANDATORY) */}
                 <div className="form-group-block mt-16">
                   <label className="form-label" htmlFor="reviewUrl">
-                    {isAlreadyActive ? "New Google Review or Business URL" : "Google Review URL"}{" "}
-                    <span className="required">*</span>
+                    Shop Location / Google Review URL <span className="required">* (Mandatory)</span>
                   </label>
                   <input
                     className="form-input"
@@ -467,14 +521,14 @@ export default function Activate() {
                     autoComplete="url"
                   />
                   <p className="input-help">
-                    <ExternalLink size={12} /> Paste your Google Review link, Google Maps link, or website.
+                    <MapPin size={12} /> Google Review link or Google Maps shop location. This is required for all cards.
                   </p>
                 </div>
 
-                {/* 3. Optional Business Name */}
+                {/* 4. Business / Location Name (Optional / Recommended) */}
                 <div className="form-group-block mt-16">
                   <label className="form-label" htmlFor="businessTitle">
-                    Business / Location Name <span className="optional-tag">(Optional)</span>
+                    Business / Shop Name <span className="optional-tag">(Recommended for Card Print)</span>
                   </label>
                   <input
                     className="form-input"
@@ -485,8 +539,70 @@ export default function Activate() {
                     placeholder="e.g. Royal Cafe & Bakery"
                     maxLength={100}
                   />
-                  <p className="input-help">Helps you identify this stand in your records.</p>
+                  <p className="input-help">Printed on your physical card & countertop stand preview.</p>
                 </div>
+
+                {/* 5. Optional Social Links (Shown when Social Connect Card is selected) */}
+                {cardType === "connect" && (
+                  <div className="social-inputs-panel">
+                    <div className="social-panel-header">
+                      <span className="social-panel-title">
+                        <Share2 size={15} /> Social & Business Channels
+                      </span>
+                      <span className="optional-badge">Optional (Add any you have)</span>
+                    </div>
+
+                    <div className="social-fields-grid">
+                      {/* Instagram */}
+                      <div className="social-field-item">
+                        <div className="social-input-row">
+                          <div className="social-prefix-icon insta" title="Instagram">
+                            <InstagramIcon size={17} />
+                          </div>
+                          <input
+                            className="social-input-inner"
+                            type="text"
+                            value={instagram}
+                            onChange={(e) => setInstagram(e.target.value)}
+                            placeholder="Instagram handle (@myshop) or profile link"
+                          />
+                        </div>
+                      </div>
+
+                      {/* WhatsApp Business */}
+                      <div className="social-field-item">
+                        <div className="social-input-row">
+                          <div className="social-prefix-icon wa" title="WhatsApp Business">
+                            <MessageCircle size={17} />
+                          </div>
+                          <input
+                            className="social-input-inner"
+                            type="text"
+                            value={whatsapp}
+                            onChange={(e) => setWhatsapp(e.target.value)}
+                            placeholder="WhatsApp Business number (+91 9876543210) or wa.me"
+                          />
+                        </div>
+                      </div>
+
+                      {/* Facebook */}
+                      <div className="social-field-item">
+                        <div className="social-input-row">
+                          <div className="social-prefix-icon fb" title="Facebook Page">
+                            <FacebookIcon size={17} />
+                          </div>
+                          <input
+                            className="social-input-inner"
+                            type="text"
+                            value={facebook}
+                            onChange={(e) => setFacebook(e.target.value)}
+                            placeholder="Facebook page URL (https://facebook.com/...)"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
 
                 {/* Error Banner */}
                 {error && (
@@ -507,7 +623,7 @@ export default function Activate() {
                     </>
                   ) : isAlreadyActive ? (
                     <>
-                      Update Destination Link <ArrowRight size={17} />
+                      Update Stand & Links <ArrowRight size={17} />
                     </>
                   ) : (
                     <>
@@ -517,8 +633,35 @@ export default function Activate() {
                 </button>
               </form>
 
+              {/* LIVE CARD & STAND PREVIEW STUDIO (Instant Feedback) */}
+              <div className="mt-28">
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "8px" }}>
+                  <span className="form-label" style={{ margin: 0, display: "flex", alignItems: "center", gap: "6px" }}>
+                    <Sparkles size={15} color="#f59e0b" /> Live Card & Counter Stand Preview Studio
+                  </span>
+                  <button
+                    type="button"
+                    className="btn-link-action"
+                    onClick={() => setShowLiveStudio(!showLiveStudio)}
+                    style={{ fontSize: "11px" }}
+                  >
+                    {showLiveStudio ? "Hide Preview" : "Show Preview"}
+                  </button>
+                </div>
+
+                {showLiveStudio && (
+                  <NfcCardStudio
+                    cardId={cardId || "TF-01100"}
+                    title={businessTitle || "Your Business Name"}
+                    destinationUrl={reviewUrl}
+                    cardType={cardType}
+                    socialLinks={{ instagram, whatsapp, facebook }}
+                  />
+                )}
+              </div>
+
               <div className="form-disclaimer mt-20">
-                🔒 Protected by permanent dynamic QR routing. You can return to this page anytime to update your link.
+                🔒 Protected by permanent dynamic QR routing. You can return to this page anytime to update your links.
               </div>
             </div>
           )}

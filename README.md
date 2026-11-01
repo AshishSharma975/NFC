@@ -25,7 +25,7 @@ You can deploy both the React frontend and Node.js backend together as a single 
 5. Under **Environment Variables**, add:
    - `MONGO_DB_URI`: Your MongoDB Atlas URI
    - `NODE_ENV`: `production`
-   - `ADMIN_PASSWORD`: Your secret admin passcode (default: `admin1234`)
+   - `ADMIN_PASSWORD`: Your secret admin passcode (default: @@@@@@)
    - `BASE_URL`: (Optional - Render automatically detects domain, or enter `https://your-app.onrender.com`)
 6. Click **Deploy Web Service**!
    Render will build the Vite React frontend into `/dist` and launch Express, which serves:

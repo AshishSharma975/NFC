@@ -27,6 +27,7 @@ import {
   SlidersHorizontal,
 } from "lucide-react";
 import { getAllCardsApi, updateCardApi, activateCardApi, deleteCardApi } from "../utils/api";
+import NfcCardStudio from "./NfcCardStudio";
 
 export default function DynamicQRSection() {
   const [cards, setCards] = useState([]);
@@ -757,62 +758,29 @@ export default function DynamicQRSection() {
         </div>
       )}
 
-      {/* MODAL 2: View / Download Full QR Code */}
+      {/* MODAL 2: View / Download Full QR Code & Card Studio */}
       {qrModalCard && (
         <div className="modal-backdrop" onClick={() => setQrModalCard(null)}>
-          <div className="modal-window qr-modal-window" onClick={(e) => e.stopPropagation()}>
+          <div className="modal-window qr-modal-window" style={{ maxWidth: "700px" }} onClick={(e) => e.stopPropagation()}>
             <div className="modal-header">
               <div>
-                <span className="eyebrow">STAND QR CODE</span>
-                <h3>Dynamic QR for {qrModalCard.cardId}</h3>
+                <span className="eyebrow">PRINT-READY CARD & STAND STUDIO</span>
+                <h3>{qrModalCard.title || `Stand ${qrModalCard.cardId}`}</h3>
               </div>
               <button className="modal-close-btn" onClick={() => setQrModalCard(null)}>
                 <X size={18} />
               </button>
             </div>
 
-            <div className="qr-modal-body">
-              <div className="qr-display-box">
-                <QRCodeSVG
-                  id="stand-modal-qr"
-                  value={qrModalCard.qrUrl || `${window.location.origin}/c/${qrModalCard.cardId}`}
-                  size={240}
-                  level="H"
-                  includeMargin={true}
-                />
-              </div>
-
-              <div className="qr-modal-details">
-                <div className="qr-detail-item">
-                  <span className="detail-label">STAND ID:</span>
-                  <strong className="detail-value">{qrModalCard.cardId}</strong>
-                </div>
-                <div className="qr-detail-item">
-                  <span className="detail-label">REDIRECT ROUTE:</span>
-                  <code className="detail-code">/c/{qrModalCard.cardId}</code>
-                </div>
-                <div className="qr-detail-item">
-                  <span className="detail-label">CONNECTED TARGET:</span>
-                  <span className="detail-link" title={qrModalCard.destinationUrl}>
-                    {qrModalCard.destinationUrl}
-                  </span>
-                </div>
-              </div>
-
-              <div className="qr-download-buttons">
-                <button
-                  className="button button-dark"
-                  onClick={() => handleDownloadModalQR("png")}
-                >
-                  <Download size={15} /> Download PNG
-                </button>
-                <button
-                  className="button button-outline"
-                  onClick={() => handleDownloadModalQR("svg")}
-                >
-                  <Download size={15} /> Download SVG
-                </button>
-              </div>
+            <div className="qr-modal-body" style={{ padding: "10px 0" }}>
+              <NfcCardStudio
+                cardId={qrModalCard.cardId}
+                title={qrModalCard.title}
+                destinationUrl={qrModalCard.destinationUrl}
+                qrUrl={qrModalCard.qrUrl}
+                cardType={qrModalCard.cardType || "review"}
+                socialLinks={qrModalCard.socialLinks || {}}
+              />
             </div>
           </div>
         </div>
