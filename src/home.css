@@ -1805,17 +1805,11 @@
 }
 
 .export-buttons-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 10px;
-  width: 100%;
-  box-sizing: border-box;
-}
-
-@container (min-width: 720px) {
-  .export-buttons-grid {
-    grid-template-columns: repeat(4, 1fr);
-  }
+  display: grid !important;
+  grid-template-columns: repeat(2, 1fr) !important;
+  gap: 10px !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
 }
 
 .studio-btn {

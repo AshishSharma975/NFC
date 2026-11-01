@@ -270,11 +270,21 @@ export default function NfcCardStudio({
           <strong>Single-Sided Print Ready:</strong> High-res vector graphics with integrated QR code.
         </div>
 
-        <div className="export-buttons-grid">
+        <div
+          className="export-buttons-grid"
+          style={{
+            display: "grid",
+            gridTemplateColumns: "1fr 1fr",
+            gap: "10px",
+            width: "100%",
+            boxSizing: "border-box",
+          }}
+        >
           <button
             type="button"
             className="studio-btn btn-svg"
             onClick={handleDownloadSvg}
+            style={{ minWidth: 0, width: "100%", boxSizing: "border-box" }}
             title="Download true SVG vector file - scales to any size infinitely"
           >
             <Download size={14} /> <span>Vector SVG</span>
@@ -285,6 +295,7 @@ export default function NfcCardStudio({
             className="studio-btn btn-png"
             onClick={handleDownloadPng}
             disabled={downloading}
+            style={{ minWidth: 0, width: "100%", boxSizing: "border-box" }}
             title="Download 300 DPI high-resolution PNG for thermal card printers"
           >
             <Download size={14} /> <span>{downloading ? "Exporting..." : "300 DPI PNG"}</span>
@@ -294,6 +305,7 @@ export default function NfcCardStudio({
             type="button"
             className="studio-btn btn-cdr"
             onClick={handleDownloadCdr}
+            style={{ minWidth: 0, width: "100%", boxSizing: "border-box" }}
             title="Download CorelDRAW vector file (Import via Ctrl+I in CorelDRAW)"
           >
             <FileCode size={14} /> <span>CorelDRAW (.cdr)</span>
@@ -303,6 +315,7 @@ export default function NfcCardStudio({
             type="button"
             className="studio-btn btn-print"
             onClick={handlePrint}
+            style={{ minWidth: 0, width: "100%", boxSizing: "border-box" }}
             title="Open calibrated browser print dialog with standard mm dimensions"
           >
             <Printer size={14} /> <span>Direct Print</span>
