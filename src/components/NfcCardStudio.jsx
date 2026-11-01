@@ -181,7 +181,7 @@ export default function NfcCardStudio({
               onClick={() => setTheme("matte-black")}
               title="Pinterest Luxury Matte Black Aesthetic"
             >
-              <span></span>
+              <span>{"\uD83D\uDDA4"}</span>
               <span className="btn-label-text">
                 <span className="name-desktop">Matte Obsidian Luxury</span>
                 <span className="name-mobile">Obsidian</span>
@@ -193,7 +193,7 @@ export default function NfcCardStudio({
               onClick={() => setTheme("minimal-white")}
               title="Scandinavian Minimalist Studio White"
             >
-              <span></span>
+              <span>{"\uD83E\uDD0D"}</span>
               <span className="btn-label-text">
                 <span className="name-desktop">Studio Porcelain Pearl</span>
                 <span className="name-mobile">Porcelain</span>
@@ -205,7 +205,7 @@ export default function NfcCardStudio({
               onClick={() => setTheme("sunset-split")}
               title="Modern Asymmetric Amber Split (Reference Design 1)"
             >
-              <span></span>
+              <span>{"\u2728"}</span>
               <span className="btn-label-text">
                 <span className="name-desktop">Modern Split (Amber)</span>
                 <span className="name-mobile">Amber Split</span>

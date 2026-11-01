@@ -1568,6 +1568,7 @@
   margin-top: 24px;
   box-shadow: 0 12px 40px rgba(0, 0, 0, 0.35);
   overflow: hidden;
+  container-type: inline-size;
 }
 
 .studio-toolbar {
@@ -1805,9 +1806,16 @@
 
 .export-buttons-grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(2, 1fr);
   gap: 10px;
   width: 100%;
+  box-sizing: border-box;
+}
+
+@container (min-width: 720px) {
+  .export-buttons-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
 }
 
 .studio-btn {
@@ -1816,13 +1824,20 @@
   justify-content: center;
   gap: 8px;
   height: 42px;
-  padding: 0 14px;
+  padding: 0 12px;
   font-size: 12px;
   font-weight: 700;
   border-radius: 10px;
   cursor: pointer;
   transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
   border: 1px solid transparent;
+  min-width: 0;
+  box-sizing: border-box;
+}
+
+.studio-btn span {
+  overflow: hidden;
+  text-overflow: ellipsis;
   white-space: nowrap;
 }
 
