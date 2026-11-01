@@ -383,6 +383,7 @@ export default function Activate() {
                   title={savedResult.title || businessTitle}
                   destinationUrl={savedResult.destinationUrl}
                   qrUrl={savedResult.qrUrl}
+                  cardNumber={savedResult.cardNumber}
                   cardType={savedResult.cardType || cardType}
                   socialLinks={savedResult.socialLinks || { instagram, whatsapp, facebook }}
                 />
@@ -634,16 +635,17 @@ export default function Activate() {
               </form>
 
               {/* LIVE CARD & STAND PREVIEW STUDIO (Instant Feedback) */}
-              <div className="mt-28">
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "8px" }}>
-                  <span className="form-label" style={{ margin: 0, display: "flex", alignItems: "center", gap: "6px" }}>
-                    <Sparkles size={15} color="#f59e0b" /> Live Card & Counter Stand Preview Studio
+              <div className="live-preview-studio-section">
+                <div className="live-studio-header-row">
+                  <span className="live-studio-title-badge">
+                    <Sparkles size={15} color="#f59e0b" />
+                    <span className="name-desktop">Live Card & Counter Stand Preview Studio</span>
+                    <span className="name-mobile">Live Card Preview</span>
                   </span>
                   <button
                     type="button"
-                    className="btn-link-action"
+                    className="btn-link-action studio-toggle-btn"
                     onClick={() => setShowLiveStudio(!showLiveStudio)}
-                    style={{ fontSize: "11px" }}
                   >
                     {showLiveStudio ? "Hide Preview" : "Show Preview"}
                   </button>
@@ -654,6 +656,7 @@ export default function Activate() {
                     cardId={cardId || "TF-01100"}
                     title={businessTitle || "Your Business Name"}
                     destinationUrl={reviewUrl}
+                    cardNumber={existingCard?.cardNumber}
                     cardType={cardType}
                     socialLinks={{ instagram, whatsapp, facebook }}
                   />

@@ -1567,83 +1567,96 @@
   color: #f1f5f9;
   margin-top: 24px;
   box-shadow: 0 12px 40px rgba(0, 0, 0, 0.35);
+  overflow: hidden;
 }
 
 .studio-toolbar {
   display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
+  flex-direction: column;
+  gap: 14px;
   padding-bottom: 16px;
   border-bottom: 1px solid #1e2430;
 }
 
 .toolbar-group {
   display: flex;
-  align-items: center;
-  gap: 8px;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+  width: 100%;
 }
 
 .toolbar-label {
-  font-size: 11px;
+  font-size: 10px;
   font-weight: 800;
   color: #64748b;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
 }
 
 .pill-toggle-group {
-  display: inline-flex;
+  display: grid;
   background: #181c24;
-  padding: 3px;
-  border-radius: 10px;
+  padding: 4px;
+  border-radius: 12px;
   border: 1px solid #262b36;
   gap: 4px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.pill-toggle-group.format-toggle {
+  grid-template-columns: 1fr 1fr;
+}
+
+.pill-toggle-group.theme-toggle {
+  grid-template-columns: repeat(3, 1fr);
 }
 
 .pill-btn {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 6px;
-  padding: 6px 12px;
+  padding: 8px 10px;
   font-size: 12px;
   font-weight: 700;
   color: #94a3b8;
   background: transparent;
   border: none;
-  border-radius: 7px;
+  border-radius: 8px;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 0.2s ease;
+  min-height: 38px;
+  text-align: center;
+  box-sizing: border-box;
 }
 
 .pill-btn:hover {
   color: #ffffff;
+  background: rgba(255, 255, 255, 0.04);
 }
 
 .pill-btn.active {
   background: #334155;
   color: #ffffff;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
 }
 
-.flip-side-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 6px 14px;
-  background: #16a34a;
-  color: #ffffff;
-  font-size: 12px;
-  font-weight: 700;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: all 0.2s;
+.pill-sub-dim {
+  font-size: 10px;
+  opacity: 0.65;
+  font-weight: 600;
 }
 
-.flip-side-btn:hover {
-  background: #15803d;
-  transform: translateY(-1px);
+.theme-name-desktop,
+.name-desktop {
+  display: inline;
+}
+
+.theme-name-mobile,
+.name-mobile {
+  display: none;
 }
 
 .studio-canvas-stage {
@@ -1651,75 +1664,88 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  min-height: 440px;
+  justify-content: flex-start;
+  min-height: 420px;
   background: radial-gradient(circle at center, #181d26 0%, #0a0c10 100%);
   border-radius: 16px;
   margin: 16px 0;
-  padding: 32px 16px;
-  overflow: hidden;
+  padding: 16px;
   border: 1px solid rgba(255, 255, 255, 0.05);
+  box-sizing: border-box;
 }
 
 .stage-spec-badge {
-  position: absolute;
-  top: 14px;
-  left: 16px;
-  right: 16px;
+  position: relative;
+  width: 100%;
   display: flex;
   justify-content: space-between;
   align-items: center;
   font-size: 11px;
   font-weight: 600;
   color: #64748b;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.spec-title-text {
+  font-size: 11.5px;
+  font-weight: 700;
+  color: #94a3b8;
+  letter-spacing: 0.02em;
 }
 
 .spec-vector-pill {
   background: rgba(16, 185, 129, 0.15);
   color: #34d399;
-  padding: 2px 8px;
+  padding: 3px 10px;
   border-radius: 100px;
   font-size: 10px;
   font-weight: 800;
   letter-spacing: 0.05em;
   border: 1px solid rgba(16, 185, 129, 0.3);
+  white-space: nowrap;
 }
 
 .card-svg-container {
   max-width: 100%;
   display: flex;
   justify-content: center;
-  filter: drop-shadow(0 20px 40px rgba(0, 0, 0, 0.6));
+  align-items: center;
+  margin: auto 0;
+  filter: drop-shadow(0 16px 36px rgba(0, 0, 0, 0.65));
 }
 
 .card-svg-container svg {
   max-width: 100%;
   height: auto;
   border-radius: 16px;
+  display: block;
 }
 
 .card-svg-container.card-aspect svg {
-  width: 260px;
+  width: 240px;
   aspect-ratio: 54 / 85.6;
 }
 
 .card-svg-container.stand-aspect svg {
-  width: 320px;
+  width: 270px;
   aspect-ratio: 1 / 1;
 }
 
 .stage-zoom-controls {
-  position: absolute;
-  bottom: 14px;
-  right: 16px;
+  position: relative;
+  margin-top: 14px;
+  align-self: flex-end;
   display: inline-flex;
   align-items: center;
-  background: rgba(15, 23, 42, 0.8);
+  background: rgba(15, 23, 42, 0.85);
   backdrop-filter: blur(8px);
   border: 1px solid #334155;
   border-radius: 8px;
   padding: 2px 6px;
   gap: 4px;
+  z-index: 5;
 }
 
 .zoom-btn {
@@ -1770,33 +1796,34 @@
 .export-hint {
   font-size: 12px;
   color: #94a3b8;
+  line-height: 1.4;
 }
 
 .export-hint strong {
   color: #f1f5f9;
 }
 
-.export-buttons-row {
-  display: flex;
-  flex-wrap: wrap;
+.export-buttons-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
   gap: 10px;
+  width: 100%;
 }
 
 .studio-btn {
-  flex: 1;
-  min-width: 140px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
-  height: 40px;
-  padding: 0 16px;
+  height: 42px;
+  padding: 0 14px;
   font-size: 12px;
   font-weight: 700;
   border-radius: 10px;
   cursor: pointer;
   transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
   border: 1px solid transparent;
+  white-space: nowrap;
 }
 
 .studio-btn.btn-svg {
@@ -1841,16 +1868,183 @@
   transform: translateY(-1px);
 }
 
+/* Live Studio Header inside Activate & Manage Pages */
+.live-preview-studio-section {
+  margin-top: 28px;
+  padding-top: 20px;
+  border-top: 1px solid #f1f5f9;
+}
+
+.live-studio-header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.live-studio-title-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.studio-toggle-btn {
+  font-size: 11px;
+  font-weight: 700;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+/* ==========================================================================
+   MOBILE RESPONSIVENESS OVERRIDES (Screens <= 640px)
+   ========================================================================== */
 @media (max-width: 640px) {
-  .studio-toolbar {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-  .export-buttons-row {
-    flex-direction: column;
-  }
-  .studio-btn {
+  .card-studio-wrapper {
+    padding: 14px 10px;
+    border-radius: 16px;
+    margin-top: 14px;
     width: 100%;
+    box-sizing: border-box;
+  }
+
+  .studio-toolbar {
+    gap: 10px;
+    padding-bottom: 12px;
+  }
+
+  .toolbar-group {
+    width: 100%;
+  }
+
+  .toolbar-label {
+    font-size: 9.5px;
+  }
+
+  .pill-toggle-group {
+    padding: 3px;
+    gap: 3px;
+  }
+
+  .pill-toggle-group.format-toggle .pill-btn {
+    padding: 7px 4px;
+    font-size: 11px;
+    min-height: 38px;
+    gap: 4px;
+  }
+
+  .pill-toggle-group.theme-toggle {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .pill-toggle-group.theme-toggle .pill-btn {
+    flex-direction: column;
+    padding: 6px 2px;
+    font-size: 10.5px;
+    min-height: 48px;
+    gap: 2px;
+    line-height: 1.15;
+  }
+
+  .pill-toggle-group.theme-toggle .pill-btn span:first-child {
+    font-size: 15px;
+  }
+
+  .name-desktop {
+    display: none !important;
+  }
+
+  .name-mobile {
+    display: inline !important;
+    font-size: 10px;
+    font-weight: 700;
+  }
+
+  .pill-sub-dim {
+    display: none !important;
+  }
+
+  .studio-canvas-stage {
+    padding: 12px 8px;
+    min-height: auto;
+    margin: 12px 0;
+    border-radius: 14px;
+  }
+
+  .stage-spec-badge {
+    margin-bottom: 12px;
+    gap: 4px;
+    justify-content: space-between;
+  }
+
+  .spec-title-text {
+    font-size: 10px;
+    font-weight: 700;
+  }
+
+  .spec-vector-pill {
+    font-size: 9px;
+    padding: 2px 7px;
+  }
+
+  .card-svg-container {
+    margin: 8px auto;
+  }
+
+  .card-svg-container.card-aspect svg {
+    width: min(195px, 60vw);
+    max-height: 46vh;
+    height: auto;
+  }
+
+  .card-svg-container.stand-aspect svg {
+    width: min(215px, 68vw);
+    max-height: 40vh;
+    height: auto;
+  }
+
+  .stage-zoom-controls {
+    margin-top: 10px;
+    padding: 2px 4px;
+    gap: 2px;
+  }
+
+  .zoom-label {
+    font-size: 10px;
+    min-width: 30px;
+  }
+
+  .studio-export-footer {
+    padding-top: 12px;
+    gap: 10px;
+  }
+
+  .export-hint {
+    font-size: 11px;
+    line-height: 1.35;
+  }
+
+  .export-buttons-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+
+  .studio-btn {
+    height: 40px;
+    padding: 0 8px;
+    font-size: 11px;
+    gap: 5px;
+    border-radius: 9px;
+    min-width: 0;
+  }
+
+  .studio-btn span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 }
 

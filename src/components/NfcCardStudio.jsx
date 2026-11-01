@@ -148,21 +148,25 @@ export default function NfcCardStudio({
       <div className="studio-toolbar">
         {/* Format Selector: Pocket Card vs Counter Stand */}
         <div className="toolbar-group">
-          <span className="toolbar-label">FORMAT:</span>
-          <div className="pill-toggle-group">
+          <span className="toolbar-label">FORMAT</span>
+          <div className="pill-toggle-group format-toggle">
             <button
               type="button"
               className={`pill-btn ${format === "nfc-card" ? "active" : ""}`}
               onClick={() => setFormat("nfc-card")}
             >
-              <CreditCard size={14} /> NFC Pocket Card (85.6 × 54mm)
+              <CreditCard size={14} />
+              <span className="btn-label-text">Pocket Card</span>
+              <span className="pill-sub-dim">85×54mm</span>
             </button>
             <button
               type="button"
               className={`pill-btn ${format === "table-stand" ? "active" : ""}`}
               onClick={() => setFormat("table-stand")}
             >
-              <Smartphone size={14} /> Countertop Stand (100mm)
+              <Smartphone size={14} />
+              <span className="btn-label-text">Stand Plaque</span>
+              <span className="pill-sub-dim">100mm</span>
             </button>
           </div>
         </div>
@@ -170,15 +174,19 @@ export default function NfcCardStudio({
         {/* Theme Selector for Pocket Card */}
         {format === "nfc-card" && (
           <div className="toolbar-group">
-            <span className="toolbar-label">MINIMAL THEME:</span>
-            <div className="pill-toggle-group">
+            <span className="toolbar-label">MINIMAL THEME</span>
+            <div className="pill-toggle-group theme-toggle">
               <button
                 type="button"
                 className={`pill-btn ${theme === "matte-black" ? "active" : ""}`}
                 onClick={() => setTheme("matte-black")}
                 title="Pinterest Luxury Matte Black Aesthetic"
               >
-                🖤 Matte Obsidian Luxury
+                <span>🖤</span>
+                <span className="btn-label-text">
+                  <span className="name-desktop">Matte Obsidian Luxury</span>
+                  <span className="name-mobile">Obsidian</span>
+                </span>
               </button>
               <button
                 type="button"
@@ -186,7 +194,11 @@ export default function NfcCardStudio({
                 onClick={() => setTheme("minimal-white")}
                 title="Scandinavian Minimalist Studio White"
               >
-                🤍 Studio Porcelain Pearl
+                <span>🤍</span>
+                <span className="btn-label-text">
+                  <span className="name-desktop">Studio Porcelain Pearl</span>
+                  <span className="name-mobile">Porcelain</span>
+                </span>
               </button>
               <button
                 type="button"
@@ -194,7 +206,11 @@ export default function NfcCardStudio({
                 onClick={() => setTheme("sunset-split")}
                 title="Modern Asymmetric Amber Split (Reference Design 1)"
               >
-                ✨ Modern Split (Amber Curve)
+                <span>✨</span>
+                <span className="btn-label-text">
+                  <span className="name-desktop">Modern Split (Amber)</span>
+                  <span className="name-mobile">Amber Split</span>
+                </span>
               </button>
             </div>
           </div>
@@ -205,12 +221,12 @@ export default function NfcCardStudio({
       <div className="studio-canvas-stage">
         {/* Dimension & Scale badge */}
         <div className="stage-spec-badge">
-          <span>
+          <span className="spec-title-text">
             {format === "nfc-card"
-              ? "Standard CR80 Pocket Card: 85.6mm × 54mm • SINGLE-SIDED ALL-IN-ONE PRINT"
-              : "Countertop Acrylic Plaque: 100mm × 100mm • ACRYLIC DISPLAY STAND"}
+              ? "CR80 Pocket Card • 85.6 × 54mm"
+              : "Countertop Stand • 100 × 100mm"}
           </span>
-          <span className="spec-vector-pill">100% Vector Scalable</span>
+          <span className="spec-vector-pill">100% Vector Print</span>
         </div>
 
         {/* SVG Render Container */}
@@ -229,7 +245,7 @@ export default function NfcCardStudio({
             onClick={() => setZoom(Math.max(0.7, zoom - 0.15))}
             title="Zoom out"
           >
-            <ZoomOut size={14} />
+            <ZoomOut size={13} />
           </button>
           <span className="zoom-label">{Math.round(zoom * 100)}%</span>
           <button
@@ -238,7 +254,7 @@ export default function NfcCardStudio({
             onClick={() => setZoom(Math.min(1.4, zoom + 0.15))}
             title="Zoom in"
           >
-            <ZoomIn size={14} />
+            <ZoomIn size={13} />
           </button>
         </div>
       </div>
@@ -250,20 +266,20 @@ export default function NfcCardStudio({
         </div>
       )}
 
-      {/* Download & Export Action Strip ("Bada Chota Dono me aache se ho jaye") */}
+      {/* Download & Export Action Strip */}
       <div className="studio-export-footer">
         <div className="export-hint">
-          <strong>Single-Sided Print Vector:</strong> Scalable for both small pocket cards (8.5cm) and large countertop acrylic stands (100cm+) with zero blur and integrated QR code.
+          <strong>Single-Sided Print Ready:</strong> High-res vector graphics with integrated QR code.
         </div>
 
-        <div className="export-buttons-row">
+        <div className="export-buttons-grid">
           <button
             type="button"
             className="studio-btn btn-svg"
             onClick={handleDownloadSvg}
             title="Download true SVG vector file - scales to any size infinitely"
           >
-            <Download size={14} /> Vector SVG (Infinite Scale)
+            <Download size={14} /> <span>Vector SVG</span>
           </button>
 
           <button
@@ -273,7 +289,7 @@ export default function NfcCardStudio({
             disabled={downloading}
             title="Download 300 DPI high-resolution PNG for thermal card printers"
           >
-            <Download size={14} /> {downloading ? "Generating PNG..." : "300 DPI High-Res PNG"}
+            <Download size={14} /> <span>{downloading ? "Exporting..." : "300 DPI PNG"}</span>
           </button>
 
           <button
@@ -282,7 +298,7 @@ export default function NfcCardStudio({
             onClick={handleDownloadCdr}
             title="Download CorelDRAW vector file (Import via Ctrl+I in CorelDRAW)"
           >
-            <FileCode size={14} /> CorelDRAW (.cdr)
+            <FileCode size={14} /> <span>CorelDRAW (.cdr)</span>
           </button>
 
           <button
@@ -291,7 +307,7 @@ export default function NfcCardStudio({
             onClick={handlePrint}
             title="Open calibrated browser print dialog with standard mm dimensions"
           >
-            <Printer size={14} /> Direct Print
+            <Printer size={14} /> <span>Direct Print</span>
           </button>
         </div>
       </div>
