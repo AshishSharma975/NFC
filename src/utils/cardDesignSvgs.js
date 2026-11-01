@@ -479,54 +479,295 @@ export function generateCardSvgString({
 
   // =========================================================================
   // 2. FORMAT: COUNTERTOP STAND / TABLE PLAQUE (Square 1000 x 1000 px)
-  // Inspired by Photo 4 & Photo 5: Dual "TAP PHONE" and "SCAN CODE" zones
+  // Pinterest-level Minimalist & Unique Design with All Features:
+  // - Fixed QR Code centering inside scan zone
+  // - 3 Minimal Themes: Matte Obsidian, Studio Porcelain Pearl & Modern Split
+  // - Social Connect mode support (Google + Instagram + WhatsApp + Facebook)
+  // - Unique Corner Serial Number Badge (#01, #02, #100) & Top NFC Contactless Badge
   // =========================================================================
   const SW = 1000;
   const SH = 1000;
   const SR = 44;
 
-  const qrSizeStand = 280;
-  const qrXStand = 590;
-  const qrYStand = 450;
+  // Exact centering for 270x270 QR code inside 310x310 white box at (35, 75)
+  const qrBoxInnerX = 55;
+  const qrBoxInnerY = 95;
+  const qrBoxInnerSize = 270;
 
-  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${SW} ${SH}" width="${SW}" height="${SH}">
+  // Shared gradients for Countertop Stand
+  const standGradients = `
     <defs>
-      <radialGradient id="standBg" cx="50%" cy="30%" r="80%">
-        <stop offset="0%" stop-color="#181c24"/>
-        <stop offset="100%" stop-color="#0a0c10"/>
+      <radialGradient id="standObsidianBg" cx="50%" cy="25%" r="85%">
+        <stop offset="0%" stop-color="#181d26"/>
+        <stop offset="55%" stop-color="#0e1117"/>
+        <stop offset="100%" stop-color="#07080b"/>
       </radialGradient>
+      <linearGradient id="standPearlBg" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stop-color="#ffffff"/>
+        <stop offset="60%" stop-color="#f8fafc"/>
+        <stop offset="100%" stop-color="#f1f5f9"/>
+      </linearGradient>
+      <linearGradient id="standSunsetGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stop-color="#fbbf24"/>
+        <stop offset="50%" stop-color="#f59e0b"/>
+        <stop offset="100%" stop-color="#d97706"/>
+      </linearGradient>
       <linearGradient id="rainbowBorder" x1="0%" y1="0%" x2="100%" y2="100%">
         <stop offset="0%" stop-color="#4285F4"/>
         <stop offset="33%" stop-color="#EA4335"/>
         <stop offset="66%" stop-color="#FBBC05"/>
         <stop offset="100%" stop-color="#34A853"/>
       </linearGradient>
+      <linearGradient id="instaGradStand" x1="0%" y1="100%" x2="100%" y2="0%">
+        <stop offset="0%" stop-color="#ffd521"/>
+        <stop offset="25%" stop-color="#f50000"/>
+        <stop offset="50%" stop-color="#b900b4"/>
+        <stop offset="100%" stop-color="#833ab4"/>
+      </linearGradient>
     </defs>
+  `;
+
+  // Render social channels bar for Connect Mode
+  const renderStandSocialRow = (isDark = true) => {
+    const textColor = isDark ? "#94a3b8" : "#64748b";
+    return `
+      <g transform="translate(${SW / 2}, 290)">
+        <text x="0" y="0" font-family="-apple-system, BlinkMacSystemFont, 'Inter', sans-serif" font-size="12" font-weight="700" fill="${textColor}" text-anchor="middle" letter-spacing="2">CONNECT &amp; REVIEW WITH US ON</text>
+        <g transform="translate(0, 10)">
+          <!-- Google -->
+          <circle cx="-75" cy="18" r="16" fill="#ffffff" filter="drop-shadow(0 3px 6px rgba(0,0,0,0.2))"/>
+          <g transform="translate(-87, 6) scale(1)">
+            ${ICONS.googleG}
+          </g>
+          <!-- Instagram -->
+          <circle cx="-25" cy="18" r="16" fill="url(#instaGradStand)" filter="drop-shadow(0 3px 6px rgba(0,0,0,0.2))"/>
+          <g transform="translate(-39, 4) scale(1.05)">
+            ${ICONS.instagram}
+          </g>
+          <!-- WhatsApp -->
+          <circle cx="25" cy="18" r="16" fill="#25D366" filter="drop-shadow(0 3px 6px rgba(0,0,0,0.2))"/>
+          <g transform="translate(11, 4) scale(1.0)">
+            ${ICONS.whatsapp}
+          </g>
+          <!-- Facebook -->
+          <circle cx="75" cy="18" r="16" fill="#1877F2" filter="drop-shadow(0 3px 6px rgba(0,0,0,0.2))"/>
+          <g transform="translate(63, 6) scale(0.85)">
+            ${ICONS.facebook}
+          </g>
+        </g>
+      </g>
+    `;
+  };
+
+  // Render Google review catchline for Review Mode
+  const renderStandReviewRow = (isDark = true) => {
+    const headColor = isDark ? "#ffffff" : "#0f172a";
+    const subColor = isDark ? "#94a3b8" : "#64748b";
+    return `
+      <g transform="translate(${SW / 2}, 285)">
+        <text x="0" y="0" font-family="-apple-system, BlinkMacSystemFont, 'Plus Jakarta Sans', 'Inter', sans-serif" font-size="24" font-weight="800" fill="${headColor}" text-anchor="middle" letter-spacing="-0.5">Your Feedback Matters to us!</text>
+        <text x="0" y="28" font-family="-apple-system, BlinkMacSystemFont, 'Inter', sans-serif" font-size="15" font-weight="600" fill="${subColor}" text-anchor="middle">Tap phone on NFC or scan QR code to review on Google</text>
+      </g>
+    `;
+  };
+
+  // -------------------------------------------------------------------------
+  // STAND THEME 2: STUDIO PORCELAIN PEARL (Minimalist Light Acrylic Desk Stand)
+  // -------------------------------------------------------------------------
+  if (theme === "minimal-white") {
+    return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${SW} ${SH}" width="${SW}" height="${SH}">
+      ${standGradients}
+
+      <!-- Stand Plaque Outer Base -->
+      <rect x="4" y="4" width="${SW - 8}" height="${SH - 8}" rx="${SR}" fill="url(#standPearlBg)" stroke="#e2e8f0" stroke-width="4"/>
+
+      <!-- Corner Serial Badge (Top-Left) -->
+      <g transform="translate(60, 60)">
+        <rect x="0" y="0" width="120" height="52" rx="16" fill="#ffffff" stroke="#0f172a" stroke-width="2.5"/>
+        <text x="60" y="34" font-family="monospace, sans-serif" font-size="24" font-weight="900" fill="#0f172a" text-anchor="middle" letter-spacing="2">${cornerNumber}</text>
+      </g>
+
+      <!-- Contactless NFC Indicator Badge (Top-Right) -->
+      <g transform="translate(820, 60)">
+        <rect x="0" y="0" width="120" height="52" rx="16" fill="#ffffff" stroke="#e2e8f0" stroke-width="2"/>
+        <g transform="translate(18, 14) scale(0.8)">
+          ${ICONS.nfcWave("#0284c7")}
+        </g>
+        <text x="75" y="32" font-family="-apple-system, BlinkMacSystemFont, 'Inter', sans-serif" font-size="13" font-weight="800" fill="#0f172a" text-anchor="middle" letter-spacing="1">1-TAP</text>
+      </g>
+
+      <!-- Header: Official Google G Logo & Title -->
+      <g transform="translate(${SW / 2 - 38}, 75) scale(2.8)">
+        ${ICONS.googleG}
+      </g>
+
+      <!-- 5 Golden Stars -->
+      <g transform="translate(${SW / 2 - 85}, 175) scale(1.3)">
+        ${ICONS.fiveStars}
+      </g>
+
+      <!-- Business Name Header -->
+      <text x="${SW / 2}" y="248" font-family="-apple-system, BlinkMacSystemFont, 'Plus Jakarta Sans', 'Inter', sans-serif" font-size="32" font-weight="800" fill="#0f172a" text-anchor="middle" letter-spacing="-0.5">${safeTitle}</text>
+
+      <!-- Dynamic Mode Row: Connect vs Review -->
+      ${isConnect ? renderStandSocialRow(false) : renderStandReviewRow(false)}
+
+      <!-- DUAL ACTION BOXES (LEFT: TAP PHONE, RIGHT: SCAN CODE) -->
+
+      <!-- BOX 1 (LEFT): TAP PHONE -->
+      <g transform="translate(80, 360)">
+        <rect x="0" y="0" width="380" height="480" rx="28" fill="#ffffff" stroke="#e2e8f0" stroke-width="2.5"/>
+        <text x="190" y="55" font-family="-apple-system, BlinkMacSystemFont, 'Inter', sans-serif" font-size="18" font-weight="800" fill="#0f172a" text-anchor="middle" letter-spacing="2">TAP PHONE</text>
+        
+        <!-- Phone & NFC Waves Graphic -->
+        <g transform="translate(142, 120) scale(1.4)">
+          ${ICONS.nfcPhoneHand("#0284c7")}
+        </g>
+
+        <text x="190" y="350" font-family="-apple-system, BlinkMacSystemFont, 'Inter', sans-serif" font-size="20" font-weight="800" fill="#0f172a" text-anchor="middle">NFC INSTANT</text>
+        <text x="190" y="380" font-family="-apple-system, BlinkMacSystemFont, 'Inter', sans-serif" font-size="14" font-weight="500" fill="#64748b" text-anchor="middle">Hold phone near stand</text>
+        <text x="190" y="420" font-family="-apple-system, BlinkMacSystemFont, 'Inter', sans-serif" font-size="12" font-weight="800" fill="#0284c7" text-anchor="middle" letter-spacing="1">ZERO APP NEEDED</text>
+      </g>
+
+      <!-- BOX 2 (RIGHT): SCAN CODE -->
+      <g transform="translate(540, 360)">
+        <rect x="0" y="0" width="380" height="480" rx="28" fill="#ffffff" stroke="#e2e8f0" stroke-width="2.5"/>
+        <text x="190" y="55" font-family="-apple-system, BlinkMacSystemFont, 'Inter', sans-serif" font-size="18" font-weight="800" fill="#0f172a" text-anchor="middle" letter-spacing="2">SCAN CODE</text>
+
+        <!-- QR Box with Google Rainbow Border -->
+        <rect x="35" y="75" width="310" height="310" rx="22" fill="#ffffff" stroke="url(#rainbowBorder)" stroke-width="5"/>
+        ${generateQrPath(qrValue, qrBoxInnerX, qrBoxInnerY, qrBoxInnerSize, qrBoxInnerSize, "#0f172a")}
+
+        <!-- Stand Code Underneath -->
+        <text x="190" y="435" font-family="monospace, -apple-system, sans-serif" font-size="18" font-weight="800" fill="#0f172a" text-anchor="middle" letter-spacing="3">${safeCardId}</text>
+      </g>
+
+      <!-- Footer Tagline -->
+      <text x="${SW / 2}" y="925" font-family="-apple-system, BlinkMacSystemFont, 'Inter', sans-serif" font-size="13" font-weight="700" fill="#94a3b8" text-anchor="middle" letter-spacing="3">SMART NFC &bull; ZERO APP NEEDED &bull; COUNTERTOP ACRYLIC STAND</text>
+    </svg>`;
+  }
+
+  // -------------------------------------------------------------------------
+  // STAND THEME 3: MODERN SPLIT (Amber Curved Wave Plaque - Reference Design 1)
+  // -------------------------------------------------------------------------
+  if (theme === "sunset-split") {
+    return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${SW} ${SH}" width="${SW}" height="${SH}">
+      ${standGradients}
+
+      <!-- Stand Plaque Outer Base -->
+      <rect x="4" y="4" width="${SW - 8}" height="${SH - 8}" rx="${SR}" fill="#0a0c12" stroke="#2b2318" stroke-width="4"/>
+
+      <!-- Asymmetrical Amber Wave Curve (Photo 1 Aesthetic) -->
+      <path d="M 4 4 L 996 4 L 996 320 Q 680 400 360 320 T 4 340 Z" fill="url(#standSunsetGrad)"/>
+
+      <!-- Corner Serial Badge (Top-Left) -->
+      <g transform="translate(60, 60)">
+        <rect x="0" y="0" width="120" height="52" rx="16" fill="#14171f" stroke="#ffffff" stroke-width="2.5"/>
+        <text x="60" y="34" font-family="monospace, sans-serif" font-size="24" font-weight="900" fill="#ffffff" text-anchor="middle" letter-spacing="2">${cornerNumber}</text>
+      </g>
+
+      <!-- Contactless NFC Indicator Badge (Top-Right) -->
+      <g transform="translate(820, 60)">
+        <rect x="0" y="0" width="120" height="52" rx="16" fill="#14171f" stroke="#ffffff" stroke-width="2"/>
+        <g transform="translate(18, 14) scale(0.8)">
+          ${ICONS.nfcWave("#fbbf24")}
+        </g>
+        <text x="75" y="32" font-family="-apple-system, BlinkMacSystemFont, 'Inter', sans-serif" font-size="13" font-weight="800" fill="#ffffff" text-anchor="middle" letter-spacing="1">1-TAP</text>
+      </g>
+
+      <!-- Header: Official Google G Logo with White Backing Circle -->
+      <circle cx="${SW / 2}" cy="108" r="34" fill="#ffffff" filter="drop-shadow(0 4px 10px rgba(0,0,0,0.2))"/>
+      <g transform="translate(${SW / 2 - 34}, 74) scale(2.5)">
+        ${ICONS.googleG}
+      </g>
+
+      <!-- 5 Golden Stars -->
+      <g transform="translate(${SW / 2 - 85}, 168) scale(1.3)">
+        ${ICONS.fiveStars}
+      </g>
+
+      <!-- Business Name Header -->
+      <text x="${SW / 2}" y="238" font-family="-apple-system, BlinkMacSystemFont, 'Plus Jakarta Sans', 'Inter', sans-serif" font-size="32" font-weight="800" fill="#ffffff" text-anchor="middle" letter-spacing="-0.5">${safeTitle}</text>
+
+      <!-- Dynamic Mode Row: Connect vs Review -->
+      ${isConnect ? renderStandSocialRow(true) : renderStandReviewRow(true)}
+
+      <!-- DUAL ACTION BOXES (LEFT: TAP PHONE, RIGHT: SCAN CODE) -->
+
+      <!-- BOX 1 (LEFT): TAP PHONE -->
+      <g transform="translate(80, 360)">
+        <rect x="0" y="0" width="380" height="480" rx="28" fill="#14171f" stroke="#3d301b" stroke-width="2.5"/>
+        <text x="190" y="55" font-family="-apple-system, BlinkMacSystemFont, 'Inter', sans-serif" font-size="18" font-weight="800" fill="#ffffff" text-anchor="middle" letter-spacing="2">TAP PHONE</text>
+        
+        <!-- Phone & NFC Radiating Waves Graphic -->
+        <g transform="translate(142, 120) scale(1.4)">
+          ${ICONS.nfcPhoneHand("#fbbf24")}
+        </g>
+
+        <text x="190" y="350" font-family="-apple-system, BlinkMacSystemFont, 'Inter', sans-serif" font-size="20" font-weight="800" fill="#ffffff" text-anchor="middle">NFC INSTANT</text>
+        <text x="190" y="380" font-family="-apple-system, BlinkMacSystemFont, 'Inter', sans-serif" font-size="14" font-weight="500" fill="#94a3b8" text-anchor="middle">Hold phone near stand</text>
+        <text x="190" y="420" font-family="-apple-system, BlinkMacSystemFont, 'Inter', sans-serif" font-size="12" font-weight="700" fill="#fbbf24" text-anchor="middle" letter-spacing="1">ZERO APP NEEDED</text>
+      </g>
+
+      <!-- BOX 2 (RIGHT): SCAN CODE -->
+      <g transform="translate(540, 360)">
+        <rect x="0" y="0" width="380" height="480" rx="28" fill="#14171f" stroke="#3d301b" stroke-width="2.5"/>
+        <text x="190" y="55" font-family="-apple-system, BlinkMacSystemFont, 'Inter', sans-serif" font-size="18" font-weight="800" fill="#ffffff" text-anchor="middle" letter-spacing="2">SCAN CODE</text>
+
+        <!-- QR Box with Google Rainbow Border -->
+        <rect x="35" y="75" width="310" height="310" rx="22" fill="#ffffff" stroke="url(#rainbowBorder)" stroke-width="5"/>
+        ${generateQrPath(qrValue, qrBoxInnerX, qrBoxInnerY, qrBoxInnerSize, qrBoxInnerSize, "#0f172a")}
+
+        <!-- Stand Code Underneath -->
+        <text x="190" y="435" font-family="monospace, -apple-system, sans-serif" font-size="18" font-weight="800" fill="#fbbf24" text-anchor="middle" letter-spacing="3">${safeCardId}</text>
+      </g>
+
+      <!-- Footer Tagline -->
+      <text x="${SW / 2}" y="925" font-family="-apple-system, BlinkMacSystemFont, 'Inter', sans-serif" font-size="13" font-weight="700" fill="#64748b" text-anchor="middle" letter-spacing="3">SMART NFC &bull; ZERO APP NEEDED &bull; COUNTERTOP ACRYLIC STAND</text>
+    </svg>`;
+  }
+
+  // -------------------------------------------------------------------------
+  // STAND THEME 1: MATTE OBSIDIAN LUXURY (DEFAULT Pinterest Luxury Dark Stand)
+  // -------------------------------------------------------------------------
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${SW} ${SH}" width="${SW}" height="${SH}">
+    ${standGradients}
 
     <!-- Stand Plaque Outer Base -->
-    <rect x="4" y="4" width="${SW - 8}" height="${SH - 8}" rx="${SR}" fill="url(#standBg)" stroke="#2d3340" stroke-width="4"/>
+    <rect x="4" y="4" width="${SW - 8}" height="${SH - 8}" rx="${SR}" fill="url(#standObsidianBg)" stroke="#272e3b" stroke-width="4"/>
 
     <!-- Prominent Corner Serial Badge (Top-Left) -->
     <g transform="translate(60, 60)">
-      <rect x="0" y="0" width="120" height="52" rx="16" fill="#14171f" stroke="#38bdf8" stroke-width="2.5"/>
+      <rect x="0" y="0" width="120" height="52" rx="16" fill="#14171f" stroke="#f59e0b" stroke-width="2.5"/>
       <text x="60" y="34" font-family="monospace, sans-serif" font-size="24" font-weight="900" fill="#ffffff" text-anchor="middle" letter-spacing="2">${cornerNumber}</text>
     </g>
 
+    <!-- Contactless NFC Indicator Badge (Top-Right) -->
+    <g transform="translate(820, 60)">
+      <rect x="0" y="0" width="120" height="52" rx="16" fill="#14171f" stroke="#334155" stroke-width="2"/>
+      <g transform="translate(18, 14) scale(0.8)">
+        ${ICONS.nfcWave("#38bdf8")}
+      </g>
+      <text x="75" y="32" font-family="-apple-system, BlinkMacSystemFont, 'Inter', sans-serif" font-size="13" font-weight="800" fill="#ffffff" text-anchor="middle" letter-spacing="1">1-TAP</text>
+    </g>
+
     <!-- Header: Official Google G Logo & Title -->
-    <g transform="translate(${SW / 2 - 38}, 80) scale(2.8)">
+    <g transform="translate(${SW / 2 - 38}, 75) scale(2.8)">
       ${ICONS.googleG}
     </g>
 
     <!-- 5 Golden Stars -->
-    <g transform="translate(${SW / 2 - 85}, 180) scale(1.3)">
+    <g transform="translate(${SW / 2 - 85}, 175) scale(1.3)">
       ${ICONS.fiveStars}
     </g>
 
-    <!-- Header Catchline (Photo 5) -->
-    <text x="${SW / 2}" y="255" font-family="-apple-system, BlinkMacSystemFont, 'Plus Jakarta Sans', 'Inter', sans-serif" font-size="34" font-weight="800" fill="#ffffff" text-anchor="middle" letter-spacing="-0.5">Your Feedback Matters to us!</text>
-    <text x="${SW / 2}" y="295" font-family="-apple-system, BlinkMacSystemFont, 'Inter', sans-serif" font-size="20" font-weight="700" fill="#94a3b8" text-anchor="middle">${safeTitle}</text>
+    <!-- Business Name Header -->
+    <text x="${SW / 2}" y="248" font-family="-apple-system, BlinkMacSystemFont, 'Plus Jakarta Sans', 'Inter', sans-serif" font-size="32" font-weight="800" fill="#ffffff" text-anchor="middle" letter-spacing="-0.5">${safeTitle}</text>
 
-    <!-- DUAL ACTION BOXES (Photo 5 Exact Design) -->
+    <!-- Dynamic Mode Row: Connect vs Review -->
+    ${isConnect ? renderStandSocialRow(true) : renderStandReviewRow(true)}
+
+    <!-- DUAL ACTION BOXES (LEFT: TAP PHONE, RIGHT: SCAN CODE) -->
 
     <!-- BOX 1 (LEFT): TAP PHONE -->
     <g transform="translate(80, 360)">
@@ -550,14 +791,14 @@ export function generateCardSvgString({
 
       <!-- QR Box with Google Rainbow Border -->
       <rect x="35" y="75" width="310" height="310" rx="22" fill="#ffffff" stroke="url(#rainbowBorder)" stroke-width="5"/>
-      ${generateQrPath(qrValue, qrXStand, qrYStand, qrSizeStand, qrSizeStand, "#0f172a")}
+      ${generateQrPath(qrValue, qrBoxInnerX, qrBoxInnerY, qrBoxInnerSize, qrBoxInnerSize, "#0f172a")}
 
       <!-- Stand Code Underneath -->
       <text x="190" y="435" font-family="monospace, -apple-system, sans-serif" font-size="18" font-weight="800" fill="#ffffff" text-anchor="middle" letter-spacing="3">${safeCardId}</text>
     </g>
 
     <!-- Footer Tagline -->
-    <text x="${SW / 2}" y="925" font-family="-apple-system, BlinkMacSystemFont, 'Inter', sans-serif" font-size="14" font-weight="700" fill="#64748b" text-anchor="middle" letter-spacing="3">POWERED BY TAPFORM SMART NFC &bull; COUNTERTOP ACRYLIC STAND</text>
+    <text x="${SW / 2}" y="925" font-family="-apple-system, BlinkMacSystemFont, 'Inter', sans-serif" font-size="13" font-weight="700" fill="#64748b" text-anchor="middle" letter-spacing="3">SMART NFC &bull; ZERO APP NEEDED &bull; COUNTERTOP ACRYLIC STAND</text>
   </svg>`;
 }
 

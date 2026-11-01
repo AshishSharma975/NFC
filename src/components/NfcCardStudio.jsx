@@ -171,50 +171,48 @@ export default function NfcCardStudio({
           </div>
         </div>
 
-        {/* Theme Selector for Pocket Card */}
-        {format === "nfc-card" && (
-          <div className="toolbar-group">
-            <span className="toolbar-label">MINIMAL THEME</span>
-            <div className="pill-toggle-group theme-toggle">
-              <button
-                type="button"
-                className={`pill-btn ${theme === "matte-black" ? "active" : ""}`}
-                onClick={() => setTheme("matte-black")}
-                title="Pinterest Luxury Matte Black Aesthetic"
-              >
-                <span>🖤</span>
-                <span className="btn-label-text">
-                  <span className="name-desktop">Matte Obsidian Luxury</span>
-                  <span className="name-mobile">Obsidian</span>
-                </span>
-              </button>
-              <button
-                type="button"
-                className={`pill-btn ${theme === "minimal-white" ? "active" : ""}`}
-                onClick={() => setTheme("minimal-white")}
-                title="Scandinavian Minimalist Studio White"
-              >
-                <span>🤍</span>
-                <span className="btn-label-text">
-                  <span className="name-desktop">Studio Porcelain Pearl</span>
-                  <span className="name-mobile">Porcelain</span>
-                </span>
-              </button>
-              <button
-                type="button"
-                className={`pill-btn ${theme === "sunset-split" ? "active" : ""}`}
-                onClick={() => setTheme("sunset-split")}
-                title="Modern Asymmetric Amber Split (Reference Design 1)"
-              >
-                <span>✨</span>
-                <span className="btn-label-text">
-                  <span className="name-desktop">Modern Split (Amber)</span>
-                  <span className="name-mobile">Amber Split</span>
-                </span>
-              </button>
-            </div>
+        {/* Theme Selector for both Pocket Card and Counter Stand */}
+        <div className="toolbar-group">
+          <span className="toolbar-label">MINIMAL THEME</span>
+          <div className="pill-toggle-group theme-toggle">
+            <button
+              type="button"
+              className={`pill-btn ${theme === "matte-black" ? "active" : ""}`}
+              onClick={() => setTheme("matte-black")}
+              title="Pinterest Luxury Matte Black Aesthetic"
+            >
+              <span></span>
+              <span className="btn-label-text">
+                <span className="name-desktop">Matte Obsidian Luxury</span>
+                <span className="name-mobile">Obsidian</span>
+              </span>
+            </button>
+            <button
+              type="button"
+              className={`pill-btn ${theme === "minimal-white" ? "active" : ""}`}
+              onClick={() => setTheme("minimal-white")}
+              title="Scandinavian Minimalist Studio White"
+            >
+              <span></span>
+              <span className="btn-label-text">
+                <span className="name-desktop">Studio Porcelain Pearl</span>
+                <span className="name-mobile">Porcelain</span>
+              </span>
+            </button>
+            <button
+              type="button"
+              className={`pill-btn ${theme === "sunset-split" ? "active" : ""}`}
+              onClick={() => setTheme("sunset-split")}
+              title="Modern Asymmetric Amber Split (Reference Design 1)"
+            >
+              <span></span>
+              <span className="btn-label-text">
+                <span className="name-desktop">Modern Split (Amber)</span>
+                <span className="name-mobile">Amber Split</span>
+              </span>
+            </button>
           </div>
-        )}
+        </div>
       </div>
 
       {/* Main Preview Stage */}
