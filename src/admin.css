@@ -2551,4 +2551,8 @@
     padding: 16px 14px;
     border-radius: 16px;
   }
+
+  .qr-action-buttons-grid {
+    grid-template-columns: 1fr !important;
+  }
 }
