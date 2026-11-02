@@ -29,6 +29,10 @@ import {
   Trash2,
   Hash,
   ArrowLeft,
+  Sliders,
+  MapPin,
+  Share2,
+  Smartphone,
 } from "lucide-react";
 import {
   adminLoginApi,
@@ -56,8 +60,22 @@ export default function AdminDashboard() {
   const [loggingIn, setLoggingIn] = useState(false);
   const [rememberMe, setRememberMe] = useState(true);
 
-  // Active Tab: 'overview' | 'bulk' | 'directory'
+  // Active Tab: 'overview' | 'all-in-one' | 'bulk' | 'directory'
   const [activeTab, setActiveTab] = useState("overview");
+
+  // All-in-One Stand & Social Studio State
+  const [studioCardId, setStudioCardId] = useState("");
+  const [studioCardNumber, setStudioCardNumber] = useState(null);
+  const [studioTitle, setStudioTitle] = useState("");
+  const [studioReviewUrl, setStudioReviewUrl] = useState("");
+  const [studioCardType, setStudioCardType] = useState("connect");
+  const [studioInstagram, setStudioInstagram] = useState("");
+  const [studioWhatsapp, setStudioWhatsapp] = useState("");
+  const [studioFacebook, setStudioFacebook] = useState("");
+  const [studioStatus, setStudioStatus] = useState("active");
+  const [studioSaving, setStudioSaving] = useState(false);
+  const [studioSuccess, setStudioSuccess] = useState("");
+  const [studioError, setStudioError] = useState("");
 
   // Dashboard Data State
   const [stats, setStats] = useState({
@@ -164,10 +182,27 @@ export default function AdminDashboard() {
       }
 
       if (cardsRes && cardsRes.success) {
-        setCards(cardsRes.data || []);
+        const fetchedCards = cardsRes.data || [];
+        setCards(fetchedCards);
         if (!statsRes && cardsRes.stats) {
           setStats(cardsRes.stats);
         }
+        // Initialize Studio with first card if not set yet
+        setStudioCardId((prev) => {
+          if (!prev && fetchedCards.length > 0) {
+            const first = fetchedCards[0];
+            setStudioCardNumber(first.cardNumber ?? null);
+            setStudioTitle(first.title || "");
+            setStudioReviewUrl(first.destinationUrl || "");
+            setStudioCardType(first.cardType || "connect");
+            setStudioInstagram(first.socialLinks?.instagram || "");
+            setStudioWhatsapp(first.socialLinks?.whatsapp || "");
+            setStudioFacebook(first.socialLinks?.facebook || "");
+            setStudioStatus(first.status || "active");
+            return first.cardId;
+          }
+          return prev;
+        });
       }
     } catch (err) {
       setError(err.message || "Failed to load admin data.");
@@ -176,6 +211,22 @@ export default function AdminDashboard() {
       setRefreshing(false);
     }
   }, [statusFilter, search]);
+
+  // Select card to edit/preview in All-in-One Studio
+  const selectCardForStudio = useCallback((card) => {
+    if (!card) return;
+    setStudioCardId(card.cardId || "");
+    setStudioCardNumber(card.cardNumber ?? null);
+    setStudioTitle(card.title || "");
+    setStudioReviewUrl(card.destinationUrl || "");
+    setStudioCardType(card.cardType || "connect");
+    setStudioInstagram(card.socialLinks?.instagram || "");
+    setStudioWhatsapp(card.socialLinks?.whatsapp || "");
+    setStudioFacebook(card.socialLinks?.facebook || "");
+    setStudioStatus(card.status || "active");
+    setStudioError("");
+    setStudioSuccess("");
+  }, []);
 
   useEffect(() => {
     if (isAuthenticated) {
@@ -314,6 +365,74 @@ export default function AdminDashboard() {
       setAddError(err.message || "Failed to create card.");
     } finally {
       setAddingCard(false);
+    }
+  }
+
+  // Handle Save in All-in-One Studio
+  async function handleSaveStudioStand(e) {
+    e.preventDefault();
+    const cleanId = studioCardId.trim().toUpperCase();
+    const cleanUrl = studioReviewUrl.trim();
+
+    if (!cleanId) {
+      setStudioError("Stand Card ID is required.");
+      return;
+    }
+    if (!cleanUrl) {
+      setStudioError("Shop Location / Google Review link is mandatory.");
+      return;
+    }
+
+    try {
+      const url = new URL(cleanUrl);
+      if (!["http:", "https:"].includes(url.protocol)) {
+        throw new Error("Invalid protocol");
+      }
+    } catch {
+      setStudioError("Please enter a valid URL starting with https://");
+      return;
+    }
+
+    setStudioSaving(true);
+    setStudioError("");
+    setStudioSuccess("");
+
+    try {
+      const payload = {
+        cardId: cleanId,
+        destinationUrl: cleanUrl,
+        title: studioTitle.trim(),
+        cardType: studioCardType,
+        status: studioStatus,
+        socialLinks: {
+          instagram: studioInstagram.trim(),
+          whatsapp: studioWhatsapp.trim(),
+          facebook: studioFacebook.trim(),
+        },
+      };
+
+      const existing = cards.find(
+        (c) => c.cardId.toUpperCase() === cleanId
+      );
+
+      let response;
+      if (existing) {
+        response = await updateCardApi(existing.cardId, payload);
+      } else {
+        response = await activateCardApi(payload);
+      }
+
+      if (response && response.success) {
+        setStudioSuccess(`Stand '${cleanId}' successfully saved and updated!`);
+        showToast(`Stand '${cleanId}' All-in-One configuration saved!`);
+        fetchDashboardData(true);
+      } else {
+        throw new Error(response?.message || "Failed to save stand.");
+      }
+    } catch (err) {
+      setStudioError(err.message || "Failed to save All-in-One Stand.");
+    } finally {
+      setStudioSaving(false);
     }
   }
 
@@ -545,6 +664,15 @@ export default function AdminDashboard() {
 
           <button
             type="button"
+            className={`admin-tab-btn ${activeTab === "all-in-one" ? "active" : ""}`}
+            onClick={() => setActiveTab("all-in-one")}
+          >
+            <Sparkles size={15} />
+            <span>All-in-One Studio</span>
+          </button>
+
+          <button
+            type="button"
             className={`admin-tab-btn ${activeTab === "bulk" ? "active" : ""}`}
             onClick={() => setActiveTab("bulk")}
           >
@@ -655,8 +783,19 @@ export default function AdminDashboard() {
               </div>
             </div>
 
-            {/* Quick Action Banner */}
+            {/* Quick Action Banners */}
             <div className="admin-banner-grid">
+              <div className="action-banner-card banner-all-in-one" onClick={() => setActiveTab("all-in-one")}>
+                <div className="banner-icon-badge amber"><Sparkles size={22} /></div>
+                <div className="banner-card-content">
+                  <h3>All-in-One Multi-Link Studio</h3>
+                  <p>Configure Google Review, Instagram, WhatsApp, and Facebook links with live vector print exports.</p>
+                </div>
+                <button type="button" className="banner-arrow-btn">
+                  <ArrowRight size={16} />
+                </button>
+              </div>
+
               <div className="action-banner-card" onClick={() => setActiveTab("bulk")}>
                 <div className="banner-icon-badge"><Layers size={22} /></div>
                 <div className="banner-card-content">
@@ -737,6 +876,312 @@ export default function AdminDashboard() {
                     ))}
                   </div>
                 )}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* ============================================================== */}
+        {/* TAB 2: ALL-IN-ONE STAND & PRINT STUDIO (ADMIN-EXCLUSIVE)      */}
+        {/* ============================================================== */}
+        {activeTab === "all-in-one" && (
+          <div className="admin-tab-content all-in-one-tab-layout">
+            {/* Header Banner */}
+            <div className="studio-top-banner">
+              <div className="studio-banner-text">
+                <div className="studio-badge-pill">
+                  <Sparkles size={13} />
+                  <span>ALL-IN-ONE STAND MANAGER &amp; PRINT STUDIO</span>
+                </div>
+                <h2>Standard All-in-One Multi-Link &amp; Print Studio</h2>
+                <p>
+                  Configure multi-channel stands (Google Location + Instagram, WhatsApp &amp; Facebook) exclusively from this private admin panel. Preview print designs in real-time and export vector files.
+                </p>
+              </div>
+
+              <div className="studio-banner-actions">
+                {studioCardId && (
+                  <a
+                    href={`/c/${studioCardId}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="admin-btn-secondary"
+                    title="Open customer redirect page in new tab"
+                  >
+                    <Smartphone size={14} /> <span>Test Scan (/c/{studioCardId})</span> <ExternalLink size={12} />
+                  </a>
+                )}
+              </div>
+            </div>
+
+            {/* Stand Quick-Selector Strip */}
+            <div className="studio-selector-strip">
+              <div className="selector-field-wrap">
+                <label className="strip-label">Select Existing Stand:</label>
+                <select
+                  value={studioCardId}
+                  onChange={(e) => {
+                    const found = cards.find((c) => c.cardId === e.target.value);
+                    if (found) {
+                      selectCardForStudio(found);
+                    } else {
+                      setStudioCardId(e.target.value);
+                    }
+                  }}
+                  className="admin-select-styled strip-select"
+                >
+                  <option value="">-- Choose from {cards.length} database stands --</option>
+                  {cards.map((c) => (
+                    <option key={c.cardId} value={c.cardId}>
+                      {c.cardId} — {c.title || "Untitled"} ({c.cardType === "connect" ? "🌐 Social All-in-One" : "📍 Google Review"})
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <button
+                type="button"
+                className="admin-btn-secondary strip-new-btn"
+                onClick={() => {
+                  setStudioCardId(`TF-${String(Math.floor(Math.random() * 9000) + 1000)}`);
+                  setStudioCardNumber(null);
+                  setStudioTitle("");
+                  setStudioReviewUrl("");
+                  setStudioCardType("connect");
+                  setStudioInstagram("");
+                  setStudioWhatsapp("");
+                  setStudioFacebook("");
+                  setStudioStatus("active");
+                  setStudioSuccess("");
+                  setStudioError("");
+                }}
+              >
+                <Plus size={14} /> <span>New Stand ID</span>
+              </button>
+            </div>
+
+            {/* 2-Column Responsive Workspace Grid */}
+            <div className="all-in-one-workspace-grid">
+              {/* Left Column: Configuration Form */}
+              <div className="studio-config-card">
+                <div className="card-header-styled">
+                  <div className="header-title-group">
+                    <Sliders size={18} color="#16a34a" />
+                    <div>
+                      <h3>Stand Configuration</h3>
+                      <span className="card-sub-hint">Set destination links &amp; social profiles</span>
+                    </div>
+                  </div>
+                  {studioCardId && (
+                    <span className="mono-card-pill"><code>{studioCardId}</code></span>
+                  )}
+                </div>
+
+                <form onSubmit={handleSaveStudioStand} className="studio-form-body">
+                  {/* Stand ID */}
+                  <div className="form-group-item">
+                    <label className="form-item-label">
+                      Stand Card ID <span className="req-star">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      value={studioCardId}
+                      onChange={(e) => setStudioCardId(e.target.value.toUpperCase())}
+                      className="admin-input-styled mono-font"
+                      placeholder="e.g. TF-01100"
+                      required
+                    />
+                    <span className="field-hint">Unique identifier on the physical acrylic stand or NFC chip.</span>
+                  </div>
+
+                  {/* Stand Title / Business Name */}
+                  <div className="form-group-item mt-14">
+                    <label className="form-item-label">
+                      Business / Stand Name
+                    </label>
+                    <input
+                      type="text"
+                      value={studioTitle}
+                      onChange={(e) => setStudioTitle(e.target.value)}
+                      className="admin-input-styled"
+                      placeholder="e.g. Royal Cafe &amp; Bakery"
+                    />
+                    <span className="field-hint">Rendered on the print preview and customer landing page.</span>
+                  </div>
+
+                  {/* Card Functionality Selector */}
+                  <div className="form-group-item mt-14">
+                    <label className="form-item-label">
+                      Card Functionality <span className="req-star">*</span>
+                    </label>
+                    <div className="studio-type-toggle-row">
+                      <button
+                        type="button"
+                        className={`studio-type-pill ${studioCardType === "connect" ? "active" : ""}`}
+                        onClick={() => setStudioCardType("connect")}
+                      >
+                        <div className="type-pill-icon">🌐</div>
+                        <div className="type-pill-text">
+                          <strong>Social Connect (All-in-One)</strong>
+                          <small>Location + Instagram, WhatsApp &amp; Facebook</small>
+                        </div>
+                      </button>
+
+                      <button
+                        type="button"
+                        className={`studio-type-pill ${studioCardType === "review" ? "active" : ""}`}
+                        onClick={() => setStudioCardType("review")}
+                      >
+                        <div className="type-pill-icon">📍</div>
+                        <div className="type-pill-text">
+                          <strong>Direct Google Review</strong>
+                          <small>1-tap redirect to Google Maps</small>
+                        </div>
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Google Review URL (Mandatory) */}
+                  <div className="form-group-item mt-14">
+                    <label className="form-item-label">
+                      Shop Location / Google Review URL <span className="req-star">* (Mandatory)</span>
+                    </label>
+                    <div className="input-with-icon-wrap">
+                      <MapPin size={15} className="input-icon-left" />
+                      <input
+                        type="url"
+                        value={studioReviewUrl}
+                        onChange={(e) => setStudioReviewUrl(e.target.value)}
+                        className="admin-input-styled with-left-icon"
+                        placeholder="https://g.page/r/... or https://maps.app.goo.gl/..."
+                        required
+                      />
+                    </div>
+                    <span className="field-hint">Primary shop location or Google Review link.</span>
+                  </div>
+
+                  {/* Social & Business Channels (Shown for All-in-One) */}
+                  {studioCardType === "connect" && (
+                    <div className="admin-social-block mt-14">
+                      <div className="social-block-header">
+                        <Share2 size={14} />
+                        <span>Social &amp; Business Channels (All-in-One)</span>
+                      </div>
+
+                      <div className="social-inputs-stack">
+                        <div className="social-input-row-admin">
+                          <span className="social-admin-prefix insta">Instagram</span>
+                          <input
+                            type="text"
+                            value={studioInstagram}
+                            onChange={(e) => setStudioInstagram(e.target.value)}
+                            className="admin-social-input"
+                            placeholder="Handle (@myshop) or URL"
+                          />
+                        </div>
+
+                        <div className="social-input-row-admin">
+                          <span className="social-admin-prefix wa">WhatsApp</span>
+                          <input
+                            type="text"
+                            value={studioWhatsapp}
+                            onChange={(e) => setStudioWhatsapp(e.target.value)}
+                            className="admin-social-input"
+                            placeholder="Business number (+91 9876543210)"
+                          />
+                        </div>
+
+                        <div className="social-input-row-admin">
+                          <span className="social-admin-prefix fb">Facebook</span>
+                          <input
+                            type="text"
+                            value={studioFacebook}
+                            onChange={(e) => setStudioFacebook(e.target.value)}
+                            className="admin-social-input"
+                            placeholder="Facebook page link"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Stand Status */}
+                  <div className="form-group-item mt-14">
+                    <label className="form-item-label">Stand Status</label>
+                    <select
+                      value={studioStatus}
+                      onChange={(e) => setStudioStatus(e.target.value)}
+                      className="admin-select-styled"
+                    >
+                      <option value="active">Active (Redirects live on tap/scan)</option>
+                      <option value="inactive">Inactive (Shows setup page)</option>
+                    </select>
+                  </div>
+
+                  {/* Alert Messages */}
+                  {studioError && (
+                    <div className="admin-alert-banner alert-danger mt-14">
+                      <AlertCircle size={15} />
+                      <span>{studioError}</span>
+                    </div>
+                  )}
+
+                  {studioSuccess && (
+                    <div className="admin-alert-banner alert-success mt-14">
+                      <CheckCircle2 size={15} />
+                      <span>{studioSuccess}</span>
+                    </div>
+                  )}
+
+                  {/* Save Button */}
+                  <div className="studio-form-actions mt-18">
+                    <button
+                      type="submit"
+                      className="admin-btn-primary studio-submit-btn"
+                      disabled={studioSaving}
+                    >
+                      {studioSaving ? (
+                        <>
+                          <Loader2 size={16} className="spin-icon" /> Saving Stand...
+                        </>
+                      ) : (
+                        <>
+                          <CheckCircle2 size={16} /> Save Stand &amp; Update Links
+                        </>
+                      )}
+                    </button>
+                  </div>
+                </form>
+              </div>
+
+              {/* Right Column: Embedded NfcCardStudio */}
+              <div className="studio-preview-card">
+                <div className="card-header-styled">
+                  <div className="header-title-group">
+                    <Sparkles size={18} color="#f59e0b" />
+                    <div>
+                      <h3>Live Vector Card &amp; Stand Studio</h3>
+                      <span className="card-sub-hint">Instant vector rendering &amp; 300 DPI print exports</span>
+                    </div>
+                  </div>
+                  <span className="spec-vector-pill">Vector Engine</span>
+                </div>
+
+                <div className="studio-cardstudio-container">
+                  <NfcCardStudio
+                    key={`${studioCardId}-${studioCardType}-${studioTitle}`}
+                    cardId={studioCardId || "TF-01100"}
+                    cardNumber={studioCardNumber}
+                    title={studioTitle || "Your Business Name"}
+                    destinationUrl={studioReviewUrl || "https://maps.google.com"}
+                    cardType={studioCardType}
+                    socialLinks={{
+                      instagram: studioInstagram,
+                      whatsapp: studioWhatsapp,
+                      facebook: studioFacebook,
+                    }}
+                  />
+                </div>
               </div>
             </div>
           </div>
@@ -988,6 +1433,19 @@ export default function AdminDashboard() {
                           {/* Action Buttons */}
                           <td className="text-right">
                             <div className="action-buttons-cell">
+                              {/* Open in All-in-One Studio */}
+                              <button
+                                type="button"
+                                className="row-action-btn studio-btn-row"
+                                onClick={() => {
+                                  selectCardForStudio(card);
+                                  setActiveTab("all-in-one");
+                                }}
+                                title="Open in All-in-One Studio"
+                              >
+                                <Sparkles size={14} />
+                              </button>
+
                               {/* View / Download QR */}
                               <button
                                 type="button"
