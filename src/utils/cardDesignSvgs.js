@@ -206,18 +206,18 @@ export function generateCardSvgString({
         </g>
 
         <!-- Center NFC Chip Emblem -->
-        <g transform="translate(${W / 2}, 205)">
-          <circle cx="0" cy="0" r="50" fill="#151a24" stroke="url(#backGoldGradDark)" stroke-width="2.5"/>
-          <g transform="translate(-20, -20) scale(1.7)">
+        <g transform="translate(${W / 2}, 185)">
+          <circle cx="0" cy="0" r="46" fill="#151a24" stroke="url(#backGoldGradDark)" stroke-width="2.5"/>
+          <g transform="translate(-18, -18) scale(1.55)">
             ${ICONS.nfcWave("#fbbf24")}
           </g>
         </g>
 
-        <text x="${W / 2}" y="300" font-family="-apple-system, BlinkMacSystemFont, 'Plus Jakarta Sans', 'Inter', sans-serif" font-size="40" font-weight="900" fill="#ffffff" text-anchor="middle" letter-spacing="1.5">${safeBrand.toUpperCase()}</text>
-        <text x="${W / 2}" y="330" font-family="-apple-system, BlinkMacSystemFont, 'Inter', sans-serif" font-size="15" font-weight="700" fill="#fbbf24" text-anchor="middle" letter-spacing="3.5">SMART NFC &bull; DIGITAL TOUCHPOINT</text>
+        <text x="${W / 2}" y="270" font-family="-apple-system, BlinkMacSystemFont, 'Plus Jakarta Sans', 'Inter', sans-serif" font-size="34" font-weight="900" fill="#ffffff" text-anchor="middle" letter-spacing="3">${safeBrand.toUpperCase()}</text>
+        <text x="${W / 2}" y="296" font-family="-apple-system, BlinkMacSystemFont, 'Inter', sans-serif" font-size="13" font-weight="700" fill="#fbbf24" text-anchor="middle" letter-spacing="3">SMART NFC &bull; DIGITAL TOUCHPOINT</text>
 
         <!-- Compact Contact Details Box -->
-        <g transform="translate(48, 380)">
+        <g transform="translate(48, 340)">
           <rect x="0" y="0" width="${W - 96}" height="175" rx="20" fill="#131722" stroke="#252e3e" stroke-width="1.8" filter="drop-shadow(0 8px 20px rgba(0,0,0,0.45))"/>
 
           <!-- Phone Row -->
@@ -239,13 +239,16 @@ export function generateCardSvgString({
           </g>
         </g>
 
-        <!-- OFFICIAL EMERALD VORTEX LOGO BADGE IN EMPTY SPACE (Photo 1) -->
-        <g transform="translate(${W / 2}, 660)" filter="drop-shadow(0 6px 16px rgba(0,0,0,0.4))">
-          <rect x="-140" y="-45" width="280" height="90" rx="22" fill="#11151e" stroke="#10b981" stroke-width="1.5"/>
-          <g transform="translate(-85, 0)">
-            ${ICONS.tapformLogo(54, "#10b981", "#ffffff")}
+        <!-- LUXURY TAPFORM BRAND INSIGNIA (Centered Clean Lockup) -->
+        <g transform="translate(${W / 2}, 660)">
+          <!-- Subtle glow effect -->
+          <circle cx="-90" cy="0" r="38" fill="#10b981" fill-opacity="0.15" filter="blur(6px)"/>
+          
+          <!-- Logo & Brand lockup -->
+          <g transform="translate(-90, 0)">
+            ${ICONS.tapformLogo(52, "#10b981", "#ffffff")}
           </g>
-          <text x="-35" y="11" font-family="-apple-system, BlinkMacSystemFont, 'Plus Jakarta Sans', sans-serif" font-size="30" font-weight="900" fill="#ffffff" letter-spacing="1.5">TAPFORM</text>
+          <text x="-48" y="11" font-family="-apple-system, BlinkMacSystemFont, 'Plus Jakarta Sans', sans-serif" font-size="34" font-weight="900" fill="#ffffff" letter-spacing="3">TAPFORM</text>
         </g>
 
         <!-- Bottom Tech Specs & Verification Badge -->
