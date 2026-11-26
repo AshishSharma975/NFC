@@ -231,7 +231,7 @@ export function generateCardSvgString({
 
         <!-- Compact Contact Details Box -->
         <g transform="translate(48, 340)">
-          <rect x="0" y="0" width="${W - 96}" height="175" rx="20" fill="#131722" stroke="#252e3e" stroke-width="1.8" filter="drop-shadow(0 8px 20px rgba(0,0,0,0.45))"/>
+          <rect x="0" y="0" width="${W - 96}" height="175" rx="20" fill="#131722" stroke="#252e3e" stroke-width="1.8"/>
 
           <!-- Phone Row -->
           <g transform="translate(24, 25)">
@@ -254,9 +254,6 @@ export function generateCardSvgString({
 
         <!-- LUXURY TAPFORM BRAND INSIGNIA (Centered Clean Lockup) -->
         <g transform="translate(${W / 2}, 660)">
-          <!-- Subtle glow effect -->
-          <circle cx="-90" cy="0" r="38" fill="#10b981" fill-opacity="0.15" filter="blur(6px)"/>
-          
           <!-- Logo & Brand lockup -->
           <g transform="translate(-90, 0)">
             ${ICONS.tapformLogo(52, "#10b981", "#ffffff")}
@@ -334,7 +331,7 @@ export function generateCardSvgString({
         }
 
         <!-- 4x4 CM QR CODE TILE -->
-        <g filter="drop-shadow(0 14px 24px rgba(0,0,0,0.08))">
+        <g>
           <rect x="${qrBoxX}" y="${qrBoxY}" width="${qrBoxSize}" height="${qrBoxSize}" rx="28" fill="#ffffff" stroke="url(#rainbowBorderPocket)" stroke-width="5"/>
           ${
             isBlank
@@ -356,16 +353,16 @@ export function generateCardSvgString({
         <!-- Social Icons Row (Google, Insta, WhatsApp, FB) -->
         <g transform="translate(${W / 2}, 780)">
           <g transform="translate(-115, 0)">
-            <circle cx="28" cy="28" r="24" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5" filter="drop-shadow(0 2px 4px rgba(0,0,0,0.08))"/>
+            <circle cx="28" cy="28" r="24" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5"/>
             <g transform="translate(17, 17) scale(0.95)">${ICONS.googleG}</g>
 
-            <circle cx="90" cy="28" r="24" fill="#e1306c" stroke="#e1306c" stroke-width="1.5" filter="drop-shadow(0 2px 4px rgba(0,0,0,0.08))"/>
+            <circle cx="90" cy="28" r="24" fill="#e1306c" stroke="#e1306c" stroke-width="1.5"/>
             <g transform="translate(77, 15) scale(1)">${ICONS.instagram}</g>
 
-            <circle cx="152" cy="28" r="24" fill="#16a34a" stroke="#22c55e" stroke-width="1.5" filter="drop-shadow(0 2px 4px rgba(0,0,0,0.08))"/>
+            <circle cx="152" cy="28" r="24" fill="#16a34a" stroke="#22c55e" stroke-width="1.5"/>
             <g transform="translate(139, 15) scale(1)">${ICONS.whatsapp}</g>
 
-            <circle cx="214" cy="28" r="24" fill="#1d4ed8" stroke="#3b82f6" stroke-width="1.5" filter="drop-shadow(0 2px 4px rgba(0,0,0,0.08))"/>
+            <circle cx="214" cy="28" r="24" fill="#1d4ed8" stroke="#3b82f6" stroke-width="1.5"/>
             <g transform="translate(203, 17) scale(0.95)">${ICONS.facebook}</g>
           </g>
         </g>
@@ -428,7 +425,7 @@ export function generateCardSvgString({
       }
 
       <!-- 4x4 CM PHYSICAL PRINT QR TILE (472px width on 54mm card) -->
-      <g filter="drop-shadow(0 14px 28px rgba(0,0,0,0.65))">
+      <g>
         <rect x="${qrBoxX}" y="${qrBoxY}" width="${qrBoxSize}" height="${qrBoxSize}" rx="28" fill="#ffffff" stroke="url(#qrFrameGrad)" stroke-width="5"/>
         ${
           isBlank
@@ -645,22 +642,22 @@ export function generateCardSvgString({
 
     <!-- Social Icons -->
     <g transform="translate(${SW / 2}, 252)">
-      <circle cx="-90" cy="0" r="22" fill="#ffffff" stroke="#e2e8f0" stroke-width="1.5" filter="drop-shadow(0 3px 6px rgba(0,0,0,0.12))"/>
+      <circle cx="-90" cy="0" r="22" fill="#ffffff" stroke="#e2e8f0" stroke-width="1.5"/>
       <g transform="translate(-104, -14) scale(1.15)">${ICONS.googleG}</g>
 
-      <circle cx="-30" cy="0" r="22" fill="url(#instaGradAll)" filter="drop-shadow(0 3px 6px rgba(0,0,0,0.12))"/>
+      <circle cx="-30" cy="0" r="22" fill="url(#instaGradAll)"/>
       <g transform="translate(-45, -15) scale(1.2)">${ICONS.instagram}</g>
 
-      <circle cx="30" cy="0" r="22" fill="#25D366" filter="drop-shadow(0 3px 6px rgba(0,0,0,0.12))"/>
+      <circle cx="30" cy="0" r="22" fill="#25D366"/>
       <g transform="translate(14, -16) scale(1.25)">${ICONS.whatsapp}</g>
 
-      <circle cx="90" cy="0" r="22" fill="#1877F2" filter="drop-shadow(0 3px 6px rgba(0,0,0,0.12))"/>
+      <circle cx="90" cy="0" r="22" fill="#1877F2"/>
       <g transform="translate(77, -13) scale(1.05)">${ICONS.facebook}</g>
     </g>
 
     <!-- DUAL ACTION PANELS -->
     <g transform="translate(95, 315)">
-      <rect x="0" y="0" width="375" height="510" rx="32" fill="#ffffff" stroke="#e2e8f0" stroke-width="2.5" filter="drop-shadow(0 6px 16px rgba(0,0,0,0.03))"/>
+      <rect x="0" y="0" width="375" height="510" rx="32" fill="#ffffff" stroke="#e2e8f0" stroke-width="2.5"/>
       <text x="187" y="60" font-family="-apple-system, BlinkMacSystemFont, 'Inter', sans-serif" font-size="21" font-weight="900" fill="#0f172a" text-anchor="middle" letter-spacing="2">TAP PHONE</text>
 
       <g transform="translate(138, 140) scale(1.6)">
@@ -678,7 +675,7 @@ export function generateCardSvgString({
     </g>
 
     <g transform="translate(525, 315)">
-      <rect x="0" y="0" width="375" height="510" rx="32" fill="#ffffff" stroke="#e2e8f0" stroke-width="2.5" filter="drop-shadow(0 6px 16px rgba(0,0,0,0.03))"/>
+      <rect x="0" y="0" width="375" height="510" rx="32" fill="#ffffff" stroke="#e2e8f0" stroke-width="2.5"/>
       <text x="187" y="60" font-family="-apple-system, BlinkMacSystemFont, 'Inter', sans-serif" font-size="21" font-weight="900" fill="#0f172a" text-anchor="middle" letter-spacing="2">SCAN CODE</text>
 
       <rect x="32" y="80" width="310" height="310" rx="28" fill="#ffffff" stroke="url(#rainbowBorderStandAll)" stroke-width="6"/>
