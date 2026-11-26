@@ -1,6 +1,6 @@
 import JSZip from "jszip";
 import QRCode from "qrcode";
-import { generateCardSvgString, generateSideBySideCardSvg } from "./cardDesignSvgs";
+import { generateCardSvgString, generateSideBySideCardSvg } from "./cardDesignSvgs.js";
 
 /**
  * Generate CSV text content from an array of card objects
