@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import { bulkGenerateCardsApi, getAllCardsApi } from "../utils/api";
 import { downloadCsvManifest, downloadZipExport } from "../utils/bulkExport";
+import { downloadCardSvg } from "../utils/cardDesignSvgs";
 
 export default function BulkExportSection({ onBatchCreated, totalCardsCount = 0 }) {
   // Generator State
@@ -160,8 +161,8 @@ export default function BulkExportSection({ onBatchCreated, totalCardsCount = 0 
     }
   }
 
-  // Download ZIP (PNG + SVG + CSV) button
-  async function handleDownloadZip(cardsToExport = null) {
+  // Download ZIP with specific exportMode
+  async function handleDownloadZip(cardsToExport = null, exportMode = "all") {
     setIsExportingZip(true);
     setExportError("");
     setExportSuccessMsg("");
@@ -174,18 +175,50 @@ export default function BulkExportSection({ onBatchCreated, totalCardsCount = 0 
       }
 
       const timestamp = new Date().toISOString().slice(0, 10);
+      let label = "all_prints";
+      if (exportMode === "cards-review") label = "chhota_cards_review_85x54";
+      else if (exportMode === "cards-all-in-one") label = "chhota_cards_all_in_one_85x54";
+      else if (exportMode === "stand-review") label = "bada_stands_review_6x6";
+      else if (exportMode === "stand-all-in-one") label = "bada_stands_all_in_one_6x6";
+
       await downloadZipExport(cards, {
-        filename: `tapform_bulk_qrs_${filterStatus}_${cards.length}_${timestamp}.zip`,
+        filename: `tapform_${label}_${filterStatus}_${cards.length}_${timestamp}.zip`,
+        exportMode,
         onProgress: (p) => setZipProgress(p),
       });
 
-      setExportSuccessMsg(`Successfully exported ZIP package with ${cards.length} print-ready PNGs, SVGs & CSV!`);
+      setExportSuccessMsg(`Successfully exported ZIP package with ${cards.length} cards!`);
       setTimeout(() => setExportSuccessMsg(""), 6000);
     } catch (err) {
       setExportError(err.message || "Failed to build ZIP export.");
     } finally {
       setIsExportingZip(false);
       setZipProgress(null);
+    }
+  }
+
+  // Download Blank 6x6 Acrylic Stand Template
+  function handleDownloadBlankStand(variant = "all-in-one") {
+    try {
+      downloadCardSvg(
+        {
+          format: "table-stand",
+          theme: "paw-white",
+          designVariant: variant,
+          title: "",
+          cardId: "BLANK-STAND",
+          cardNumber: "0000",
+          isBlank: true,
+          brandName: "Tapform",
+          phone: "8827718774",
+          email: "ashish8389sharma@gmail.com",
+        },
+        `Tapform_Blank_6x6_Stand_${variant === "all-in-one" ? "All_In_One" : "Review"}_Template`
+      );
+      setExportSuccessMsg(`Blank 6x6 Acrylic Stand (${variant === "all-in-one" ? "All-in-One" : "Review"}) Template Downloaded!`);
+      setTimeout(() => setExportSuccessMsg(""), 5000);
+    } catch (err) {
+      setExportError("Download failed: " + err.message);
     }
   }
 
@@ -421,7 +454,7 @@ export default function BulkExportSection({ onBatchCreated, totalCardsCount = 0 
           </div>
 
           {/* Action Buttons Row */}
-          <div className="export-actions-row">
+          <div className="export-actions-row" style={{ display: "flex", flexWrap: "wrap", gap: "10px", alignItems: "center" }}>
             <button
               type="button"
               className="bolt-btn-secondary"
@@ -454,10 +487,68 @@ export default function BulkExportSection({ onBatchCreated, totalCardsCount = 0 
               )}
             </button>
 
+            {/* Chhota Card Buttons */}
+            <button
+              type="button"
+              className="bolt-btn-secondary"
+              onClick={() => handleDownloadZip(null, "cards-review")}
+              disabled={isExportingZip || isExportingCsv}
+              title="Download 85x54mm CR80 Google Review Cards (Front + Back with Tapform phone & email)"
+              style={{ background: "#f8fafc", color: "#0f172a", borderColor: "#cbd5e1", fontWeight: 600 }}
+            >
+              <FileArchive size={15} /> <span>Chhota Card (Review) 85x54 ZIP</span>
+            </button>
+
+            <button
+              type="button"
+              className="bolt-btn-secondary"
+              onClick={() => handleDownloadZip(null, "cards-all-in-one")}
+              disabled={isExportingZip || isExportingCsv}
+              title="Download 85x54mm CR80 All-in-One Social Cards (Front + Back with Tapform phone & email)"
+              style={{ background: "#eff6ff", color: "#1e40af", borderColor: "#bfdbfe", fontWeight: 700 }}
+            >
+              <FileArchive size={15} /> <span>Chhota Card (All-in-One) 85x54 ZIP</span>
+            </button>
+
+            {/* Bada Stand 6x6 Buttons */}
+            <button
+              type="button"
+              className="bolt-btn-secondary"
+              onClick={() => handleDownloadZip(null, "stand-review")}
+              disabled={isExportingZip || isExportingCsv}
+              title="Download 6x6 Acrylic Stand (Google Review) ZIP"
+              style={{ background: "#fefce8", color: "#854d0e", borderColor: "#fef08a", fontWeight: 600 }}
+            >
+              <FileArchive size={15} /> <span>Bada Stand (Review) 6x6 ZIP</span>
+            </button>
+
+            <button
+              type="button"
+              className="bolt-btn-secondary"
+              onClick={() => handleDownloadZip(null, "stand-all-in-one")}
+              disabled={isExportingZip || isExportingCsv}
+              title="Download 6x6 Acrylic Stand (All-in-One Connect) ZIP"
+              style={{ background: "#fdf4ff", color: "#86198f", borderColor: "#f5d0fe", fontWeight: 600 }}
+            >
+              <FileArchive size={15} /> <span>Bada Stand (All-in-One) 6x6 ZIP</span>
+            </button>
+
+            {/* Blank 6x6 Stand Templates */}
+            <button
+              type="button"
+              className="bolt-btn-secondary"
+              onClick={() => handleDownloadBlankStand("all-in-one")}
+              title="Download Blank 6x6 All-in-One Stand Template (150x150mm Vector SVG with QR Box)"
+              style={{ background: "#f0fdf4", color: "#166534", borderColor: "#bbf7d0", fontWeight: 700 }}
+            >
+              <Download size={15} /> <span>Download Blank 6x6 Stand (Template)</span>
+            </button>
+
+            {/* Complete Full ZIP */}
             <button
               type="button"
               className="bolt-btn-dark"
-              onClick={() => handleDownloadZip()}
+              onClick={() => handleDownloadZip(null, "all")}
               disabled={isExportingZip || isExportingCsv}
             >
               {isExportingZip ? (
@@ -471,7 +562,7 @@ export default function BulkExportSection({ onBatchCreated, totalCardsCount = 0 
                 </>
               ) : (
                 <>
-                  <Download size={15} /> Download ZIP (PNG + SVG + CDR + CSV)
+                  <Download size={15} /> Download Master Full Package ZIP
                 </>
               )}
             </button>

@@ -47,6 +47,7 @@ import {
   clearAdminToken,
 } from "../utils/api";
 import BulkExportSection from "../components/BulkExportSection";
+import NfcCardStudio from "../components/NfcCardStudio";
 import "../admin.css";
 
 export default function AdminDashboard() {
@@ -1151,14 +1152,14 @@ export default function AdminDashboard() {
                 </form>
               </div>
 
-              {/* Right Column: Live Dynamic QR Code & Direct Print/Vector Export */}
-              <div className="studio-preview-card qr-code-panel-card">
+              {/* Right Column: Complete Print Card Studio with Front & Back Side */}
+              <div className="studio-preview-card qr-code-panel-card" style={{ overflow: "hidden" }}>
                 <div className="card-header-styled">
                   <div className="header-title-group">
                     <QrCode size={18} color="#16a34a" />
                     <div>
-                      <h3>Dynamic QR Code</h3>
-                      <span className="card-sub-hint">Permanent NFC &amp; QR scan destination</span>
+                      <h3>Print Card & Stand Studio</h3>
+                      <span className="card-sub-hint">Preview Front (Large Font) & Back (Brand & Contact)</span>
                     </div>
                   </div>
                   <span className={`status-pill ${studioStatus === "active" ? "pill-active" : "pill-inactive"}`}>
@@ -1166,96 +1167,23 @@ export default function AdminDashboard() {
                   </span>
                 </div>
 
-                <div className="qr-panel-content text-center">
-                  <div className="qr-display-box" style={{ display: "inline-block", padding: "18px", background: "#ffffff", borderRadius: "16px", border: "1px solid #e2e8f0", boxShadow: "0 4px 16px rgba(0,0,0,0.04)" }}>
-                    <QRCodeSVG
-                      id="studio-live-qr-svg"
-                      value={studioCardId ? `${window.location.origin}/c/${studioCardId}` : "https://tapform.me"}
-                      size={220}
-                      level="H"
-                      marginSize={2}
-                      bgColor="#ffffff"
-                      fgColor="#0f172a"
-                    />
-                  </div>
-
-                  <div className="qr-meta-box mt-16" style={{ textAlign: "left", background: "#f8fafc", padding: "14px 16px", borderRadius: "12px", border: "1px solid #e2e8f0" }}>
-                    <div className="qr-meta-line" style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                      <span style={{ fontSize: "11px", fontWeight: 700, color: "#64748b" }}>STAND IDENTIFIER</span>
-                      <strong className="mono-font" style={{ fontSize: "15px", color: "#0f172a" }}>{studioCardId || "TF-01100"}</strong>
-                    </div>
-
-                    <div className="qr-meta-line mt-8" style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                      <span style={{ fontSize: "11px", fontWeight: 700, color: "#64748b" }}>FUNCTIONALITY</span>
-                      <span style={{ fontSize: "12px", fontWeight: 700, color: "#16a34a" }}>
-                        {studioCardType === "connect" ? "🌐 Social All-in-One (Multi-Link)" : "📍 Google Review (Direct)"}
-                      </span>
-                    </div>
-
-                    <div className="qr-meta-line mt-10">
-                      <span style={{ fontSize: "11px", fontWeight: 700, color: "#64748b" }}>PERMANENT SCAN LINK</span>
-                      <div className="url-copy-box" style={{ marginTop: "4px" }}>
-                        <code>{studioCardId ? `${window.location.origin}/c/${studioCardId}` : "https://tapform.me"}</code>
-                        <button
-                          type="button"
-                          className="cell-copy-btn"
-                          onClick={() =>
-                            copyToClipboard(
-                              studioCardId ? `${window.location.origin}/c/${studioCardId}` : "https://tapform.me",
-                              "studio-qr"
-                            )
-                          }
-                          title="Copy Permanent Scan URL"
-                        >
-                          {copiedMap["studio-qr"] ? <Check size={13} /> : <Copy size={13} />}
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* QR Download Options & Test Button */}
-                  <div className="qr-action-buttons-grid mt-18" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px" }}>
-                    <button
-                      type="button"
-                      className="admin-btn-secondary"
-                      onClick={() => downloadSvgAs("studio-live-qr-svg", studioCardId || "stand-qr", "png")}
-                      title="Download 1024x1024 High-Res PNG"
-                      style={{ width: "100%", justifyContent: "center" }}
-                    >
-                      <Download size={14} /> <span>1024px PNG</span>
-                    </button>
-
-                    <button
-                      type="button"
-                      className="admin-btn-secondary"
-                      onClick={() => downloadSvgAs("studio-live-qr-svg", studioCardId || "stand-qr", "svg")}
-                      title="Download Vector SVG"
-                      style={{ width: "100%", justifyContent: "center" }}
-                    >
-                      <Download size={14} /> <span>Vector SVG</span>
-                    </button>
-
-                    <button
-                      type="button"
-                      className="admin-btn-secondary"
-                      onClick={() => downloadSvgAs("studio-live-qr-svg", studioCardId || "stand-qr", "cdr")}
-                      title="Download CorelDRAW Vector (Import via Ctrl+I in CorelDRAW)"
-                      style={{ width: "100%", justifyContent: "center", background: "#f0fdf4", color: "#166534", borderColor: "#bbf7d0" }}
-                    >
-                      <Download size={14} /> <span>CorelDRAW (.cdr)</span>
-                    </button>
-
-                    <a
-                      href={studioCardId ? `/c/${studioCardId}` : "#"}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="admin-btn-primary"
-                      title="Test Live Redirection in new tab"
-                      style={{ width: "100%", justifyContent: "center" }}
-                    >
-                      <ExternalLink size={14} /> <span>Test Scan</span>
-                    </a>
-                  </div>
+                <div className="qr-panel-content" style={{ padding: "16px" }}>
+                  <NfcCardStudio
+                    cardId={studioCardId || "TF-01"}
+                    cardNumber={studioCardNumber}
+                    title={studioTitle || "Your Business Name"}
+                    destinationUrl={studioReviewUrl}
+                    qrUrl={studioCardId ? `${window.location.origin}/c/${studioCardId}` : "https://tapform.me"}
+                    cardType={studioCardType || "review"}
+                    socialLinks={{
+                      instagram: studioInstagram,
+                      whatsapp: studioWhatsapp,
+                      facebook: studioFacebook,
+                    }}
+                    brandName="tapform"
+                    phone="8827718774"
+                    email="ashish8389sharma@gmail.com"
+                  />
                 </div>
               </div>
             </div>

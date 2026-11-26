@@ -41,9 +41,6 @@ export function generateCsvContent(cards) {
   return [headers.join(","), ...rows].join("\r\n");
 }
 
-/**
- * Trigger immediate browser download of CSV manifest
- */
 export function downloadCsvManifest(cards, filename = "codes.csv") {
   if (!cards || cards.length === 0) {
     throw new Error("No cards available to export.");
@@ -63,9 +60,6 @@ export function downloadCsvManifest(cards, filename = "codes.csv") {
   setTimeout(() => URL.revokeObjectURL(url), 1000);
 }
 
-/**
- * Helper to convert base64 data URL to Uint8Array for JSZip
- */
 function dataUrlToUint8Array(dataUrl) {
   const base64 = dataUrl.split(",")[1];
   const binaryString = atob(base64);
@@ -79,15 +73,20 @@ function dataUrlToUint8Array(dataUrl) {
 
 /**
  * Generate and download a ZIP file containing:
- * - 1024x1024 PNG images with 4-module quiet zone
+ * - 1024x1024 PNG images
  * - Vector SVG files
- * - codes.csv manifest listing all QR IDs, URLs, and statuses
+ * - CorelDRAW Vector files
+ * - 4 Print Designs:
+ *   1) Chhota Review Pocket Card (Front & Back)
+ *   2) Chhota All in One Pocket Card (Front & Back)
+ *   3) Bada 6x6 Google Review Stand
+ *   4) Bada 6x6 All in One Stand
  *
  * @param {Array} cards - array of card objects
- * @param {Object} options - { onProgress: Function, filename: string }
+ * @param {Object} options - { onProgress: Function, filename: string, exportMode: string, isBlank: boolean }
  */
 export async function downloadZipExport(cards, options = {}) {
-  const { onProgress, filename } = options;
+  const { onProgress, filename, exportMode = "all", isBlank = false } = options;
 
   if (!cards || cards.length === 0) {
     throw new Error("No cards selected for ZIP export.");
@@ -104,7 +103,7 @@ export async function downloadZipExport(cards, options = {}) {
         ? `${window.location.origin}/c/${card.cardId}`
         : `/c/${card.cardId}`);
 
-    // Generate 1024x1024 PNG with 4-module quiet zone (print ready)
+    // Generate 1024x1024 PNG
     const pngDataUrl = await QRCode.toDataURL(permanentUrl, {
       width: 1024,
       margin: 4,
@@ -115,11 +114,9 @@ export async function downloadZipExport(cards, options = {}) {
       },
     });
 
-    // 1. Root PNG and SVG
     const pngBytes = dataUrlToUint8Array(pngDataUrl);
-    zip.file(`${card.cardId}.png`, pngBytes);
+    zip.file(`QRs_PNG_1024px/${card.cardId}.png`, pngBytes);
 
-    // 2. Scalable Vector Graphic (SVG)
     const svgString = await QRCode.toString(permanentUrl, {
       type: "svg",
       margin: 4,
@@ -129,28 +126,72 @@ export async function downloadZipExport(cards, options = {}) {
         light: "#ffffff",
       },
     });
+    zip.file(`QRs_Vector_SVG/${card.cardId}.svg`, svgString);
 
-    zip.file(`${card.cardId}.svg`, svgString);
-
-    // 3. CorelDRAW Dedicated Vector Folder
     const corelSvg = `<!-- CorelDRAW Print Ready Vector: Press Ctrl+I (File > Import) in CorelDRAW to open as 100% Vector Curves -->\n${svgString}`;
     zip.file(`CorelDRAW_Print_Ready/${card.cardId}_CorelDRAW_Vector.svg`, corelSvg);
 
-    // 4. Complete Designed Vector Card with Unique Corner Number (#01, #02... #100)
-    try {
-      const cardDesignSvg = generateCardSvgString({
-        format: "nfc-card",
-        theme: card.designTheme || "matte-black",
-        cardType: card.cardType || "review",
-        title: card.title || "Your Business Name",
-        cardId: card.cardId,
-        cardNumber: card.cardNumber,
-        qrValue: permanentUrl,
-        socialLinks: card.socialLinks || {},
-      });
-      zip.file(`Designed_Cards_Print_Ready/${card.cardId}_Designed_Card.svg`, cardDesignSvg);
-    } catch (e) {
-      console.warn("Card design SVG export warning:", e);
+    // 1. Chhota Pocket Cards (85x54mm)
+    if (exportMode === "all" || exportMode === "cards-review" || exportMode === "cards-all-in-one") {
+      try {
+        const isAllInOne = exportMode === "cards-all-in-one";
+        const folder = isAllInOne ? "85x54_Pocket_Cards_All_In_One" : "85x54_Pocket_Cards_Google_Review";
+
+        // Front Side
+        const frontSvg = generateCardSvgString({
+          format: "nfc-card",
+          designVariant: isAllInOne ? "all-in-one" : "review",
+          theme: isAllInOne ? "paw-white" : "matte-black",
+          side: "front",
+          title: card.title || "",
+          cardId: card.cardId,
+          cardNumber: card.cardNumber,
+          qrValue: permanentUrl,
+          socialLinks: card.socialLinks || {},
+          isBlank,
+        });
+        zip.file(`${folder}/Front_${card.cardId}.svg`, frontSvg);
+
+        // Back Side (Contains Phone + Email)
+        const backSvg = generateCardSvgString({
+          format: "nfc-card",
+          side: "back",
+          title: card.title || "",
+          cardId: card.cardId,
+          cardNumber: card.cardNumber,
+          brandName: "Tapform",
+          phone: "8827718774",
+          email: "ashish8389sharma@gmail.com",
+        });
+        zip.file(`${folder}/Back_${card.cardId}.svg`, backSvg);
+      } catch (e) {
+        console.warn("Card export warning:", e);
+      }
+    }
+
+    // 2. Bada 6x6 Stands (150x150mm)
+    if (exportMode === "all" || exportMode === "stand-review" || exportMode === "stand-all-in-one") {
+      try {
+        const isAllInOneStand = exportMode === "stand-all-in-one";
+        const folder = isAllInOneStand ? "6x6_Acrylic_Stands_All_In_One" : "6x6_Acrylic_Stands_Google_Review";
+
+        const standSvg = generateCardSvgString({
+          format: "table-stand",
+          designVariant: isAllInOneStand ? "all-in-one" : "review",
+          title: card.title || "",
+          cardId: card.cardId,
+          cardNumber: card.cardNumber,
+          qrValue: permanentUrl,
+          socialLinks: card.socialLinks || {},
+          brandName: "Tapform",
+          phone: "8827718774",
+          email: "ashish8389sharma@gmail.com",
+          isBlank,
+        });
+        zip.file(`${folder}/${card.cardId}_6x6_Stand.svg`, standSvg);
+      } catch (e) {
+        console.warn("Stand export warning:", e);
+      }
     }
 
     if (onProgress) {
@@ -162,31 +203,24 @@ export async function downloadZipExport(cards, options = {}) {
       });
     }
 
-    // Yield to main thread every 5 iterations to keep UI responsive
     if (i % 5 === 0) {
       await new Promise((resolve) => setTimeout(resolve, 0));
     }
   }
 
-  // Include CorelDRAW Print Instructions for shop owners
+  // Include CorelDRAW Print Instructions
   const corelInstructions = `====================================================================
 INSTRUCTIONS FOR PRINT SHOP / CORELDRAW OPERATORS
 ====================================================================
-All QR codes in this ZIP are print-ready for UV flatbed, acrylic, and laser printers:
-
-1. Open CorelDRAW (Supports all versions: CorelDRAW X4, X5, X6, X7, X8, 2019-2024).
-2. Press Ctrl + I (File > Import).
-3. Select files from the 'CorelDRAW_Print_Ready' folder or root .svg files.
-4. The QR imports instantly as 100% SHARP VECTOR CURVES.
-5. Position inside your stand layout (4x6", A5, or table-top acrylic) and print!
+1. 85x54mm Cards (Pocket CR80): Front (4x4cm QR) & Back (Brand Logo, Phone & Email).
+2. 6x6 Inch Acrylic Stands: 150mm x 150mm Square format (Google Review & All-in-One).
+3. CorelDRAW Import: In CorelDRAW press Ctrl + I to import any SVG file directly as 100% vector curves.
 ====================================================================`;
   zip.file("CorelDRAW_Print_Instructions.txt", corelInstructions);
 
-  // Include codes.csv manifest inside the ZIP
   const csvContent = generateCsvContent(cards);
   zip.file("codes.csv", csvContent);
 
-  // Generate ZIP blob with DEFLATE compression
   const zipBlob = await zip.generateAsync(
     {
       type: "blob",
@@ -204,7 +238,7 @@ All QR codes in this ZIP are print-ready for UV flatbed, acrylic, and laser prin
   );
 
   const timestamp = new Date().toISOString().slice(0, 10);
-  const finalFilename = filename || `tapform_bulk_qrs_${timestamp}.zip`;
+  const finalFilename = filename || `tapform_print_ready_${timestamp}.zip`;
 
   const downloadUrl = URL.createObjectURL(zipBlob);
   const anchor = document.createElement("a");

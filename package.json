@@ -4,7 +4,9 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
+    "dev": "node scripts/dev.js",
+    "dev:frontend": "vite",
+    "dev:backend": "node backend/src/server.js",
     "start": "node backend/src/server.js",
     "build": "vite build",
     "server": "node backend/src/server.js",

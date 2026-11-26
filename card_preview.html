@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Tapform Design Previews - 6x6 Stand & 85x54 Card</title>
+  <style>
+    body {
+      background: #090d16;
+      color: #ffffff;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      margin: 0;
+      padding: 30px 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    h1 {
+      font-size: 26px;
+      margin-bottom: 6px;
+      color: #f8fafc;
+    }
+    p {
+      color: #94a3b8;
+      margin-top: 0;
+      margin-bottom: 24px;
+      font-size: 15px;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 24px;
+      width: 100%;
+      max-width: 1300px;
+    }
+    .card-box {
+      background: #141a24;
+      border: 1px solid #252f42;
+      border-radius: 20px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    }
+    .title {
+      font-size: 17px;
+      font-weight: 800;
+      color: #38bdf8;
+      margin-bottom: 4px;
+    }
+    .badge {
+      background: rgba(16, 185, 129, 0.2);
+      color: #34d399;
+      font-size: 11px;
+      padding: 3px 10px;
+      border-radius: 100px;
+      font-weight: 700;
+      margin-bottom: 16px;
+    }
+    .svg-holder {
+      width: 100%;
+      max-width: 310px;
+      filter: drop-shadow(0 12px 24px rgba(0,0,0,0.5));
+    }
+    .svg-holder svg {
+      width: 100%;
+      height: auto;
+      border-radius: 16px;
+      display: block;
+    }
+  </style>
+</head>
+<body>
+  <h1>✨ Tapform 6x6 Stand & 85x54 Pocket Card Designs</h1>
+  <p>Accurate 6x6 Inch Acrylic Stand (Review & All-in-One + Blank) and 85x54mm Pocket Cards (Review & All-in-One + Back)</p>
+
+  <div class="grid">
+    <!-- 1. 6x6 Blank Stand -->
+    <div class="card-box">
+      <div class="title">1. 6x6 Blank Stand Template</div>
+      <div class="badge">Blank QR Box for Manufacturer</div>
+      <div class="svg-holder" id="s1"></div>
+    </div>
+
+    <!-- 2. 6x6 All-in-One Stand -->
+    <div class="card-box">
+      <div class="title">2. 6x6 All-in-One Stand (#1133)</div>
+      <div class="badge">Social Icons + Bottom Phone/Brand</div>
+      <div class="svg-holder" id="s2"></div>
+    </div>
+
+    <!-- 3. 6x6 Google Review Stand -->
+    <div class="card-box">
+      <div class="title">3. 6x6 Google Review Stand</div>
+      <div class="badge">Official Google Review Plaque</div>
+      <div class="svg-holder" id="s3"></div>
+    </div>
+
+    <!-- 4. 85x54 Google Review Front -->
+    <div class="card-box">
+      <div class="title">4. 85x54 Pocket Card (Review)</div>
+      <div class="badge">Exact 4x4cm QR & Big Bold Review Text</div>
+      <div class="svg-holder" id="s4"></div>
+    </div>
+
+    <!-- 5. 85x54 All-in-One Front -->
+    <div class="card-box">
+      <div class="title">5. 85x54 Pocket Card (All-in-One)</div>
+      <div class="badge">Multi-Platform Connect + 4x4cm QR</div>
+      <div class="svg-holder" id="s5"></div>
+    </div>
+
+    <!-- 6. 85x54 Pocket Card Back -->
+    <div class="card-box">
+      <div class="title">6. 85x54 Pocket Card Back</div>
+      <div class="badge">Tapform Emerald Logo + Phone & Gmail</div>
+      <div class="svg-holder" id="s6"></div>
+    </div>
+  </div>
+
+  <script type="module">
+    import { generateCardSvgString } from "./src/utils/cardDesignSvgs.js";
+
+    // 1. Blank 6x6
+    document.getElementById("s1").innerHTML = generateCardSvgString({
+      format: "table-stand",
+      theme: "paw-white",
+      designVariant: "all-in-one",
+      title: "",
+      cardId: "BLANK-STAND",
+      cardNumber: "0000",
+      isBlank: true,
+      brandName: "Tapform",
+      phone: "8827718774",
+      email: "ashish8389sharma@gmail.com",
+    });
+
+    // 2. 6x6 All-in-One Stand
+    document.getElementById("s2").innerHTML = generateCardSvgString({
+      format: "table-stand",
+      theme: "paw-white",
+      designVariant: "all-in-one",
+      title: "Tapform",
+      cardId: "SSHOP-1133",
+      cardNumber: "1133",
+      isBlank: false,
+      brandName: "Tapform",
+      phone: "8827718774",
+      email: "ashish8389sharma@gmail.com",
+    });
+
+    // 3. 6x6 Google Review Stand
+    document.getElementById("s3").innerHTML = generateCardSvgString({
+      format: "table-stand",
+      theme: "paw-white",
+      designVariant: "review",
+      title: "",
+      cardId: "REV-1133",
+      cardNumber: "1133",
+      isBlank: false,
+      brandName: "Tapform",
+      phone: "8827718774",
+      email: "ashish8389sharma@gmail.com",
+    });
+
+    // 4. 85x54 Google Review Front
+    document.getElementById("s4").innerHTML = generateCardSvgString({
+      format: "nfc-card",
+      designVariant: "review",
+      theme: "matte-black",
+      side: "front",
+      title: "",
+      cardId: "TF-1133",
+      cardNumber: "1133",
+    });
+
+    // 5. 85x54 All-in-One Front
+    document.getElementById("s5").innerHTML = generateCardSvgString({
+      format: "nfc-card",
+      designVariant: "all-in-one",
+      theme: "paw-white",
+      side: "front",
+      title: "",
+      cardId: "TF-1133",
+      cardNumber: "1133",
+    });
+
+    // 6. 85x54 Back
+    document.getElementById("s6").innerHTML = generateCardSvgString({
+      format: "nfc-card",
+      theme: "matte-black",
+      side: "back",
+      title: "Tapform",
+      cardId: "TF-1133",
+      cardNumber: "1133",
+      brandName: "Tapform",
+      phone: "8827718774",
+      email: "ashish8389sharma@gmail.com",
+    });
+  </script>
+</body>
+</html>
