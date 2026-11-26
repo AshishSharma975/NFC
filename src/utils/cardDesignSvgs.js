@@ -227,7 +227,7 @@ export function generateCardSvgString({
         </g>
 
         <text x="${W / 2}" y="270" font-family="-apple-system, BlinkMacSystemFont, 'Plus Jakarta Sans', 'Inter', sans-serif" font-size="34" font-weight="900" fill="#ffffff" text-anchor="middle" letter-spacing="3">${safeBrand.toUpperCase()}</text>
-        <text x="${W / 2}" y="296" font-family="-apple-system, BlinkMacSystemFont, 'Inter', sans-serif" font-size="13" font-weight="700" fill="#fbbf24" text-anchor="middle" letter-spacing="3">SMART NFC &bull; DIGITAL TOUCHPOINT</text>
+        <text x="${W / 2}" y="296" font-family="-apple-system, BlinkMacSystemFont, 'Inter', sans-serif" font-size="13" font-weight="700" fill="#fbbf24" text-anchor="middle" letter-spacing="3">SMART NFC &#8226; DIGITAL TOUCHPOINT</text>
 
         <!-- Compact Contact Details Box -->
         <g transform="translate(48, 340)">
@@ -237,7 +237,7 @@ export function generateCardSvgString({
           <g transform="translate(24, 25)">
             <rect x="0" y="0" width="38" height="38" rx="10" fill="#1e293b" stroke="#334155" stroke-width="1.2"/>
             <g transform="translate(10, 10) scale(0.85)">${ICONS.phone("#38bdf8")}</g>
-            <text x="52" y="15" font-family="-apple-system, BlinkMacSystemFont, 'Inter', sans-serif" font-size="11" font-weight="800" fill="#94a3b8" letter-spacing="1.2">CALL &bull; WHATSAPP SUPPORT</text>
+            <text x="52" y="15" font-family="-apple-system, BlinkMacSystemFont, 'Inter', sans-serif" font-size="11" font-weight="800" fill="#94a3b8" letter-spacing="1.2">CALL &#8226; WHATSAPP SUPPORT</text>
             <text x="52" y="32" font-family="-apple-system, BlinkMacSystemFont, 'Inter', sans-serif" font-size="16" font-weight="800" fill="#ffffff" letter-spacing="0.5">+91 ${safePhone}</text>
           </g>
 
@@ -266,7 +266,7 @@ export function generateCardSvgString({
           <rect x="-190" y="-22" width="380" height="44" rx="22" fill="#151a24" stroke="#2c3444" stroke-width="1.5"/>
           <text x="0" y="6" font-family="-apple-system, BlinkMacSystemFont, 'Inter', sans-serif" font-size="14" font-weight="800" fill="#f8fafc" text-anchor="middle" letter-spacing="2">EMBEDDED NTAG213 / 215 CHIP</text>
           <text x="0" y="55" font-family="-apple-system, BlinkMacSystemFont, 'Inter', sans-serif" font-size="15" font-weight="600" fill="#cbd5e1" text-anchor="middle">Compatible with all iPhone &amp; Android devices</text>
-          <text x="0" y="80" font-family="-apple-system, BlinkMacSystemFont, 'Inter', sans-serif" font-size="13" font-weight="500" fill="#64748b" text-anchor="middle">No app or battery required &bull; Waterproof &amp; Durable</text>
+          <text x="0" y="80" font-family="-apple-system, BlinkMacSystemFont, 'Inter', sans-serif" font-size="13" font-weight="500" fill="#64748b" text-anchor="middle">No app or battery required &#8226; Waterproof &amp; Durable</text>
         </g>
       </svg>`;
     }
@@ -347,7 +347,7 @@ export function generateCardSvgString({
         <g transform="translate(${W / 2 - 150}, 715)">
           <rect x="0" y="0" width="300" height="46" rx="23" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.8"/>
           <circle cx="26" cy="23" r="7" fill="#16a34a" />
-          <text x="160" y="29" font-family="-apple-system, BlinkMacSystemFont, 'Inter', sans-serif" font-size="14" font-weight="900" fill="#0f172a" text-anchor="middle" letter-spacing="2">1-TAP NFC &bull; SCAN CAMERA</text>
+          <text x="160" y="29" font-family="-apple-system, BlinkMacSystemFont, 'Inter', sans-serif" font-size="14" font-weight="900" fill="#0f172a" text-anchor="middle" letter-spacing="2">1-TAP NFC &#8226; SCAN CAMERA</text>
         </g>
 
         <!-- Social Icons Row (Google, Insta, WhatsApp, FB) -->
@@ -371,7 +371,7 @@ export function generateCardSvgString({
         <g transform="translate(${W / 2}, 920)">
           <rect x="-95" y="-20" width="190" height="38" rx="19" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
           <text x="0" y="5" font-family="monospace, -apple-system, sans-serif" font-size="17" font-weight="800" fill="#0f172a" text-anchor="middle" letter-spacing="2.5">${isBlank ? "CARD-ID" : safeCardId}</text>
-          <text x="0" y="44" font-family="-apple-system, BlinkMacSystemFont, 'Inter', sans-serif" font-size="13" font-weight="900" fill="#64748b" text-anchor="middle" letter-spacing="3.5">SMART NFC &bull; ZERO APP NEEDED</text>
+          <text x="0" y="44" font-family="-apple-system, BlinkMacSystemFont, 'Inter', sans-serif" font-size="13" font-weight="900" fill="#64748b" text-anchor="middle" letter-spacing="3.5">SMART NFC &#8226; ZERO APP NEEDED</text>
         </g>
       </svg>`;
     }
@@ -441,7 +441,7 @@ export function generateCardSvgString({
       <g transform="translate(${W / 2 - 150}, 715)">
         <rect x="0" y="0" width="300" height="46" rx="23" fill="#151a24" stroke="#2c3444" stroke-width="1.8"/>
         <circle cx="26" cy="23" r="7" fill="#22c55e" />
-        <text x="160" y="29" font-family="-apple-system, BlinkMacSystemFont, 'Inter', sans-serif" font-size="14" font-weight="900" fill="#ffffff" text-anchor="middle" letter-spacing="2">1-TAP NFC &bull; SCAN CAMERA</text>
+        <text x="160" y="29" font-family="-apple-system, BlinkMacSystemFont, 'Inter', sans-serif" font-size="14" font-weight="900" fill="#ffffff" text-anchor="middle" letter-spacing="2">1-TAP NFC &#8226; SCAN CAMERA</text>
       </g>
 
       <!-- LARGER READABLE BOTTOM REVIEW TEXT (24px Bold) -->
@@ -454,7 +454,7 @@ export function generateCardSvgString({
       <g transform="translate(${W / 2}, 920)">
         <rect x="-95" y="-20" width="190" height="38" rx="19" fill="#121620" stroke="#242b38" stroke-width="1.5"/>
         <text x="0" y="5" font-family="monospace, -apple-system, sans-serif" font-size="17" font-weight="800" fill="#fbbf24" text-anchor="middle" letter-spacing="2.5">${isBlank ? "CARD-ID" : safeCardId}</text>
-        <text x="0" y="44" font-family="-apple-system, BlinkMacSystemFont, 'Inter', sans-serif" font-size="13" font-weight="900" fill="#64748b" text-anchor="middle" letter-spacing="3.5">SMART NFC &bull; ZERO APP NEEDED</text>
+        <text x="0" y="44" font-family="-apple-system, BlinkMacSystemFont, 'Inter', sans-serif" font-size="13" font-weight="900" fill="#64748b" text-anchor="middle" letter-spacing="3.5">SMART NFC &#8226; ZERO APP NEEDED</text>
       </g>
     </svg>`;
   }
@@ -574,8 +574,8 @@ export function generateCardSvgString({
 
       <!-- Bottom Footer Tagline with Brand and Phone in Small Text -->
       <g transform="translate(${SW / 2}, 925)">
-        <text x="0" y="0" font-family="-apple-system, BlinkMacSystemFont, 'Inter', sans-serif" font-size="14" font-weight="800" fill="#64748b" text-anchor="middle" letter-spacing="2">SMART NFC &bull; ZERO APP NEEDED &bull; 6x6 ACRYLIC STAND</text>
-        <text x="0" y="28" font-family="-apple-system, BlinkMacSystemFont, 'Inter', sans-serif" font-size="13" font-weight="700" fill="#94a3b8" text-anchor="middle">${safeBrand} &bull; Ph: +91 ${safePhone}</text>
+        <text x="0" y="0" font-family="-apple-system, BlinkMacSystemFont, 'Inter', sans-serif" font-size="14" font-weight="800" fill="#64748b" text-anchor="middle" letter-spacing="2">SMART NFC &#8226; ZERO APP NEEDED &#8226; 6x6 ACRYLIC STAND</text>
+        <text x="0" y="28" font-family="-apple-system, BlinkMacSystemFont, 'Inter', sans-serif" font-size="13" font-weight="700" fill="#94a3b8" text-anchor="middle">${safeBrand} &#8226; Ph: +91 ${safePhone}</text>
       </g>
     </svg>`;
   }
@@ -695,8 +695,8 @@ export function generateCardSvgString({
 
     <!-- Bottom Footer Tagline: Brand & Phone in Small Text (Requested in Photo 2) -->
     <g transform="translate(${SW / 2}, 915)">
-      <text x="0" y="0" font-family="-apple-system, BlinkMacSystemFont, 'Inter', sans-serif" font-size="13" font-weight="800" fill="#64748b" text-anchor="middle" letter-spacing="3">SMART NFC &bull; ZERO APP NEEDED &bull; 6x6 COUNTERTOP STAND</text>
-      <text x="0" y="26" font-family="-apple-system, BlinkMacSystemFont, 'Inter', sans-serif" font-size="13" font-weight="700" fill="#0f172a" text-anchor="middle">${safeBrand} &bull; Ph: +91 ${safePhone}</text>
+      <text x="0" y="0" font-family="-apple-system, BlinkMacSystemFont, 'Inter', sans-serif" font-size="13" font-weight="800" fill="#64748b" text-anchor="middle" letter-spacing="3">SMART NFC &#8226; ZERO APP NEEDED &#8226; 6x6 COUNTERTOP STAND</text>
+      <text x="0" y="26" font-family="-apple-system, BlinkMacSystemFont, 'Inter', sans-serif" font-size="13" font-weight="700" fill="#0f172a" text-anchor="middle">${safeBrand} &#8226; Ph: +91 ${safePhone}</text>
     </g>
   </svg>`;
 }
@@ -896,7 +896,7 @@ export function generateSideBySideCardSvg(options) {
     <rect width="${totalW}" height="${totalH}" fill="#0b0f17"/>
     
     <!-- Top Sheet Header -->
-    <text x="50" y="42" font-family="-apple-system, BlinkMacSystemFont, 'Plus Jakarta Sans', sans-serif" font-size="22" font-weight="900" fill="#ffffff" letter-spacing="1">TAPFORM &bull; PRINT SHEET (FRONT &amp; BACK SIDE-BY-SIDE)</text>
+    <text x="50" y="42" font-family="-apple-system, BlinkMacSystemFont, 'Plus Jakarta Sans', sans-serif" font-size="22" font-weight="900" fill="#ffffff" letter-spacing="1">TAPFORM &#8226; PRINT SHEET (FRONT &amp; BACK SIDE-BY-SIDE)</text>
     <text x="${totalW - 50}" y="42" font-family="monospace, sans-serif" font-size="18" font-weight="800" fill="#fbbf24" text-anchor="end">${options.cardId || "TF-CARD"}</text>
 
     <!-- Front Side Section -->
