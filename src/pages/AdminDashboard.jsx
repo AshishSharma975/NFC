@@ -1171,7 +1171,7 @@ export default function AdminDashboard() {
                   <NfcCardStudio
                     cardId={studioCardId || "TF-01"}
                     cardNumber={studioCardNumber}
-                    title={studioTitle || "Your Business Name"}
+                    title={studioTitle || ""}
                     destinationUrl={studioReviewUrl}
                     qrUrl={studioCardId ? `${window.location.origin}/c/${studioCardId}` : "https://tapform.me"}
                     cardType={studioCardType || "review"}

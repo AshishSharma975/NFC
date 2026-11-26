@@ -489,35 +489,59 @@ export function generateCardSvgString({
 
       <rect x="4" y="4" width="${SW - 8}" height="${SH - 8}" rx="${SR}" fill="url(#reviewStandBg)" stroke="#232834" stroke-width="4"/>
 
-      <!-- Header: Serial Badge & Logo -->
-      <g transform="translate(60, 60)">
-        <rect x="0" y="0" width="120" height="52" rx="16" fill="#141822" stroke="#d4af37" stroke-width="2.5"/>
-        <text x="60" y="34" font-family="monospace, sans-serif" font-size="24" font-weight="900" fill="#fbbf24" text-anchor="middle" letter-spacing="1">${isBlank ? "#____" : cornerNumber}</text>
+      <!-- Header: Serial Badge & Manufacturer Tapform Micro-logo -->
+      <g transform="translate(60, 48)">
+        <rect x="0" y="0" width="110" height="42" rx="12" fill="#141822" stroke="#d4af37" stroke-width="2"/>
+        <text x="55" y="27" font-family="monospace, sans-serif" font-size="20" font-weight="900" fill="#fbbf24" text-anchor="middle" letter-spacing="1">${isBlank ? "#____" : cornerNumber}</text>
       </g>
 
-      <!-- Center Brand Logo with Emerald Vortex -->
-      <g transform="translate(${SW / 2 - 80}, 60)">
-        <g transform="translate(24, 26)">${ICONS.tapformLogo(44, "#10b981", "#ffffff")}</g>
-        <text x="60" y="37" font-family="-apple-system, BlinkMacSystemFont, 'Plus Jakarta Sans', sans-serif" font-size="36" font-weight="900" fill="#ffffff">${safeBrand}</text>
+      <!-- Discreet Top Tapform Hardware Badge -->
+      <g transform="translate(${SW / 2 - 60}, 48)">
+        <g transform="translate(14, 18)">${ICONS.tapformLogo(24, "#10b981", "#ffffff")}</g>
+        <text x="44" y="26" font-family="-apple-system, BlinkMacSystemFont, 'Plus Jakarta Sans', sans-serif" font-size="20" font-weight="900" fill="#64748b" letter-spacing="1.5">TAPFORM</text>
       </g>
 
       <!-- Top Right: 1-TAP NFC Badge -->
-      <g transform="translate(820, 60)">
-        <rect x="0" y="0" width="120" height="52" rx="16" fill="#141822" stroke="#2c3444" stroke-width="2"/>
-        <g transform="translate(18, 14) scale(0.8)">${ICONS.nfcWave("#38bdf8")}</g>
-        <text x="75" y="32" font-family="-apple-system, BlinkMacSystemFont, 'Inter', sans-serif" font-size="14" font-weight="900" fill="#ffffff">1-TAP</text>
+      <g transform="translate(830, 48)">
+        <rect x="0" y="0" width="110" height="42" rx="12" fill="#141822" stroke="#2c3444" stroke-width="1.8"/>
+        <g transform="translate(16, 11) scale(0.7)">${ICONS.nfcWave("#38bdf8")}</g>
+        <text x="68" y="26" font-family="-apple-system, BlinkMacSystemFont, 'Inter', sans-serif" font-size="12" font-weight="900" fill="#ffffff">1-TAP</text>
       </g>
 
-      <!-- Main Headline: "Review Us on Google" & Official Google Logo -->
-      <text x="${SW / 2}" y="170" font-family="-apple-system, BlinkMacSystemFont, 'Plus Jakarta Sans', sans-serif" font-size="26" font-weight="800" fill="#94a3b8" text-anchor="middle" letter-spacing="1.5">Review Us on</text>
-      
-      <g transform="translate(${SW / 2 - 85}, 185) scale(2.0)">
-        ${ICONS.googleG}
-      </g>
-
-      <g transform="translate(${SW / 2 - 85}, 260) scale(1.3)">
-        ${ICONS.fiveStars}
-      </g>
+      <!-- Client Business Name Area (Spacious & Clean) -->
+      ${
+        displayTitle
+          ? `
+          <g transform="translate(${SW / 2}, 130)">
+            <text x="0" y="0" font-family="-apple-system, BlinkMacSystemFont, 'Plus Jakarta Sans', 'Inter', sans-serif" font-size="34" font-weight="900" fill="#ffffff" text-anchor="middle" letter-spacing="-0.5">${displayTitle}</text>
+          </g>
+          <g transform="translate(${SW / 2}, 180)">
+            <text x="0" y="0" font-family="-apple-system, BlinkMacSystemFont, 'Plus Jakarta Sans', sans-serif" font-size="20" font-weight="700" fill="#94a3b8" text-anchor="middle" letter-spacing="1">Review Us on</text>
+          </g>
+          <!-- Smaller, Crisp Google G Logo -->
+          <g transform="translate(${SW / 2 - 22}, 196) scale(1.5)">
+            ${ICONS.googleG}
+          </g>
+          <!-- 5 Golden Stars Below -->
+          <g transform="translate(${SW / 2 - 82}, 256) scale(1.15)">
+            ${ICONS.fiveStars}
+          </g>
+          `
+          : `
+          <!-- Unassigned / Pre-named Stand: Lots of Open Space for Custom Name -->
+          <g transform="translate(${SW / 2}, 180)">
+            <text x="0" y="0" font-family="-apple-system, BlinkMacSystemFont, 'Plus Jakarta Sans', sans-serif" font-size="22" font-weight="700" fill="#94a3b8" text-anchor="middle" letter-spacing="1">Review Us on</text>
+          </g>
+          <!-- Smaller, Elegant Google G Logo -->
+          <g transform="translate(${SW / 2 - 25}, 198) scale(1.65)">
+            ${ICONS.googleG}
+          </g>
+          <!-- 5 Golden Stars Below -->
+          <g transform="translate(${SW / 2 - 86}, 258) scale(1.2)">
+            ${ICONS.fiveStars}
+          </g>
+          `
+      }
 
       <!-- DUAL ACTION BOXES (TAP PHONE & SCAN CODE) -->
       <g transform="translate(80, 335)">
@@ -581,33 +605,46 @@ export function generateCardSvgString({
 
     <rect x="4" y="4" width="${SW - 8}" height="${SH - 8}" rx="${SR}" fill="#ffffff" stroke="#e2e8f0" stroke-width="4"/>
 
-    <!-- Header: Serial Badge & Logo -->
-    <g transform="translate(80, 60)">
-      <rect x="0" y="0" width="120" height="52" rx="16" fill="#ffffff" stroke="#0f172a" stroke-width="3"/>
-      <text x="60" y="34" font-family="-apple-system, BlinkMacSystemFont, 'Inter', sans-serif" font-size="24" font-weight="900" fill="#0f172a" text-anchor="middle" letter-spacing="1">${isBlank ? "#____" : cornerNumber}</text>
+    <!-- Header: Serial Badge & Manufacturer Micro-badge -->
+    <g transform="translate(60, 48)">
+      <rect x="0" y="0" width="110" height="42" rx="12" fill="#ffffff" stroke="#0f172a" stroke-width="2.5"/>
+      <text x="55" y="27" font-family="-apple-system, BlinkMacSystemFont, 'Inter', sans-serif" font-size="20" font-weight="900" fill="#0f172a" text-anchor="middle" letter-spacing="1">${isBlank ? "#____" : cornerNumber}</text>
     </g>
 
-    <!-- Center Brand Logo with Emerald Vortex -->
-    <g transform="translate(${SW / 2 - 85}, 60)">
-      <g transform="translate(24, 26)">${ICONS.tapformLogo(44, "#10b981", "#10b981")}</g>
-      <text x="60" y="38" font-family="-apple-system, BlinkMacSystemFont, 'Plus Jakarta Sans', sans-serif" font-size="38" font-weight="900" fill="#0f172a">${safeBrand}</text>
+    <!-- Discreet Center Hardware Brand (Tapform) -->
+    <g transform="translate(${SW / 2 - 60}, 48)">
+      <g transform="translate(14, 18)">${ICONS.tapformLogo(24, "#10b981", "#10b981")}</g>
+      <text x="44" y="26" font-family="-apple-system, BlinkMacSystemFont, 'Plus Jakarta Sans', sans-serif" font-size="20" font-weight="900" fill="#94a3b8" letter-spacing="1.5">TAPFORM</text>
     </g>
 
-    <g transform="translate(800, 60)">
-      <rect x="0" y="0" width="120" height="52" rx="16" fill="#ffffff" stroke="#e2e8f0" stroke-width="2"/>
-      <g transform="translate(18, 14) scale(0.8)">${ICONS.nfcWave("#0284c7")}</g>
-      <text x="75" y="32" font-family="-apple-system, BlinkMacSystemFont, 'Inter', sans-serif" font-size="14" font-weight="900" fill="#0f172a">1-TAP</text>
+    <g transform="translate(830, 48)">
+      <rect x="0" y="0" width="110" height="42" rx="12" fill="#ffffff" stroke="#e2e8f0" stroke-width="2"/>
+      <g transform="translate(16, 11) scale(0.7)">${ICONS.nfcWave("#0284c7")}</g>
+      <text x="68" y="26" font-family="-apple-system, BlinkMacSystemFont, 'Inter', sans-serif" font-size="12" font-weight="900" fill="#0f172a">1-TAP</text>
     </g>
 
-    <g transform="translate(${SW / 2 - 95}, 145) scale(1.45)">
-      ${ICONS.fiveStars}
-    </g>
-
-    <!-- Connect & Review Tagline -->
-    <text x="${SW / 2}" y="215" font-family="-apple-system, BlinkMacSystemFont, 'Inter', sans-serif" font-size="16" font-weight="900" fill="#0f172a" text-anchor="middle" letter-spacing="2.5">CONNECT WITH US ON ALL PLATFORMS</text>
+    <!-- Business Name or Clean Social Connect Lockup -->
+    ${
+      displayTitle
+        ? `
+        <g transform="translate(${SW / 2}, 130)">
+          <text x="0" y="0" font-family="-apple-system, BlinkMacSystemFont, 'Plus Jakarta Sans', 'Inter', sans-serif" font-size="36" font-weight="900" fill="#0f172a" text-anchor="middle" letter-spacing="-0.5">${displayTitle}</text>
+        </g>
+        <g transform="translate(${SW / 2 - 90}, 145) scale(1.35)">
+          ${ICONS.fiveStars}
+        </g>
+        <text x="${SW / 2}" y="210" font-family="-apple-system, BlinkMacSystemFont, 'Inter', sans-serif" font-size="15" font-weight="900" fill="#0f172a" text-anchor="middle" letter-spacing="2">CONNECT WITH US ON ALL PLATFORMS</text>
+        `
+        : `
+        <g transform="translate(${SW / 2 - 95}, 125) scale(1.45)">
+          ${ICONS.fiveStars}
+        </g>
+        <text x="${SW / 2}" y="195" font-family="-apple-system, BlinkMacSystemFont, 'Inter', sans-serif" font-size="16" font-weight="900" fill="#0f172a" text-anchor="middle" letter-spacing="2.5">CONNECT WITH US ON ALL PLATFORMS</text>
+        `
+    }
 
     <!-- Social Icons -->
-    <g transform="translate(${SW / 2}, 258)">
+    <g transform="translate(${SW / 2}, 252)">
       <circle cx="-90" cy="0" r="22" fill="#ffffff" stroke="#e2e8f0" stroke-width="1.5" filter="drop-shadow(0 3px 6px rgba(0,0,0,0.12))"/>
       <g transform="translate(-104, -14) scale(1.15)">${ICONS.googleG}</g>
 
