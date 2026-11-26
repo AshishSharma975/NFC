@@ -151,6 +151,8 @@ export async function downloadZipExport(cards, options = {}) {
           isBlank,
         });
         zip.file(`${folder}/Front_${card.cardId}.svg`, frontSvg);
+        // Also put full card design in CorelDRAW folder
+        zip.file(`CorelDRAW_Print_Ready/Designs_85x54_Cards/Front_${card.cardId}.svg`, frontSvg);
 
         // Back Side (Contains Phone + Email)
         const backSvg = generateCardSvgString({
@@ -164,6 +166,7 @@ export async function downloadZipExport(cards, options = {}) {
           email: "ajjumahato9@gmail.com",
         });
         zip.file(`${folder}/Back_${card.cardId}.svg`, backSvg);
+        zip.file(`CorelDRAW_Print_Ready/Designs_85x54_Cards/Back_${card.cardId}.svg`, backSvg);
 
         // Combined Side-by-Side (Agal-Bagal) Sheet for Manufacturer
         const sideBySideSvg = generateSideBySideCardSvg({
@@ -181,6 +184,7 @@ export async function downloadZipExport(cards, options = {}) {
           isBlank,
         });
         zip.file(`${folder}/Combined_SideBySide_${card.cardId}.svg`, sideBySideSvg);
+        zip.file(`CorelDRAW_Print_Ready/Designs_85x54_Cards/Combined_SideBySide_${card.cardId}.svg`, sideBySideSvg);
       } catch (e) {
         console.warn("Card export warning:", e);
       }
@@ -206,6 +210,8 @@ export async function downloadZipExport(cards, options = {}) {
           isBlank,
         });
         zip.file(`${folder}/${card.cardId}_6x6_Stand.svg`, standSvg);
+        // Also put full stand design in CorelDRAW folder
+        zip.file(`CorelDRAW_Print_Ready/Designs_6x6_Stands/${card.cardId}_6x6_Stand.svg`, standSvg);
       } catch (e) {
         console.warn("Stand export warning:", e);
       }

@@ -566,7 +566,7 @@ export function generateCardSvgString({
             <text x="190" y="245" font-family="-apple-system, BlinkMacSystemFont, 'Inter', sans-serif" font-size="16" font-weight="800" fill="#64748b" text-anchor="middle">PRINT / PASTE QR HERE</text>
             <text x="190" y="275" font-family="-apple-system, BlinkMacSystemFont, 'Inter', sans-serif" font-size="13" font-weight="600" fill="#94a3b8" text-anchor="middle">6x6 Blank Review Stand</text>
             `
-            : generateQrPath(qrValue, 575, 425, 310, 310, "#0f172a")
+            : generateQrPath(qrValue, 35, 90, 310, 310, "#0f172a")
         }
 
         <text x="190" y="450" font-family="monospace, -apple-system, sans-serif" font-size="22" font-weight="900" fill="#fbbf24" text-anchor="middle" letter-spacing="3">${isBlank ? "STAND-ID" : safeCardId}</text>
@@ -687,7 +687,7 @@ export function generateCardSvgString({
           <text x="187" y="235" font-family="-apple-system, BlinkMacSystemFont, 'Inter', sans-serif" font-size="15" font-weight="800" fill="#94a3b8" text-anchor="middle">PASTE / PRINT QR HERE</text>
           <text x="187" y="260" font-family="-apple-system, BlinkMacSystemFont, 'Inter', sans-serif" font-size="12" font-weight="600" fill="#cbd5e1" text-anchor="middle">Blank 6x6 Countertop Stand</text>
           `
-          : generateQrPath(qrValue, 557, 395, 310, 310, "#0f172a")
+          : generateQrPath(qrValue, 32, 80, 310, 310, "#0f172a")
       }
 
       <text x="187" y="445" font-family="monospace, -apple-system, sans-serif" font-size="21" font-weight="900" fill="#0f172a" text-anchor="middle" letter-spacing="3">${isBlank ? "STAND-ID" : safeCardId}</text>
