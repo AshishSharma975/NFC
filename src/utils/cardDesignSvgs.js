@@ -109,6 +109,19 @@ const ICONS = {
   facebook: `
     <path fill="#ffffff" d="M22 12c0-5.52-4.48-10-10-10S2 6.48 2 12c0 5 3.66 9.13 8.44 9.88v-6.99H7.9v-2.89h2.54V9.8c0-2.51 1.49-3.89 3.78-3.89 1.09 0 2.23.2 2.23.2v2.46h-1.26c-1.24 0-1.63.77-1.63 1.56v1.87h2.78l-.44 2.89h-2.34v6.99C18.34 21.13 22 17 22 12z"/>
   `,
+  nfcPhoneHand: (color = "#38bdf8") => `
+    <g stroke="${color}" stroke-width="4.5" fill="none" stroke-linecap="round" stroke-linejoin="round">
+      <!-- Smartphone outline -->
+      <rect x="25" y="10" width="46" height="80" rx="10" />
+      <line x1="42" y1="18" x2="54" y2="18" stroke-width="3" />
+      <circle cx="48" cy="80" r="3" fill="${color}" />
+      <!-- NFC Waves radiating outward -->
+      <path d="M 12 36 A 22 22 0 0 0 12 64" stroke-width="4" />
+      <path d="M 4 28 A 34 34 0 0 0 4 72" stroke-width="4" />
+      <!-- Hand silhouette -->
+      <path d="M 68 56 L 82 56 C 86 56 89 59 89 63 L 89 74 C 89 78 86 81 82 81 L 68 81" stroke-width="4" />
+    </g>
+  `,
 };
 
 function escapeXml(str = "") {
