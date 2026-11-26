@@ -2329,6 +2329,21 @@
     text-overflow: ellipsis;
   }
 
+  /* Bulk Export Buttons Mobile Wrap */
+  .export-actions-row {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 8px !important;
+  }
+
+  .export-actions-row button {
+    width: 100% !important;
+    justify-content: center !important;
+    text-align: center !important;
+    padding: 10px 12px !important;
+    font-size: 12.5px !important;
+  }
+
   /* Quick Action Banners */
   .admin-banner-grid {
     grid-template-columns: 1fr;

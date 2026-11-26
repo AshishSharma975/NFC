@@ -9,6 +9,8 @@ import {
   Smartphone,
   FileCode,
   Layers,
+  FileText,
+  Loader2,
 } from "lucide-react";
 import {
   generateCardSvgString,
@@ -16,6 +18,7 @@ import {
   downloadCardPng,
   downloadCardCorelDraw,
   printCardElement,
+  downloadCardSideBySidePdf,
 } from "../utils/cardDesignSvgs";
 
 export default function NfcCardStudio({
@@ -183,6 +186,38 @@ export default function NfcCardStudio({
       setTimeout(() => setDownloadSuccess(""), 5000);
     } catch (err) {
       alert("Download failed: " + err.message);
+    }
+  }
+
+  // Handle Side-by-Side (Front & Back Agal-Bagal) PDF Download
+  const [downloadingPdf, setDownloadingPdf] = useState(false);
+  async function handleDownloadPdf() {
+    setDownloadingPdf(true);
+    try {
+      const filename = `${cardId || "card"}_${format}_${designVariant}_Front_and_Back_Sheet`;
+      await downloadCardSideBySidePdf(
+        {
+          format,
+          designVariant,
+          theme,
+          cardType: designVariant === "all-in-one" ? "connect" : "review",
+          title,
+          cardId,
+          cardNumber,
+          qrValue: effectiveQrValue,
+          socialLinks,
+          brandName: activeBrandName,
+          phone: activePhone,
+          email: activeEmail,
+        },
+        filename
+      );
+      setDownloadSuccess("Front & Back Side-by-Side PDF Sheet Downloaded!");
+      setTimeout(() => setDownloadSuccess(""), 5000);
+    } catch (err) {
+      alert("PDF generation failed: " + err.message);
+    } finally {
+      setDownloadingPdf(false);
     }
   }
 
@@ -466,6 +501,43 @@ export default function NfcCardStudio({
             title="Open calibrated browser print dialog with standard mm dimensions"
           >
             <Printer size={14} /> <span>Direct Print ({side === "back" ? "Back" : "Front"})</span>
+          </button>
+        </div>
+
+        {/* Dedicated 1-Click Side-by-Side (Front & Back Agal-Bagal) PDF Sheet */}
+        <div style={{ marginTop: "10px", width: "100%" }}>
+          <button
+            type="button"
+            onClick={handleDownloadPdf}
+            disabled={downloadingPdf}
+            style={{
+              width: "100%",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              gap: "8px",
+              padding: "10px 14px",
+              background: "linear-gradient(135deg, #0284c7 0%, #0369a1 100%)",
+              color: "#ffffff",
+              border: "1px solid #38bdf8",
+              borderRadius: "10px",
+              fontWeight: 800,
+              fontSize: "13px",
+              cursor: downloadingPdf ? "not-allowed" : "pointer",
+              boxShadow: "0 4px 12px rgba(2, 132, 199, 0.3)",
+              transition: "all 0.2s ease",
+            }}
+            title="Download single PDF sheet containing both Front & Back side-by-side (Agal-Bagal)"
+          >
+            {downloadingPdf ? (
+              <>
+                <Loader2 size={16} className="spin-icon" /> Generating Front & Back PDF Sheet...
+              </>
+            ) : (
+              <>
+                <FileText size={16} /> <span>Download PDF Sheet (Front &amp; Back Agal-Bagal)</span>
+              </>
+            )}
           </button>
         </div>
       </div>

@@ -870,3 +870,148 @@ export function printCardElement(svgElementId, format = "nfc-card") {
 </html>`);
   printWindow.document.close();
 }
+
+/**
+ * 5. GENERATE SIDE-BY-SIDE (FRONT & BACK AGAL-BAGAL) PRINT VECTOR SVG
+ * Perfect for printers who need Front and Back side-by-side on one sheet
+ */
+export function generateSideBySideCardSvg(options) {
+  const frontOptions = { ...options, side: "front" };
+  const backOptions = { ...options, side: "back" };
+
+  const frontSvg = generateCardSvgString(frontOptions);
+  const backSvg = generateCardSvgString(backOptions);
+
+  // Strip XML declarations & extract inner content
+  const extractInner = (svg) => {
+    const match = svg.match(/<svg[^>]*>([\s\S]*?)<\/svg>/i);
+    return match ? match[1] : svg;
+  };
+
+  const isStand = options.format === "table-stand";
+  const W = isStand ? 1000 : 638;
+  const H = isStand ? 1000 : 1012;
+  const gap = 80;
+  const totalW = W * 2 + gap + 100;
+  const totalH = H + 120;
+
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${totalW} ${totalH}" width="${totalW}" height="${totalH}">
+    <rect width="${totalW}" height="${totalH}" fill="#0b0f17"/>
+    
+    <!-- Top Sheet Header -->
+    <text x="50" y="42" font-family="-apple-system, BlinkMacSystemFont, 'Plus Jakarta Sans', sans-serif" font-size="22" font-weight="900" fill="#ffffff" letter-spacing="1">TAPFORM &bull; PRINT SHEET (FRONT &amp; BACK SIDE-BY-SIDE)</text>
+    <text x="${totalW - 50}" y="42" font-family="monospace, sans-serif" font-size="18" font-weight="800" fill="#fbbf24" text-anchor="end">${options.cardId || "TF-CARD"}</text>
+
+    <!-- Front Side Section -->
+    <g transform="translate(50, 70)">
+      <text x="${W / 2}" y="-12" font-family="-apple-system, BlinkMacSystemFont, 'Inter', sans-serif" font-size="16" font-weight="800" fill="#38bdf8" text-anchor="middle" letter-spacing="2">FRONT SIDE (TAP &amp; QR)</text>
+      ${extractInner(frontSvg)}
+    </g>
+
+    <!-- Back Side Section -->
+    <g transform="translate(${50 + W + gap}, 70)">
+      <text x="${W / 2}" y="-12" font-family="-apple-system, BlinkMacSystemFont, 'Inter', sans-serif" font-size="16" font-weight="800" fill="#10b981" text-anchor="middle" letter-spacing="2">BACK SIDE (CHIP &amp; CONTACT)</text>
+      ${extractInner(backSvg)}
+    </g>
+  </svg>`;
+}
+
+/**
+ * 6. DOWNLOAD PRINT-READY SIDE-BY-SIDE PDF (FRONT & BACK AGAL-BAGAL)
+ */
+export async function downloadCardSideBySidePdf(options, filename = "Tapform_Card_Print_Sheet") {
+  const { jsPDF } = await import("jspdf");
+
+  const isStand = options.format === "table-stand";
+  const doc = new jsPDF({
+    orientation: "landscape",
+    unit: "mm",
+    format: "a4", // 297mm x 210mm
+  });
+
+  // Render SVG to image data
+  const renderSvgToDataUrl = (svgStr, width, height) => {
+    return new Promise((resolve, reject) => {
+      const blob = new Blob([svgStr], { type: "image/svg+xml;charset=utf-8" });
+      const url = URL.createObjectURL(blob);
+      const img = new Image();
+      img.onload = () => {
+        const canvas = document.createElement("canvas");
+        canvas.width = width * 3;
+        canvas.height = height * 3;
+        const ctx = canvas.getContext("2d");
+        ctx.imageSmoothingEnabled = true;
+        ctx.imageSmoothingQuality = "high";
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+        URL.revokeObjectURL(url);
+        resolve(canvas.toDataURL("image/png", 1.0));
+      };
+      img.onerror = (err) => {
+        URL.revokeObjectURL(url);
+        reject(err);
+      };
+      img.src = url;
+    });
+  };
+
+  const frontSvg = generateCardSvgString({ ...options, side: "front" });
+  const backSvg = generateCardSvgString({ ...options, side: "back" });
+
+  const cardW_px = isStand ? 1000 : 638;
+  const cardH_px = isStand ? 1000 : 1012;
+
+  const [frontData, backData] = await Promise.all([
+    renderSvgToDataUrl(frontSvg, cardW_px, cardH_px),
+    renderSvgToDataUrl(backSvg, cardW_px, cardH_px),
+  ]);
+
+  // A4 Landscape is 297mm width x 210mm height
+  doc.setFillColor(15, 23, 42); // #0f172a
+  doc.rect(0, 0, 297, 210, "F");
+
+  // Title Bar
+  doc.setTextColor(255, 255, 255);
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(14);
+  doc.text("TAPFORM PHYSICAL PRINT SHEET (FRONT & BACK)", 15, 15);
+
+  doc.setTextColor(251, 191, 36);
+  doc.setFontSize(12);
+  doc.text(`Card ID: ${options.cardId || "TF-01"}  |  ${isStand ? "6x6 Acrylic Stand (150mm)" : "85x54mm CR80 Card"}`, 282, 15, { align: "right" });
+
+  // Place Front and Back Images
+  if (isStand) {
+    // 2 Square Stands side by side
+    const standSizeMm = 85;
+    const yMm = 30;
+    doc.addImage(frontData, "PNG", 35, yMm, standSizeMm, standSizeMm);
+    doc.addImage(backData, "PNG", 175, yMm, standSizeMm, standSizeMm);
+
+    doc.setTextColor(56, 189, 248);
+    doc.setFontSize(11);
+    doc.text("FRONT SIDE", 35 + standSizeMm / 2, yMm - 4, { align: "center" });
+    doc.setTextColor(52, 211, 153);
+    doc.text("BACK SIDE", 175 + standSizeMm / 2, yMm - 4, { align: "center" });
+  } else {
+    // Pocket Cards: 85.6mm height x 54mm width (Portrait as in SVG)
+    const cardWidthMm = 70;
+    const cardHeightMm = (70 * 1012) / 638; // ~111mm
+    const yMm = 35;
+    doc.addImage(frontData, "PNG", 50, yMm, cardWidthMm, cardHeightMm);
+    doc.addImage(backData, "PNG", 175, yMm, cardWidthMm, cardHeightMm);
+
+    doc.setTextColor(56, 189, 248);
+    doc.setFontSize(11);
+    doc.text("FRONT SIDE (TAP & SCAN)", 50 + cardWidthMm / 2, yMm - 4, { align: "center" });
+    doc.setTextColor(52, 211, 153);
+    doc.text("BACK SIDE (BRAND & PHONE)", 175 + cardWidthMm / 2, yMm - 4, { align: "center" });
+  }
+
+  // Footer Instructions
+  doc.setTextColor(148, 163, 184);
+  doc.setFontSize(9);
+  doc.text("High-precision thermal PVC & acrylic printer output. Colors calibrated for CMYK / Thermal dye transfer.", 148, 202, { align: "center" });
+
+  doc.save(`${filename}.pdf`);
+  return { success: true, filename: `${filename}.pdf` };
+}

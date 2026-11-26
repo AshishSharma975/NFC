@@ -1,6 +1,6 @@
 import JSZip from "jszip";
 import QRCode from "qrcode";
-import { generateCardSvgString } from "./cardDesignSvgs";
+import { generateCardSvgString, generateSideBySideCardSvg } from "./cardDesignSvgs";
 
 /**
  * Generate CSV text content from an array of card objects
@@ -164,6 +164,23 @@ export async function downloadZipExport(cards, options = {}) {
           email: "ajjumahato9@gmail.com",
         });
         zip.file(`${folder}/Back_${card.cardId}.svg`, backSvg);
+
+        // Combined Side-by-Side (Agal-Bagal) Sheet for Manufacturer
+        const sideBySideSvg = generateSideBySideCardSvg({
+          format: "nfc-card",
+          designVariant: isAllInOne ? "all-in-one" : "review",
+          theme: isAllInOne ? "paw-white" : "matte-black",
+          title: card.title || "",
+          cardId: card.cardId,
+          cardNumber: card.cardNumber,
+          qrValue: permanentUrl,
+          socialLinks: card.socialLinks || {},
+          brandName: "Tapform",
+          phone: "9893711447",
+          email: "ajjumahato9@gmail.com",
+          isBlank,
+        });
+        zip.file(`${folder}/Combined_SideBySide_${card.cardId}.svg`, sideBySideSvg);
       } catch (e) {
         console.warn("Card export warning:", e);
       }
