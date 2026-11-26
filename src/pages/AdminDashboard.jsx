@@ -524,9 +524,12 @@ export default function AdminDashboard() {
   }
 
 
-  // When a bulk batch is created, refresh list and navigate to directory
+  // When a bulk batch is created, refresh list, switch to directory tab to see them immediately!
   function handleBatchCreated(res) {
     showToast(`Created batch '${res.batchId}' with ${res.count} cards!`);
+    setStatusFilter("all");
+    setSearch("");
+    setActiveTab("directory");
     fetchDashboardData(true);
   }
 

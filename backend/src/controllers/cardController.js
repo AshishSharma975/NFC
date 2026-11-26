@@ -735,12 +735,12 @@ export async function getAllCards(req, res, next) {
       }
     }
 
-    const query = Card.find(filter).sort({ cardNumber: 1, createdAt: -1 }).lean();
+    const query = Card.find(filter).sort({ cardNumber: -1, createdAt: -1 }).lean();
 
     // High scale limit capping & pagination to prevent memory overload
     const parsedLimit = limit && !isNaN(parseInt(limit, 10)) && parseInt(limit, 10) > 0
-      ? Math.min(parseInt(limit, 10), 500)
-      : 100;
+      ? Math.min(parseInt(limit, 10), 2000)
+      : 500;
     query.limit(parsedLimit);
 
     const parsedPage = req.query.page && !isNaN(parseInt(req.query.page, 10)) && parseInt(req.query.page, 10) > 0
