@@ -1231,7 +1231,7 @@ export async function bulkGenerateCards(req, res, next) {
         cardId,
         cardNumber: num,
         destinationUrl: "",
-        title: `Card #${formattedNum}`,
+        title: "",
         status: status === "active" ? "active" : "inactive",
         batchId: generatedBatchId,
         scanCount: 0,

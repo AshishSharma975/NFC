@@ -157,7 +157,9 @@ export function generateCardSvgString({
     title.trim() === "" ||
     title.toLowerCase().includes("your business name") ||
     title.toLowerCase() === "our business" ||
-    title.toLowerCase() === "unassigned stand";
+    title.toLowerCase() === "unassigned stand" ||
+    /^card\s*#?\d+$/i.test(title.trim()) ||
+    /^nfc\s*stand\s*#?\d+$/i.test(title.trim());
   const displayTitle = isPlaceholderTitle ? "" : escapeXml(title);
   const safeCardId = escapeXml(cardId || "SSHOP-1133");
   const safeBrand = escapeXml(brandName || "Tapform");
