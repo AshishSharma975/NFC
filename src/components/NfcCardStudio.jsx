@@ -29,17 +29,21 @@ export default function NfcCardStudio({
   initialTheme = "matte-black",
   initialFormat = "nfc-card",
   initialSide = "front",
+  initialDesignVariant = "review",
   brandName = "tapform",
   phone = "9893711447",
   email = "ajjumahato9@gmail.com",
 }) {
-  // Format: 'nfc-card' | 'table-stand'
+  // Format: 'nfc-card' (85x54mm) | 'table-stand' (6x6 inch / 150mm)
   const [format, setFormat] = useState(initialFormat);
+
+  // Design Variant: 'review' (Google Review) | 'all-in-one' (Social Connect)
+  const [designVariant, setDesignVariant] = useState(initialDesignVariant);
 
   // Side: 'front' | 'back' (relevant for nfc-card)
   const [side, setSide] = useState(initialSide);
 
-  // Theme: 'matte-black' | 'minimal-white' | 'sunset-split'
+  // Theme: 'matte-black' | 'minimal-white'
   const [theme, setTheme] = useState(initialTheme);
 
   // Custom Brand info state
@@ -60,10 +64,11 @@ export default function NfcCardStudio({
   const svgString = useMemo(() => {
     return generateCardSvgString({
       format,
+      designVariant,
       theme,
-      cardType,
+      cardType: designVariant === "all-in-one" ? "connect" : "review",
       side,
-      title: title || "Your Business Name",
+      title: title || "",
       cardId,
       cardNumber,
       qrValue: effectiveQrValue,
@@ -74,8 +79,8 @@ export default function NfcCardStudio({
     });
   }, [
     format,
+    designVariant,
     theme,
-    cardType,
     side,
     title,
     cardId,
@@ -91,12 +96,13 @@ export default function NfcCardStudio({
   function handleDownloadSvg() {
     try {
       const sideSuffix = format === "nfc-card" ? `_${side}` : "";
-      const filename = `${cardId || "card"}_${format}_${theme}${sideSuffix}_vector`;
+      const filename = `${cardId || "card"}_${format}_${designVariant}${sideSuffix}_vector`;
       downloadCardSvg(
         {
           format,
+          designVariant,
           theme,
-          cardType,
+          cardType: designVariant === "all-in-one" ? "connect" : "review",
           side,
           title,
           cardId,
@@ -121,12 +127,13 @@ export default function NfcCardStudio({
     setDownloading(true);
     try {
       const sideSuffix = format === "nfc-card" ? `_${side}` : "";
-      const filename = `${cardId || "card"}_${format}_${theme}${sideSuffix}_300dpi`;
+      const filename = `${cardId || "card"}_${format}_${designVariant}${sideSuffix}_300dpi`;
       await downloadCardPng(
         {
           format,
+          designVariant,
           theme,
-          cardType,
+          cardType: designVariant === "all-in-one" ? "connect" : "review",
           side,
           title,
           cardId,
@@ -153,12 +160,13 @@ export default function NfcCardStudio({
   function handleDownloadCdr() {
     try {
       const sideSuffix = format === "nfc-card" ? `_${side}` : "";
-      const filename = `${cardId || "card"}_${format}_${theme}${sideSuffix}_CorelDRAW`;
+      const filename = `${cardId || "card"}_${format}_${designVariant}${sideSuffix}_CorelDRAW`;
       downloadCardCorelDraw(
         {
           format,
+          designVariant,
           theme,
-          cardType,
+          cardType: designVariant === "all-in-one" ? "connect" : "review",
           side,
           title,
           cardId,
@@ -193,7 +201,7 @@ export default function NfcCardStudio({
       <div className="studio-toolbar">
         {/* Format Selector: Pocket Card vs Counter Stand */}
         <div className="toolbar-group">
-          <span className="toolbar-label">FORMAT</span>
+          <span className="toolbar-label">PRODUCT FORMAT</span>
           <div className="pill-toggle-group format-toggle">
             <button
               type="button"
@@ -211,7 +219,38 @@ export default function NfcCardStudio({
             >
               <Smartphone size={14} />
               <span className="btn-label-text">Stand Plaque</span>
-              <span className="pill-sub-dim">100mm</span>
+              <span className="pill-sub-dim">6x6" (150mm)</span>
+            </button>
+          </div>
+        </div>
+
+        {/* Design Variant Selector: Google Review vs All-in-One Social */}
+        <div className="toolbar-group">
+          <span className="toolbar-label">DESIGN VARIANT</span>
+          <div className="pill-toggle-group format-toggle">
+            <button
+              type="button"
+              className={`pill-btn ${designVariant === "review" ? "active" : ""}`}
+              onClick={() => {
+                setDesignVariant("review");
+                if (format === "nfc-card") setTheme("matte-black");
+              }}
+              title="Official Google Review Design"
+            >
+              <span>⭐</span>
+              <span className="btn-label-text">Google Review</span>
+            </button>
+            <button
+              type="button"
+              className={`pill-btn ${designVariant === "all-in-one" ? "active" : ""}`}
+              onClick={() => {
+                setDesignVariant("all-in-one");
+                setTheme("paw-white");
+              }}
+              title="All-in-One Multi-Platform Connect Design"
+            >
+              <span>🌐</span>
+              <span className="btn-label-text">All-in-One</span>
             </button>
           </div>
         </div>
@@ -242,49 +281,6 @@ export default function NfcCardStudio({
             </div>
           </div>
         )}
-
-        {/* Theme Selector for both Pocket Card and Counter Stand */}
-        <div className="toolbar-group">
-          <span className="toolbar-label">MINIMAL THEME</span>
-          <div className="pill-toggle-group theme-toggle">
-            <button
-              type="button"
-              className={`pill-btn ${theme === "matte-black" ? "active" : ""}`}
-              onClick={() => setTheme("matte-black")}
-              title="Pinterest Luxury Matte Black Aesthetic"
-            >
-              <span>{"\uD83D\uDDA4"}</span>
-              <span className="btn-label-text">
-                <span className="name-desktop">Matte Obsidian Luxury</span>
-                <span className="name-mobile">Obsidian</span>
-              </span>
-            </button>
-            <button
-              type="button"
-              className={`pill-btn ${theme === "minimal-white" ? "active" : ""}`}
-              onClick={() => setTheme("minimal-white")}
-              title="Scandinavian Minimalist Studio White"
-            >
-              <span>{"\uD83E\uDD0D"}</span>
-              <span className="btn-label-text">
-                <span className="name-desktop">Studio Porcelain Pearl</span>
-                <span className="name-mobile">Porcelain</span>
-              </span>
-            </button>
-            <button
-              type="button"
-              className={`pill-btn ${theme === "sunset-split" ? "active" : ""}`}
-              onClick={() => setTheme("sunset-split")}
-              title="Modern Asymmetric Amber Split (Reference Design 1)"
-            >
-              <span>{"\u2728"}</span>
-              <span className="btn-label-text">
-                <span className="name-desktop">Modern Split (Amber)</span>
-                <span className="name-mobile">Amber Split</span>
-              </span>
-            </button>
-          </div>
-        </div>
       </div>
 
       {/* Back Side Details Quick Customization Bar */}

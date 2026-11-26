@@ -771,41 +771,52 @@ export function printCardElement(svgElementId, format = "nfc-card") {
   const isStand = format === "table-stand";
   const cssSize = isStand ? "150mm 150mm" : "54mm 85.6mm";
 
-  printWindow.document.write(`
-    <!DOCTYPE html>
-    <html>
-    <head>
-      <title>Print Card - Tapform</title>
-      <style>
-        @page {
-          size: ${cssSize};
-          margin: 0;
-        }
-        body {
-          margin: 0;
-          padding: 0;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          background: #ffffff;
-        }
-        svg {
-          width: 100vw;
-          height: 100vh;
-          display: block;
-        }
-      </style>
-    </head>
-    <body>
-      ${el.outerHTML}
-      <script>
-        window.onload = function() {
-          window.print();
-          window.onafterprint = function() { window.close(); };
-        };
-      </script>
-    </body>
-    </html>
-  `);
+  // Serialize SVG content properly
+  const svgHtml = el.outerHTML;
+
+  printWindow.document.open();
+  printWindow.document.write(`<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Print Card - Tapform</title>
+  <style>
+    @page {
+      size: ${cssSize};
+      margin: 0;
+    }
+    html, body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #ffffff;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+    svg {
+      width: 100%;
+      height: 100%;
+      max-width: 100vw;
+      max-height: 100vh;
+      display: block;
+    }
+  </style>
+</head>
+<body>
+  ${svgHtml}
+  <script>
+    window.onload = function() {
+      setTimeout(function() {
+        window.focus();
+        window.print();
+      }, 300);
+    };
+  </script>
+</body>
+</html>`);
   printWindow.document.close();
 }
