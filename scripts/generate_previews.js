@@ -12,8 +12,8 @@ const frontSvg = generateCardSvgString({
   cardId: "TF-02",
   cardNumber: 2,
   brandName: "TAPFORM",
-  phone: "8827718774",
-  email: "ashish8389sharma@gmail.com",
+  phone: "9893711447",
+  email: "ajjumahato9@gmail.com",
 });
 
 const backSvg = generateCardSvgString({
@@ -24,8 +24,8 @@ const backSvg = generateCardSvgString({
   cardId: "TF-02",
   cardNumber: 2,
   brandName: "TAPFORM",
-  phone: "8827718774",
-  email: "ashish8389sharma@gmail.com",
+  phone: "9893711447",
+  email: "ajjumahato9@gmail.com",
 });
 
 fs.writeFileSync(path.join(artifactDir, "card_front_preview.svg"), frontSvg);

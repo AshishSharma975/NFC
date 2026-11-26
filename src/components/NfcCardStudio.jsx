@@ -30,8 +30,8 @@ export default function NfcCardStudio({
   initialFormat = "nfc-card",
   initialSide = "front",
   brandName = "tapform",
-  phone = "8827718774",
-  email = "ashish8389sharma@gmail.com",
+  phone = "9893711447",
+  email = "ajjumahato9@gmail.com",
 }) {
   // Format: 'nfc-card' | 'table-stand'
   const [format, setFormat] = useState(initialFormat);
@@ -331,7 +331,7 @@ export default function NfcCardStudio({
               type="text"
               value={activePhone}
               onChange={(e) => setActivePhone(e.target.value)}
-              placeholder="8827718774"
+              placeholder="9893711447"
               style={{
                 width: "100%",
                 background: "#090d16",
@@ -351,7 +351,7 @@ export default function NfcCardStudio({
               type="email"
               value={activeEmail}
               onChange={(e) => setActiveEmail(e.target.value)}
-              placeholder="ashish8389sharma@gmail.com"
+              placeholder="ajjumahato9@gmail.com"
               style={{
                 width: "100%",
                 background: "#090d16",

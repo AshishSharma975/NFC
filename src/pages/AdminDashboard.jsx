@@ -1181,8 +1181,8 @@ export default function AdminDashboard() {
                       facebook: studioFacebook,
                     }}
                     brandName="tapform"
-                    phone="8827718774"
-                    email="ashish8389sharma@gmail.com"
+                    phone="9893711447"
+                    email="ajjumahato9@gmail.com"
                   />
                 </div>
               </div>

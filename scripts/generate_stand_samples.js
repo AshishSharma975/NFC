@@ -37,7 +37,7 @@ const card85x54Front = generateCardSvgString({
   cardNumber: "1133",
 });
 
-// 4. 85x54mm Pocket Card Back (Brand + 8827718774 + Gmail)
+// 4. 85x54mm Pocket Card Back (Brand + 9893711447 + Gmail)
 const card85x54Back = generateCardSvgString({
   format: "nfc-card",
   theme: "matte-black",
@@ -46,8 +46,8 @@ const card85x54Back = generateCardSvgString({
   cardId: "TF-1133",
   cardNumber: "1133",
   brandName: "Tapform",
-  phone: "8827718774",
-  email: "ashish8389sharma@gmail.com",
+  phone: "9893711447",
+  email: "ajjumahato9@gmail.com",
 });
 
 fs.writeFileSync(path.join(artifactDir, "stand_6x6_with_qr.svg"), standWithQr);

@@ -210,8 +210,8 @@ export default function BulkExportSection({ onBatchCreated, totalCardsCount = 0 
           cardNumber: "0000",
           isBlank: true,
           brandName: "Tapform",
-          phone: "8827718774",
-          email: "ashish8389sharma@gmail.com",
+          phone: "9893711447",
+          email: "ajjumahato9@gmail.com",
         },
         `Tapform_Blank_6x6_Stand_${variant === "all-in-one" ? "All_In_One" : "Review"}_Template`
       );

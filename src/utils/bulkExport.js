@@ -160,8 +160,8 @@ export async function downloadZipExport(cards, options = {}) {
           cardId: card.cardId,
           cardNumber: card.cardNumber,
           brandName: "Tapform",
-          phone: "8827718774",
-          email: "ashish8389sharma@gmail.com",
+          phone: "9893711447",
+          email: "ajjumahato9@gmail.com",
         });
         zip.file(`${folder}/Back_${card.cardId}.svg`, backSvg);
       } catch (e) {
@@ -184,8 +184,8 @@ export async function downloadZipExport(cards, options = {}) {
           qrValue: permanentUrl,
           socialLinks: card.socialLinks || {},
           brandName: "Tapform",
-          phone: "8827718774",
-          email: "ashish8389sharma@gmail.com",
+          phone: "9893711447",
+          email: "ajjumahato9@gmail.com",
           isBlank,
         });
         zip.file(`${folder}/${card.cardId}_6x6_Stand.svg`, standSvg);

@@ -12,7 +12,7 @@ import QRCode from "qrcode";
  *    - Both support Live QR or Blank with QR box (blank template) exclusively in Admin!
  * 
  * 3. CHHOTA POCKET CARD (85.6mm x 54mm CR80):
- *    - Variant A: "Review Pocket Card" (Review front + Back side with brand, phone 8827718774, email).
+ *    - Variant A: "Review Pocket Card" (Review front + Back side with brand, phone 9893711447, email).
  *    - Variant B: "All in One Pocket Card" (Multi-link Connect Front with Google, Insta, WA, FB + Back side with brand, phone & email).
  *    - Exact 4x4 cm QR code on front, large bottom review text ("Your reviews tell us what matters to you" 24px bold).
  *    - Blank clean space for unassigned cards (no "Your Business Name" placeholder).
@@ -135,8 +135,8 @@ export function generateCardSvgString({
   qrValue = "https://tapform.me/c/SSHOP-1133",
   socialLinks = {},
   brandName = "Tapform",
-  phone = "8827718774",
-  email = "ashish8389sharma@gmail.com",
+  phone = "9893711447",
+  email = "ajjumahato9@gmail.com",
   isBlank = false, // When true, renders QR code box as blank placeholder
 }) {
   const isPlaceholderTitle =
@@ -148,8 +148,8 @@ export function generateCardSvgString({
   const displayTitle = isPlaceholderTitle ? "" : escapeXml(title);
   const safeCardId = escapeXml(cardId || "SSHOP-1133");
   const safeBrand = escapeXml(brandName || "Tapform");
-  const safePhone = escapeXml(phone || "8827718774");
-  const safeEmail = escapeXml(email || "ashish8389sharma@gmail.com");
+  const safePhone = escapeXml(phone || "9893711447");
+  const safeEmail = escapeXml(email || "ajjumahato9@gmail.com");
   const isAllInOne = designVariant === "all-in-one" || cardType === "connect";
 
   let cornerNumber = "";
@@ -743,7 +743,7 @@ export function downloadCardCorelDraw(options, filename = "nfc-card-coreldraw") 
   CORELDRAW 100% VECTOR PRINT READY SPECIFICATION (${sideLabel})
   Vendor Instruction: In CorelDRAW, press Ctrl + I (File > Import)
   Aspect Ratio: ${options.format === "table-stand" ? "6x6 inch / 150mm x 150mm (Square Countertop Stand)" : "85.6mm x 54mm (CR80 Standard NFC Card)"}
-  Brand: ${options.brandName || "Tapform"} | ${options.phone || "8827718774"} | ${options.email || "ashish8389sharma@gmail.com"}
+  Brand: ${options.brandName || "Tapform"} | ${options.phone || "9893711447"} | ${options.email || "ajjumahato9@gmail.com"}
   =============================================================================
 -->\n`;
   const blob = new Blob([cdrHeader + svgString], { type: "image/svg+xml;charset=utf-8" });
