@@ -677,7 +677,7 @@ export function generateCardSvgString({
 
         <!-- Footer Tagline & Contact info -->
         <g transform="translate(${SW / 2}, 968)">
-          <text x="0" y="0" font-family="-apple-system, BlinkMacSystemFont, 'Inter', sans-serif" font-size="13" font-weight="700" fill="#94a3b8" text-anchor="middle" letter-spacing="1">${safeBrand} Stand Plaque &#8226; ID: ${isBlank ? "STAND-ID" : safeCardId} &#8226; Ph: +91 ${safePhone}</text>
+          <text x="0" y="0" font-family="-apple-system, BlinkMacSystemFont, 'Inter', sans-serif" font-size="13" font-weight="700" fill="#94a3b8" text-anchor="middle" letter-spacing="1">${safeBrand} Stand Plaque &#8226; ID: ${isBlank ? "STAND-ID" : safeCardId} &#8226; To order yours: +91 ${safePhone}</text>
         </g>
       </g>
     </svg>`;
@@ -874,10 +874,10 @@ export function generateCardSvgString({
       <!-- Deep Dark Obsidian Bottom Slab -->
       <path d="M 0,845 C 350,895 700,845 ${SW},795 L ${SW},${SH} L 0,${SH} Z" fill="#0b0e14"/>
 
-      <!-- Bottom Left: Ph & Info in Dark Section -->
+      <!-- Bottom Left: Ph & Info in Dark Section (Professional Order Callout) -->
       <g transform="translate(60, 936)">
         <text x="0" y="0" font-family="-apple-system, BlinkMacSystemFont, 'Inter', sans-serif" font-size="14" font-weight="800" fill="#f59e0b" letter-spacing="1.5">SMART NFC &#8226; 6x6 ACRYLIC STAND</text>
-        <text x="0" y="24" font-family="-apple-system, BlinkMacSystemFont, 'Inter', sans-serif" font-size="12" font-weight="600" fill="#94a3b8">Ph: +91 ${safePhone}</text>
+        <text x="0" y="24" font-family="-apple-system, BlinkMacSystemFont, 'Inter', sans-serif" font-size="13" font-weight="600" fill="#cbd5e1">To order your custom stand: +91 ${safePhone}</text>
       </g>
 
       <!-- Bottom Right: "Powered By:" + Logo & "Tapform" in exact same horizontal baseline -->
