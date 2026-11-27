@@ -231,26 +231,26 @@ export function generateCardSvgString({
         <text x="${W / 2}" y="270" font-family="-apple-system, BlinkMacSystemFont, 'Plus Jakarta Sans', 'Inter', sans-serif" font-size="34" font-weight="900" fill="#ffffff" text-anchor="middle" letter-spacing="3">${safeBrand.toUpperCase()}</text>
         <text x="${W / 2}" y="296" font-family="-apple-system, BlinkMacSystemFont, 'Inter', sans-serif" font-size="13" font-weight="700" fill="#fbbf24" text-anchor="middle" letter-spacing="3">SMART NFC &#8226; DIGITAL TOUCHPOINT</text>
 
-        <!-- Compact Contact Details Box -->
-        <g transform="translate(48, 340)">
-          <rect x="0" y="0" width="${W - 96}" height="175" rx="20" fill="#131722" stroke="#252e3e" stroke-width="1.8"/>
+        <!-- Compact Contact Details Box (Large High-Legibility Print Typography) -->
+        <g transform="translate(48, 335)">
+          <rect x="0" y="0" width="${W - 96}" height="195" rx="20" fill="#131722" stroke="#252e3e" stroke-width="2"/>
 
           <!-- Phone Row -->
           <g transform="translate(24, 25)">
-            <rect x="0" y="0" width="38" height="38" rx="10" fill="#1e293b" stroke="#334155" stroke-width="1.2"/>
-            <g transform="translate(10, 10) scale(0.85)">${ICONS.phone("#38bdf8")}</g>
-            <text x="52" y="15" font-family="-apple-system, BlinkMacSystemFont, 'Inter', sans-serif" font-size="11" font-weight="800" fill="#94a3b8" letter-spacing="1.2">CALL &#8226; WHATSAPP SUPPORT</text>
-            <text x="52" y="32" font-family="-apple-system, BlinkMacSystemFont, 'Inter', sans-serif" font-size="16" font-weight="800" fill="#ffffff" letter-spacing="0.5">+91 ${safePhone}</text>
+            <rect x="0" y="0" width="44" height="44" rx="12" fill="#1e293b" stroke="#334155" stroke-width="1.5"/>
+            <g transform="translate(11, 11) scale(1.0)">${ICONS.phone("#38bdf8")}</g>
+            <text x="58" y="15" font-family="-apple-system, BlinkMacSystemFont, 'Inter', sans-serif" font-size="13" font-weight="800" fill="#94a3b8" letter-spacing="1.5">CALL &#8226; WHATSAPP SUPPORT</text>
+            <text x="58" y="38" font-family="-apple-system, BlinkMacSystemFont, 'Inter', sans-serif" font-size="22" font-weight="900" fill="#ffffff" letter-spacing="1">+91 ${safePhone}</text>
           </g>
 
-          <line x1="24" y1="88" x2="${W - 120}" y2="88" stroke="#1c2432" stroke-width="1.5"/>
+          <line x1="24" y1="98" x2="${W - 120}" y2="98" stroke="#1c2432" stroke-width="1.5"/>
 
           <!-- Email Row -->
-          <g transform="translate(24, 110)">
-            <rect x="0" y="0" width="38" height="38" rx="10" fill="#1e293b" stroke="#334155" stroke-width="1.2"/>
-            <g transform="translate(10, 10) scale(0.85)">${ICONS.mail("#fbbf24")}</g>
-            <text x="52" y="15" font-family="-apple-system, BlinkMacSystemFont, 'Inter', sans-serif" font-size="11" font-weight="800" fill="#94a3b8" letter-spacing="1.2">OFFICIAL EMAIL</text>
-            <text x="52" y="32" font-family="-apple-system, BlinkMacSystemFont, 'Inter', sans-serif" font-size="15" font-weight="700" fill="#ffffff">${safeEmail}</text>
+          <g transform="translate(24, 118)">
+            <rect x="0" y="0" width="44" height="44" rx="12" fill="#1e293b" stroke="#334155" stroke-width="1.5"/>
+            <g transform="translate(11, 11) scale(1.0)">${ICONS.mail("#fbbf24")}</g>
+            <text x="58" y="15" font-family="-apple-system, BlinkMacSystemFont, 'Inter', sans-serif" font-size="13" font-weight="800" fill="#94a3b8" letter-spacing="1.5">OFFICIAL EMAIL</text>
+            <text x="58" y="38" font-family="-apple-system, BlinkMacSystemFont, 'Inter', sans-serif" font-size="20" font-weight="800" fill="#ffffff">${safeEmail}</text>
           </g>
         </g>
 
@@ -675,9 +675,10 @@ export function generateCardSvgString({
           </g>
         </g>
 
-        <!-- Footer Tagline & Contact info -->
-        <g transform="translate(${SW / 2}, 968)">
-          <text x="0" y="0" font-family="-apple-system, BlinkMacSystemFont, 'Inter', sans-serif" font-size="13" font-weight="700" fill="#94a3b8" text-anchor="middle" letter-spacing="1">${safeBrand} Stand Plaque &#8226; ID: ${isBlank ? "STAND-ID" : safeCardId} &#8226; To order yours: +91 ${safePhone}</text>
+        <!-- Footer Tagline & Contact info (Large Bold Print Typography) -->
+        <g transform="translate(${SW / 2}, 965)">
+          <text x="0" y="0" font-family="-apple-system, BlinkMacSystemFont, 'Inter', sans-serif" font-size="16" font-weight="900" fill="#0f172a" text-anchor="middle" letter-spacing="1">To order your custom stand plaque: +91 ${safePhone}</text>
+          <text x="0" y="24" font-family="-apple-system, BlinkMacSystemFont, 'Inter', sans-serif" font-size="13" font-weight="700" fill="#94a3b8" text-anchor="middle" letter-spacing="2">${safeBrand.toUpperCase()} &#8226; STAND ID: ${isBlank ? "TF-____" : safeCardId}</text>
         </g>
       </g>
     </svg>`;
@@ -874,10 +875,10 @@ export function generateCardSvgString({
       <!-- Deep Dark Obsidian Bottom Slab -->
       <path d="M 0,845 C 350,895 700,845 ${SW},795 L ${SW},${SH} L 0,${SH} Z" fill="#0b0e14"/>
 
-      <!-- Bottom Left: Ph & Info in Dark Section (Professional Order Callout) -->
-      <g transform="translate(60, 936)">
-        <text x="0" y="0" font-family="-apple-system, BlinkMacSystemFont, 'Inter', sans-serif" font-size="14" font-weight="800" fill="#f59e0b" letter-spacing="1.5">SMART NFC &#8226; 6x6 ACRYLIC STAND</text>
-        <text x="0" y="24" font-family="-apple-system, BlinkMacSystemFont, 'Inter', sans-serif" font-size="13" font-weight="600" fill="#cbd5e1">To order your custom stand: +91 ${safePhone}</text>
+      <!-- Bottom Left: Ph & Info in Dark Section (Professional Order Callout - Large Print Text) -->
+      <g transform="translate(60, 932)">
+        <text x="0" y="0" font-family="-apple-system, BlinkMacSystemFont, 'Inter', sans-serif" font-size="16" font-weight="900" fill="#f59e0b" letter-spacing="2">SMART NFC &#8226; 6x6 ACRYLIC STAND</text>
+        <text x="0" y="28" font-family="-apple-system, BlinkMacSystemFont, 'Inter', sans-serif" font-size="16" font-weight="800" fill="#ffffff" letter-spacing="0.5">To order your custom stand: +91 ${safePhone}</text>
       </g>
 
       <!-- Bottom Right: "Powered By:" + Logo & "Tapform" in exact same horizontal baseline -->
