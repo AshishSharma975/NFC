@@ -869,12 +869,12 @@ export function generateCardSvgString({
       <!-- Solid Dark Obsidian Bottom Block with Matching Curve -->
       <path d="M 0,875 C 350,915 750,855 ${SW},815 L ${SW},${SH} L 0,${SH} Z" fill="#0b0e14"/>
 
-      <!-- Bottom Right: "Powered By: Tapform" Branding -->
-      <g transform="translate(${SW - 80}, 935)">
-        <text x="0" y="0" font-family="-apple-system, BlinkMacSystemFont, 'Plus Jakarta Sans', sans-serif" font-size="16" font-weight="600" fill="#94a3b8" text-anchor="end">Powered By:</text>
-        <g transform="translate(0, 26)">
+      <!-- Bottom Right: "Powered By: Tapform" Branding (Perfect Clean Row Alignment) -->
+      <g transform="translate(${SW - 60}, 940)">
+        <text x="0" y="0" font-family="-apple-system, BlinkMacSystemFont, 'Plus Jakarta Sans', sans-serif" font-size="14" font-weight="600" fill="#94a3b8" text-anchor="end">Powered By:</text>
+        <g transform="translate(0, 24)">
           <text x="0" y="0" font-family="-apple-system, BlinkMacSystemFont, 'Plus Jakarta Sans', sans-serif" font-size="22" font-weight="900" fill="#ffffff" text-anchor="end" letter-spacing="1">Tapform</text>
-          <g transform="translate(-108, -18)">
+          <g transform="translate(-112, -7)">
             ${ICONS.tapformLogo(24, "#10b981", "#ffffff")}
           </g>
         </g>
