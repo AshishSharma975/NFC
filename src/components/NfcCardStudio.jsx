@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import {
   Download,
   Printer,
@@ -41,7 +41,18 @@ export default function NfcCardStudio({
   const [format, setFormat] = useState(initialFormat);
 
   // Design Variant: 'review' (Google Review) | 'all-in-one' (Social Connect)
-  const [designVariant, setDesignVariant] = useState(initialDesignVariant);
+  const [designVariant, setDesignVariant] = useState(
+    cardType === "connect" ? "all-in-one" : initialDesignVariant
+  );
+
+  // Sync designVariant when parent changes cardType (e.g. from Admin Dashboard functionality buttons)
+  useEffect(() => {
+    if (cardType === "connect") {
+      setDesignVariant("all-in-one");
+    } else if (cardType === "review") {
+      setDesignVariant("review");
+    }
+  }, [cardType]);
 
   // Side: 'front' | 'back' (relevant for nfc-card)
   const [side, setSide] = useState(initialSide);
