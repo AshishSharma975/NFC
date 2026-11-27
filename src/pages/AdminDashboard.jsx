@@ -155,7 +155,7 @@ export default function AdminDashboard() {
   }, []);
 
   // Fetch Dashboard Stats & Cards
-  const fetchDashboardData = useCallback(async (isRefresh = false) => {
+  const fetchDashboardData = useCallback(async (isRefresh = false, overrideFilter = null) => {
     if (isRefresh) {
       setRefreshing(true);
     } else {
@@ -163,12 +163,15 @@ export default function AdminDashboard() {
     }
     setError("");
 
+    const activeFilter = overrideFilter !== null ? overrideFilter : statusFilter;
+    const activeSearch = overrideFilter !== null ? "" : search.trim();
+
     try {
       const [statsRes, cardsRes] = await Promise.all([
         getAdminStatsApi().catch(() => null),
         getAllCardsApi({
-          status: statusFilter,
-          search: search.trim(),
+          status: activeFilter === "all" ? undefined : activeFilter,
+          search: activeSearch,
           limit: 200,
         }).catch((err) => {
           throw err;
@@ -530,7 +533,7 @@ export default function AdminDashboard() {
     setStatusFilter("all");
     setSearch("");
     setActiveTab("directory");
-    fetchDashboardData(true);
+    fetchDashboardData(true, "all");
   }
 
   // Loading Splash
