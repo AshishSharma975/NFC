@@ -698,6 +698,12 @@ export function generateCardSvgString({
   return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${SW} ${SH}" width="${SW}" height="${SH}">
     <defs>
       <!-- Premium Gold/Amber Gradients -->
+      <linearGradient id="instaGradAll" x1="0%" y1="100%" x2="100%" y2="0%">
+        <stop offset="0%" stop-color="#ffd521"/>
+        <stop offset="25%" stop-color="#f50000"/>
+        <stop offset="50%" stop-color="#b900b4"/>
+        <stop offset="100%" stop-color="#833ab4"/>
+      </linearGradient>
       <linearGradient id="goldGradStand" x1="0%" y1="0%" x2="100%" y2="100%">
         <stop offset="0%" stop-color="#f59e0b"/>
         <stop offset="50%" stop-color="#d97706"/>
@@ -729,34 +735,40 @@ export function generateCardSvgString({
         <text x="50" y="23" font-family="-apple-system, BlinkMacSystemFont, 'Inter', sans-serif" font-size="14" font-weight="900" fill="#d97706" text-anchor="middle" letter-spacing="1.5">1-TAP</text>
       </g>
 
-      <!-- ================= TOP HEADER ================= -->
-      <g transform="translate(${SW / 2}, 95)">
-        <!-- Google "G" Emblem with Soft Ambient Glow -->
-        <circle cx="0" cy="30" r="42" fill="#ffffff" stroke="#f1f5f9" stroke-width="2"/>
-        <g transform="translate(-24, 6) scale(1.6)">
-          ${ICONS.googleG}
+      <!-- ================= TOP HEADER (ALL-IN-ONE CONNECT & REVIEW) ================= -->
+      <g transform="translate(${SW / 2}, 78)">
+        <!-- Multi-Platform Floating Brand Icons Lockup -->
+        <g transform="translate(0, 16)">
+          <!-- Google G -->
+          <circle cx="-90" cy="0" r="24" fill="#ffffff" stroke="#e2e8f0" stroke-width="2"/>
+          <g transform="translate(-104, -14) scale(1.15)">${ICONS.googleG}</g>
+
+          <!-- Instagram -->
+          <circle cx="-30" cy="0" r="24" fill="url(#instaGradAll)"/>
+          <g transform="translate(-45, -15) scale(1.2)">${ICONS.instagram}</g>
+
+          <!-- WhatsApp -->
+          <circle cx="30" cy="0" r="24" fill="#25D366"/>
+          <g transform="translate(14, -16) scale(1.25)">${ICONS.whatsapp}</g>
+
+          <!-- Facebook -->
+          <circle cx="90" cy="0" r="24" fill="#1877F2"/>
+          <g transform="translate(77, -13) scale(1.05)">${ICONS.facebook}</g>
         </g>
 
-        <!-- "Review us" & "on Google" -->
-        <text x="0" y="125" font-family="-apple-system, BlinkMacSystemFont, 'Plus Jakarta Sans', 'Inter', sans-serif" font-size="52" font-weight="900" fill="#0f172a" text-anchor="middle" letter-spacing="-0.5">Review us</text>
-        <g transform="translate(0, 168)">
-          <text x="-40" y="0" font-family="-apple-system, BlinkMacSystemFont, 'Plus Jakarta Sans', 'Inter', sans-serif" font-size="36" font-weight="700" fill="#0f172a" text-anchor="middle">on</text>
-          <!-- Stylized Google Wordmark Colors -->
-          <text x="32" y="0" font-family="-apple-system, BlinkMacSystemFont, 'Plus Jakarta Sans', 'Inter', sans-serif" font-size="38" font-weight="900" text-anchor="middle">
-            <tspan fill="#4285F4">G</tspan><tspan fill="#EA4335">o</tspan><tspan fill="#FBBC05">o</tspan><tspan fill="#4285F4">g</tspan><tspan fill="#34A853">l</tspan><tspan fill="#EA4335">e</tspan>
-          </text>
-        </g>
+        <!-- Main Title: CONNECT & REVIEW -->
+        <text x="0" y="86" font-family="-apple-system, BlinkMacSystemFont, 'Plus Jakarta Sans', 'Inter', sans-serif" font-size="44" font-weight="900" fill="#0f172a" text-anchor="middle" letter-spacing="-0.5">CONNECT &amp; REVIEW</text>
+        
+        <!-- Clean Sub-Headline: 1-Tap All Platforms -->
+        <text x="0" y="120" font-family="-apple-system, BlinkMacSystemFont, 'Inter', sans-serif" font-size="15" font-weight="800" fill="#d97706" text-anchor="middle" letter-spacing="3">GOOGLE &#8226; INSTAGRAM &#8226; WHATSAPP &#8226; FACEBOOK</text>
 
         <!-- 5 GOLDEN STARS WITH HORIZONTAL ACCENT WINGS -->
-        <g transform="translate(0, 205)">
-          <!-- Left Wing Accent Line -->
-          <line x1="-220" y1="12" x2="-120" y2="12" stroke="#f59e0b" stroke-width="2.5" stroke-linecap="round"/>
-          <!-- 5 Golden Stars Centered -->
+        <g transform="translate(0, 146)">
+          <line x1="-220" y1="12" x2="-120" y2="12" stroke="#f59e0b" stroke-width="2" stroke-linecap="round"/>
           <g transform="translate(-102, -4) scale(1.25)">
             ${ICONS.fiveStars}
           </g>
-          <!-- Right Wing Accent Line -->
-          <line x1="120" y1="12" x2="220" y2="12" stroke="#f59e0b" stroke-width="2.5" stroke-linecap="round"/>
+          <line x1="120" y1="12" x2="220" y2="12" stroke="#f59e0b" stroke-width="2" stroke-linecap="round"/>
         </g>
       </g>
 
