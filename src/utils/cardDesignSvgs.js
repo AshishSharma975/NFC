@@ -474,110 +474,199 @@ export function generateCardSvgString({
 
   // -------------------------------------------------------------------------
   // STAND VARIANT 1: NORMAL GOOGLE REVIEW STAND (6x6 inch)
-  // Matching Photo 3: "Review Us on Google", Large Google G, Tap & Scan boxes
+  // Premium Acrylic Countertop Stand Plaque (Single Sided Front)
+  // Matching modern dual-tone layout:
+  // - Top deep crimson/ruby banner with client name/logo on left,
+  //   Tapform logo + "SCAN • TAP • REVIEW" + bold "REVIEW / GOOGLE REVIEW" on right.
+  // - Bottom crisp white acrylic base with dual rounded red-bordered action tiles:
+  //   1) NFC Tap Phone tile with "TAP YOUR PHONE" capsule
+  //   2) QR Code tile with "SCAN QR CODE" capsule
+  // - Clean minimal footer bar with quick features & Tapform contact.
   // -------------------------------------------------------------------------
   if (!isAllInOne) {
     return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${SW} ${SH}" width="${SW}" height="${SH}">
       <defs>
-        <radialGradient id="reviewStandBg" cx="50%" cy="20%" r="85%">
-          <stop offset="0%" stop-color="#141822"/>
-          <stop offset="60%" stop-color="#0c0e14"/>
-          <stop offset="100%" stop-color="#07080b"/>
-        </radialGradient>
+        <!-- Top Crimson Header Gradient -->
+        <linearGradient id="headerRedGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stop-color="#70090f"/>
+          <stop offset="45%" stop-color="#8a0c14"/>
+          <stop offset="100%" stop-color="#55050a"/>
+        </linearGradient>
+        <!-- Subtle glossy sheen overlay -->
+        <linearGradient id="headerSheen" x1="0%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%" stop-color="#ffffff" stop-opacity="0.16"/>
+          <stop offset="100%" stop-color="#ffffff" stop-opacity="0"/>
+        </linearGradient>
+        <!-- Button Capsule Gradient -->
+        <linearGradient id="redPillGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+          <stop offset="0%" stop-color="#dc2626"/>
+          <stop offset="100%" stop-color="#b91c1c"/>
+        </linearGradient>
+        <!-- Clip path to keep stand rounded corners -->
+        <clipPath id="standClip">
+          <rect x="0" y="0" width="${SW}" height="${SH}" rx="${SR}"/>
+        </clipPath>
       </defs>
 
-      <rect x="4" y="4" width="${SW - 8}" height="${SH - 8}" rx="${SR}" fill="url(#reviewStandBg)" stroke="#232834" stroke-width="4"/>
+      <!-- Outer Acrylic Card Base with Rounded Corners -->
+      <g clip-path="url(#standClip)">
+        <!-- Clean White Acrylic Base -->
+        <rect x="0" y="0" width="${SW}" height="${SH}" fill="#ffffff"/>
 
-      <!-- Header: Serial Badge & Manufacturer Tapform Micro-logo -->
-      <g transform="translate(60, 48)">
-        <rect x="0" y="0" width="110" height="42" rx="12" fill="#141822" stroke="#d4af37" stroke-width="2"/>
-        <text x="55" y="27" font-family="monospace, sans-serif" font-size="20" font-weight="900" fill="#fbbf24" text-anchor="middle" letter-spacing="1">${isBlank ? "#____" : cornerNumber}</text>
-      </g>
+        <!-- TOP CRIMSON BANNER WITH DYNAMIC ACRYLIC WAVE (Height ~ 430px) -->
+        <path d="M 0,0 L ${SW},0 L ${SW},400 C 720,440 280,350 0,430 Z" fill="url(#headerRedGrad)"/>
+        <!-- Soft Secondary Crimson Glow Arc -->
+        <path d="M 0,0 L ${SW},0 L ${SW},360 C 650,400 320,330 0,390 Z" fill="url(#headerSheen)"/>
 
-      <!-- Discreet Top Tapform Hardware Badge -->
-      <g transform="translate(${SW / 2 - 60}, 48)">
-        <g transform="translate(14, 18)">${ICONS.tapformLogo(24, "#10b981", "#ffffff")}</g>
-        <text x="44" y="26" font-family="-apple-system, BlinkMacSystemFont, 'Plus Jakarta Sans', sans-serif" font-size="20" font-weight="900" fill="#64748b" letter-spacing="1.5">TAPFORM</text>
-      </g>
-
-      <!-- Top Right: 1-TAP NFC Badge -->
-      <g transform="translate(830, 48)">
-        <rect x="0" y="0" width="110" height="42" rx="12" fill="#141822" stroke="#2c3444" stroke-width="1.8"/>
-        <g transform="translate(16, 11) scale(0.7)">${ICONS.nfcWave("#38bdf8")}</g>
-        <text x="68" y="26" font-family="-apple-system, BlinkMacSystemFont, 'Inter', sans-serif" font-size="12" font-weight="900" fill="#ffffff">1-TAP</text>
-      </g>
-
-      <!-- Client Business Name Area (Spacious & Clean) -->
-      ${
-        displayTitle
-          ? `
-          <g transform="translate(${SW / 2}, 130)">
-            <text x="0" y="0" font-family="-apple-system, BlinkMacSystemFont, 'Plus Jakarta Sans', 'Inter', sans-serif" font-size="34" font-weight="900" fill="#ffffff" text-anchor="middle" letter-spacing="-0.5">${displayTitle}</text>
-          </g>
-          <g transform="translate(${SW / 2}, 180)">
-            <text x="0" y="0" font-family="-apple-system, BlinkMacSystemFont, 'Plus Jakarta Sans', sans-serif" font-size="20" font-weight="700" fill="#94a3b8" text-anchor="middle" letter-spacing="1">Review Us on</text>
-          </g>
-          <!-- Smaller, Crisp Google G Logo -->
-          <g transform="translate(${SW / 2 - 22}, 196) scale(1.5)">
-            ${ICONS.googleG}
-          </g>
-          <!-- 5 Golden Stars Below -->
-          <g transform="translate(${SW / 2 - 82}, 256) scale(1.15)">
-            ${ICONS.fiveStars}
-          </g>
-          `
-          : `
-          <!-- Unassigned / Pre-named Stand: Lots of Open Space for Custom Name -->
-          <g transform="translate(${SW / 2}, 180)">
-            <text x="0" y="0" font-family="-apple-system, BlinkMacSystemFont, 'Plus Jakarta Sans', sans-serif" font-size="22" font-weight="700" fill="#94a3b8" text-anchor="middle" letter-spacing="1">Review Us on</text>
-          </g>
-          <!-- Smaller, Elegant Google G Logo -->
-          <g transform="translate(${SW / 2 - 25}, 198) scale(1.65)">
-            ${ICONS.googleG}
-          </g>
-          <!-- 5 Golden Stars Below -->
-          <g transform="translate(${SW / 2 - 86}, 258) scale(1.2)">
-            ${ICONS.fiveStars}
-          </g>
-          `
-      }
-
-      <!-- DUAL ACTION BOXES (TAP PHONE & SCAN CODE) -->
-      <g transform="translate(80, 335)">
-        <rect x="0" y="0" width="380" height="510" rx="32" fill="#151a24" stroke="#283244" stroke-width="2.5"/>
-        <text x="190" y="65" font-family="-apple-system, BlinkMacSystemFont, 'Inter', sans-serif" font-size="22" font-weight="900" fill="#ffffff" text-anchor="middle" letter-spacing="2">TAP PHONE</text>
-
-        <g transform="translate(142, 145) scale(1.6)">
-          ${ICONS.nfcPhoneHand("#38bdf8")}
+        <!-- ================= TOP HEADER SECTION ================= -->
+        <!-- LEFT: CLIENT BUSINESS LOGO & NAME (Or clean blank space if unassigned) -->
+        <g transform="translate(60, 60)">
+          ${
+            displayTitle
+              ? `
+              <!-- Client Emblem Badge Circle -->
+              <circle cx="150" cy="120" r="95" fill="#1e222d" stroke="#f59e0b" stroke-width="4.5"/>
+              <circle cx="150" cy="120" r="88" fill="none" stroke="#ffffff" stroke-width="1.5" stroke-dasharray="4,4"/>
+              
+              <!-- Client Name inside or around badge -->
+              <text x="150" y="105" font-family="-apple-system, BlinkMacSystemFont, 'Plus Jakarta Sans', sans-serif" font-size="28" font-weight="900" fill="#ffffff" text-anchor="middle" letter-spacing="1">${displayTitle}</text>
+              <g transform="translate(98, 122) scale(0.65)">${ICONS.fiveStars}</g>
+              <text x="150" y="162" font-family="-apple-system, BlinkMacSystemFont, 'Inter', sans-serif" font-size="13" font-weight="800" fill="#fef08a" text-anchor="middle" letter-spacing="2">OFFICIAL PARTNER</text>
+              `
+              : `
+              <!-- Unassigned Stand: Beautiful Clean Space for Custom Logo / Rubber Stamp / Sticker -->
+              <rect x="20" y="30" width="260" height="180" rx="20" fill="none" stroke="#ffffff" stroke-width="2" stroke-dasharray="8,8" stroke-opacity="0.35"/>
+              <text x="150" y="115" font-family="-apple-system, BlinkMacSystemFont, 'Inter', sans-serif" font-size="16" font-weight="700" fill="#ffffff" fill-opacity="0.5" text-anchor="middle" letter-spacing="1.5">CLIENT LOGO / NAME</text>
+              <text x="150" y="142" font-family="-apple-system, BlinkMacSystemFont, 'Inter', sans-serif" font-size="13" font-weight="600" fill="#ffffff" fill-opacity="0.35" text-anchor="middle">Space reserved for custom branding</text>
+              `
+          }
         </g>
 
-        <text x="190" y="380" font-family="-apple-system, BlinkMacSystemFont, 'Inter', sans-serif" font-size="24" font-weight="900" fill="#ffffff" text-anchor="middle">NFC INSTANT</text>
-        <text x="190" y="415" font-family="-apple-system, BlinkMacSystemFont, 'Inter', sans-serif" font-size="16" font-weight="600" fill="#94a3b8" text-anchor="middle">Hold phone near stand</text>
-        <text x="190" y="458" font-family="-apple-system, BlinkMacSystemFont, 'Inter', sans-serif" font-size="14" font-weight="900" fill="#38bdf8" text-anchor="middle" letter-spacing="1.5">ZERO APP NEEDED</text>
-      </g>
+        <!-- VERTICAL DIVIDER IN HEADER -->
+        <line x1="455" y1="80" x2="455" y2="330" stroke="#ffffff" stroke-opacity="0.25" stroke-width="2"/>
 
-      <g transform="translate(540, 335)">
-        <rect x="0" y="0" width="380" height="510" rx="32" fill="#151a24" stroke="#283244" stroke-width="2.5"/>
-        <text x="190" y="65" font-family="-apple-system, BlinkMacSystemFont, 'Inter', sans-serif" font-size="22" font-weight="900" fill="#ffffff" text-anchor="middle" letter-spacing="2">SCAN CODE</text>
+        <!-- RIGHT: TAPFORM BRAND LOCKUP & BOLD REVIEW TITLE -->
+        <g transform="translate(490, 75)">
+          <!-- Tapform Logo + Brand Name (Exact Brand Match) -->
+          <g transform="translate(0, 10)">
+            <g transform="translate(0, 0)">${ICONS.tapformLogo(46, "#10b981", "#ffffff")}</g>
+            <text x="62" y="36" font-family="-apple-system, BlinkMacSystemFont, 'Plus Jakarta Sans', 'Inter', sans-serif" font-size="44" font-weight="900" fill="#ffffff" letter-spacing="2">TAPFORM</text>
+          </g>
 
-        <rect x="35" y="90" width="310" height="310" rx="24" fill="#ffffff" stroke="#4285F4" stroke-width="5"/>
-        ${
-          isBlank
-            ? `
-            <rect x="52" y="108" width="276" height="276" rx="16" fill="#f8fafc" stroke="#cbd5e1" stroke-dasharray="6,6" stroke-width="2"/>
-            <text x="190" y="245" font-family="-apple-system, BlinkMacSystemFont, 'Inter', sans-serif" font-size="16" font-weight="800" fill="#64748b" text-anchor="middle">PRINT / PASTE QR HERE</text>
-            <text x="190" y="275" font-family="-apple-system, BlinkMacSystemFont, 'Inter', sans-serif" font-size="13" font-weight="600" fill="#94a3b8" text-anchor="middle">6x6 Blank Review Stand</text>
-            `
-            : generateQrPath(qrValue, 35, 90, 310, 310, "#0f172a")
-        }
+          <!-- SCAN • TAP • REVIEW Tagline -->
+          <text x="5" y="96" font-family="-apple-system, BlinkMacSystemFont, 'Inter', sans-serif" font-size="16" font-weight="800" fill="#fecaca" letter-spacing="4">SCAN &#8226; TAP &#8226; REVIEW</text>
 
-        <text x="190" y="450" font-family="monospace, -apple-system, sans-serif" font-size="22" font-weight="900" fill="#fbbf24" text-anchor="middle" letter-spacing="3">${isBlank ? "STAND-ID" : safeCardId}</text>
-      </g>
+          <!-- BOLD HERO TITLE: REVIEW -->
+          <text x="2" y="195" font-family="-apple-system, BlinkMacSystemFont, 'Plus Jakarta Sans', 'Arial Black', sans-serif" font-size="92" font-weight="900" fill="#ffffff" letter-spacing="1">REVIEW</text>
 
-      <!-- Bottom Footer Tagline with Brand and Phone in Small Text -->
-      <g transform="translate(${SW / 2}, 925)">
-        <text x="0" y="0" font-family="-apple-system, BlinkMacSystemFont, 'Inter', sans-serif" font-size="14" font-weight="800" fill="#64748b" text-anchor="middle" letter-spacing="2">SMART NFC &#8226; ZERO APP NEEDED &#8226; 6x6 ACRYLIC STAND</text>
-        <text x="0" y="28" font-family="-apple-system, BlinkMacSystemFont, 'Inter', sans-serif" font-size="13" font-weight="700" fill="#94a3b8" text-anchor="middle">${safeBrand} &#8226; Ph: +91 ${safePhone}</text>
+          <!-- SUB-TITLE: LEAVE A 5-STAR REVIEW ON GOOGLE -->
+          <g transform="translate(4, 235)">
+            <text x="0" y="0" font-family="-apple-system, BlinkMacSystemFont, 'Inter', sans-serif" font-size="17" font-weight="800" fill="#ffffff" letter-spacing="1">LEAVE US A 5-STAR REVIEW ON GOOGLE</text>
+          </g>
+        </g>
+
+        <!-- ================= DUAL ACTION TILES (MIDDLE) ================= -->
+        <!-- Tile 1: TAP YOUR PHONE (NFC) -->
+        <g transform="translate(85, 455)">
+          <!-- White square box with red rounded border -->
+          <rect x="0" y="0" width="375" height="345" rx="36" fill="#ffffff" stroke="#dc2626" stroke-width="3"/>
+
+          <!-- NFC Phone Illustration -->
+          <g transform="translate(142, 45) scale(1.75)">
+            ${ICONS.nfcPhoneHand("#0f172a")}
+          </g>
+
+          <!-- NFC Text -->
+          <text x="187" y="240" font-family="-apple-system, BlinkMacSystemFont, 'Plus Jakarta Sans', sans-serif" font-size="34" font-weight="900" fill="#0f172a" text-anchor="middle" letter-spacing="2">NFC</text>
+          <text x="187" y="268" font-family="-apple-system, BlinkMacSystemFont, 'Inter', sans-serif" font-size="14" font-weight="700" fill="#64748b" text-anchor="middle" letter-spacing="0.5">Instant 1-Tap on all smartphones</text>
+
+          <!-- Red Capsule Button: TAP YOUR PHONE -->
+          <g transform="translate(42, 290)">
+            <rect x="0" y="0" width="291" height="52" rx="26" fill="url(#redPillGrad)"/>
+            <text x="145" y="33" font-family="-apple-system, BlinkMacSystemFont, 'Plus Jakarta Sans', sans-serif" font-size="18" font-weight="900" fill="#ffffff" text-anchor="middle" letter-spacing="2">TAP YOUR PHONE</text>
+          </g>
+        </g>
+
+        <!-- CENTER "OR" BADGE -->
+        <g transform="translate(500, 615)">
+          <!-- Subtle vertical divider behind OR -->
+          <line x1="0" y1="-100" x2="0" y2="-30" stroke="#e2e8f0" stroke-width="2"/>
+          <line x1="0" y1="30" x2="0" y2="100" stroke="#e2e8f0" stroke-width="2"/>
+          <text x="0" y="8" font-family="-apple-system, BlinkMacSystemFont, 'Plus Jakarta Sans', sans-serif" font-size="24" font-weight="900" fill="#0f172a" text-anchor="middle">OR</text>
+        </g>
+
+        <!-- Tile 2: SCAN QR CODE -->
+        <g transform="translate(540, 455)">
+          <!-- White square box with red rounded border -->
+          <rect x="0" y="0" width="375" height="345" rx="36" fill="#ffffff" stroke="#dc2626" stroke-width="3"/>
+
+          <!-- High-Contrast Vector QR Code (4x4 cm equivalent) -->
+          ${
+            isBlank
+              ? `
+              <rect x="67" y="32" width="240" height="240" rx="16" fill="#f8fafc" stroke="#cbd5e1" stroke-dasharray="6,6" stroke-width="2"/>
+              <text x="187" y="145" font-family="-apple-system, BlinkMacSystemFont, 'Inter', sans-serif" font-size="16" font-weight="800" fill="#64748b" text-anchor="middle">PRINT / STICK QR</text>
+              <text x="187" y="175" font-family="-apple-system, BlinkMacSystemFont, 'Inter', sans-serif" font-size="13" font-weight="600" fill="#94a3b8" text-anchor="middle">4x4 cm High-Res QR Area</text>
+              `
+              : `<g transform="translate(67, 32)">${generateQrPath(qrValue, 0, 0, 240, 240, "#090b0e")}</g>`
+          }
+
+          <!-- Red Capsule Button: SCAN QR CODE -->
+          <g transform="translate(42, 290)">
+            <rect x="0" y="0" width="291" height="52" rx="26" fill="url(#redPillGrad)"/>
+            <text x="145" y="33" font-family="-apple-system, BlinkMacSystemFont, 'Plus Jakarta Sans', sans-serif" font-size="18" font-weight="900" fill="#ffffff" text-anchor="middle" letter-spacing="2">SCAN QR CODE</text>
+          </g>
+        </g>
+
+        <!-- ================= BOTTOM FOOTER SECTION ================= -->
+        <!-- Minimal Divider Line -->
+        <line x1="70" y1="875" x2="930" y2="875" stroke="#e2e8f0" stroke-width="2"/>
+
+        <!-- 4 Minimal Clean Action Highlights (Like photo) -->
+        <g transform="translate(90, 895)">
+          <!-- 1: Instant Tap -->
+          <g transform="translate(0, 0)">
+            <circle cx="20" cy="22" r="16" fill="#fef2f2"/>
+            <g transform="translate(10, 12) scale(0.85)">${ICONS.nfcWave("#dc2626")}</g>
+            <text x="46" y="18" font-family="-apple-system, BlinkMacSystemFont, 'Inter', sans-serif" font-size="13" font-weight="900" fill="#0f172a">INSTANT</text>
+            <text x="46" y="34" font-family="-apple-system, BlinkMacSystemFont, 'Inter', sans-serif" font-size="12" font-weight="600" fill="#64748b">1-TAP NFC</text>
+          </g>
+
+          <line x1="185" y1="6" x2="185" y2="40" stroke="#e2e8f0" stroke-width="1.5"/>
+
+          <!-- 2: No App Needed -->
+          <g transform="translate(215, 0)">
+            <circle cx="20" cy="22" r="16" fill="#fef2f2"/>
+            <path d="M14 22 L19 27 L27 17" stroke="#dc2626" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+            <text x="46" y="18" font-family="-apple-system, BlinkMacSystemFont, 'Inter', sans-serif" font-size="13" font-weight="900" fill="#0f172a">ZERO APP</text>
+            <text x="46" y="34" font-family="-apple-system, BlinkMacSystemFont, 'Inter', sans-serif" font-size="12" font-weight="600" fill="#64748b">REQUIRED</text>
+          </g>
+
+          <line x1="395" y1="6" x2="395" y2="40" stroke="#e2e8f0" stroke-width="1.5"/>
+
+          <!-- 3: 5-Star Reviews -->
+          <g transform="translate(425, 0)">
+            <circle cx="20" cy="22" r="16" fill="#fef2f2"/>
+            <path d="M20 12l2.3 5.4 5.7.5-4.2 3.7 1.3 5.6-5.1-3-5.1 3 1.3-5.6-4.2-3.7 5.7-.5z" fill="#dc2626"/>
+            <text x="46" y="18" font-family="-apple-system, BlinkMacSystemFont, 'Inter', sans-serif" font-size="13" font-weight="900" fill="#0f172a">5-STAR</text>
+            <text x="46" y="34" font-family="-apple-system, BlinkMacSystemFont, 'Inter', sans-serif" font-size="12" font-weight="600" fill="#64748b">REVIEWS</text>
+          </g>
+
+          <line x1="605" y1="6" x2="605" y2="40" stroke="#e2e8f0" stroke-width="1.5"/>
+
+          <!-- 4: 100% Secure -->
+          <g transform="translate(635, 0)">
+            <circle cx="20" cy="22" r="16" fill="#fef2f2"/>
+            <path d="M20 12 L28 15 V21 C28 26 24 29 20 31 C16 29 12 26 12 21 V15 Z" fill="none" stroke="#dc2626" stroke-width="2"/>
+            <text x="46" y="18" font-family="-apple-system, BlinkMacSystemFont, 'Inter', sans-serif" font-size="13" font-weight="900" fill="#0f172a">VERIFIED</text>
+            <text x="46" y="34" font-family="-apple-system, BlinkMacSystemFont, 'Inter', sans-serif" font-size="12" font-weight="600" fill="#64748b">HARDWARE</text>
+          </g>
+        </g>
+
+        <!-- Footer Tagline & Contact info -->
+        <g transform="translate(${SW / 2}, 968)">
+          <text x="0" y="0" font-family="-apple-system, BlinkMacSystemFont, 'Inter', sans-serif" font-size="13" font-weight="700" fill="#94a3b8" text-anchor="middle" letter-spacing="1">${safeBrand} Stand Plaque &#8226; ID: ${isBlank ? "STAND-ID" : safeCardId} &#8226; Ph: +91 ${safePhone}</text>
+        </g>
       </g>
     </svg>`;
   }
