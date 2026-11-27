@@ -760,21 +760,21 @@ export function generateCardSvgString({
 
       <!-- ================= 4 FLOATING CIRCULAR SOCIAL ICONS ================= -->
       <g transform="translate(${SW / 2}, ${displayTitle ? 120 : 105})">
-        <!-- Google G -->
-        <circle cx="-75" cy="0" r="22" fill="#ffffff" stroke="#e2e8f0" stroke-width="2"/>
-        <g transform="translate(-89, -14) scale(1.15)">${ICONS.googleG}</g>
+        <!-- 1. Google (Circle R=22 at -90, Icon 24x24 viewBox 0..24, centered at -90, 0) -->
+        <circle cx="-90" cy="0" r="22" fill="#ffffff" stroke="#e2e8f0" stroke-width="2"/>
+        <g transform="translate(-104, -14) scale(1.16)">${ICONS.googleG}</g>
 
-        <!-- Instagram -->
-        <circle cx="-25" cy="0" r="22" fill="url(#instaRoundGrad)"/>
-        <g transform="translate(-40, -15) scale(1.2)">${ICONS.instagram}</g>
+        <!-- 2. Instagram (Circle R=22 at -30, Icon 22x22 viewBox 3..25 centered at -30, 0) -->
+        <circle cx="-30" cy="0" r="22" fill="url(#instaRoundGrad)"/>
+        <g transform="translate(-43, -13) scale(1.05)">${ICONS.instagram}</g>
 
-        <!-- WhatsApp -->
-        <circle cx="25" cy="0" r="22" fill="#25D366"/>
-        <g transform="translate(9, -16) scale(1.25)">${ICONS.whatsapp}</g>
+        <!-- 3. WhatsApp (Circle R=22 at 30, Icon 24x24 viewBox 0..24 centered at 30, 0) -->
+        <circle cx="30" cy="0" r="22" fill="#25D366"/>
+        <g transform="translate(17, -13) scale(1.08)">${ICONS.whatsapp}</g>
 
-        <!-- Facebook -->
-        <circle cx="75" cy="0" r="22" fill="#1877F2"/>
-        <g transform="translate(62, -13) scale(1.05)">${ICONS.facebook}</g>
+        <!-- 4. Facebook (Circle R=22 at 90, Icon 24x24 viewBox 0..24 centered at 90, 0) -->
+        <circle cx="90" cy="0" r="22" fill="#1877F2"/>
+        <g transform="translate(77, -13) scale(1.08)">${ICONS.facebook}</g>
       </g>
 
       <!-- ================= HERO CONNECT & REVIEW TITLE ================= -->
