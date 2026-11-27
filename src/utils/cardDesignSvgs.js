@@ -545,24 +545,36 @@ export function generateCardSvgString({
         <!-- VERTICAL DIVIDER IN HEADER -->
         <line x1="455" y1="80" x2="455" y2="330" stroke="#ffffff" stroke-opacity="0.25" stroke-width="2"/>
 
-        <!-- RIGHT: TAPFORM BRAND LOCKUP & BOLD REVIEW TITLE -->
-        <g transform="translate(490, 75)">
-          <!-- Tapform Logo + Brand Name (Exact Brand Match) -->
-          <g transform="translate(0, 10)">
-            <g transform="translate(0, 0)">${ICONS.tapformLogo(46, "#10b981", "#ffffff")}</g>
-            <text x="62" y="36" font-family="-apple-system, BlinkMacSystemFont, 'Plus Jakarta Sans', 'Inter', sans-serif" font-size="44" font-weight="900" fill="#ffffff" letter-spacing="2">TAPFORM</text>
+        <!-- RIGHT: TAPFORM BRAND LOCKUP & BOLD REVIEW TITLE WITH GOOGLE G & STARS -->
+        <g transform="translate(485, 70)">
+          <!-- Tapform Logo + Brand Name (Perfect Vertically Centered Alignment) -->
+          <g transform="translate(0, 0)">
+            <!-- Vortex Knot Logo centered at (24, 24) with size 48 -->
+            <g transform="translate(24, 24)">${ICONS.tapformLogo(48, "#10b981", "#ffffff")}</g>
+            <text x="62" y="34" font-family="-apple-system, BlinkMacSystemFont, 'Plus Jakarta Sans', 'Inter', sans-serif" font-size="40" font-weight="900" fill="#ffffff" letter-spacing="2">TAPFORM</text>
           </g>
 
           <!-- SCAN • TAP • REVIEW Tagline -->
-          <text x="5" y="96" font-family="-apple-system, BlinkMacSystemFont, 'Inter', sans-serif" font-size="16" font-weight="800" fill="#fecaca" letter-spacing="4">SCAN &#8226; TAP &#8226; REVIEW</text>
+          <text x="5" y="80" font-family="-apple-system, BlinkMacSystemFont, 'Inter', sans-serif" font-size="15" font-weight="800" fill="#fecaca" letter-spacing="3.5">SCAN &#8226; TAP &#8226; REVIEW</text>
 
           <!-- BOLD HERO TITLE: REVIEW -->
-          <text x="2" y="195" font-family="-apple-system, BlinkMacSystemFont, 'Plus Jakarta Sans', 'Arial Black', sans-serif" font-size="92" font-weight="900" fill="#ffffff" letter-spacing="1">REVIEW</text>
+          <text x="2" y="172" font-family="-apple-system, BlinkMacSystemFont, 'Plus Jakarta Sans', 'Arial Black', sans-serif" font-size="88" font-weight="900" fill="#ffffff" letter-spacing="1">REVIEW</text>
 
-          <!-- SUB-TITLE: LEAVE A 5-STAR REVIEW ON GOOGLE -->
-          <g transform="translate(4, 235)">
-            <text x="0" y="0" font-family="-apple-system, BlinkMacSystemFont, 'Inter', sans-serif" font-size="17" font-weight="800" fill="#ffffff" letter-spacing="1">LEAVE US A 5-STAR REVIEW ON GOOGLE</text>
+          <!-- SUB-TITLE WITH GOOGLE SIGN & 5 STARS -->
+          <g transform="translate(4, 204)">
+            <!-- Official Colorful Google "G" Logo -->
+            <g transform="translate(0, 0) scale(1.15)">
+              ${ICONS.googleG}
+            </g>
+
+            <!-- 5 Golden Stars aligned beside Google G -->
+            <g transform="translate(42, 4) scale(0.95)">
+              ${ICONS.fiveStars}
+            </g>
           </g>
+
+          <!-- Action Callout Line -->
+          <text x="5" y="260" font-family="-apple-system, BlinkMacSystemFont, 'Inter', sans-serif" font-size="16" font-weight="800" fill="#ffffff" letter-spacing="1.2">LEAVE US A 5-STAR REVIEW ON GOOGLE</text>
         </g>
 
         <!-- ================= DUAL ACTION TILES (MIDDLE) ================= -->
