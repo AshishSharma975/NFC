@@ -547,11 +547,11 @@ export function generateCardSvgString({
 
         <!-- RIGHT: TAPFORM BRAND LOCKUP & BOLD REVIEW TITLE WITH GOOGLE G & STARS -->
         <g transform="translate(485, 70)">
-          <!-- Tapform Logo + Brand Name (Perfect Vertically Centered Alignment) -->
+          <!-- Tapform Logo + Brand Name (Perfect Mathematical Center Alignment via dominant-baseline) -->
           <g transform="translate(0, 0)">
             <!-- Vortex Knot Logo centered at (24, 24) with size 48 -->
             <g transform="translate(24, 24)">${ICONS.tapformLogo(48, "#10b981", "#ffffff")}</g>
-            <text x="62" y="34" font-family="-apple-system, BlinkMacSystemFont, 'Plus Jakarta Sans', 'Inter', sans-serif" font-size="40" font-weight="900" fill="#ffffff" letter-spacing="2">TAPFORM</text>
+            <text x="62" y="24" dominant-baseline="central" font-family="-apple-system, BlinkMacSystemFont, 'Plus Jakarta Sans', 'Inter', sans-serif" font-size="42" font-weight="900" fill="#ffffff" letter-spacing="2">TAPFORM</text>
           </g>
 
           <!-- SCAN • TAP • REVIEW Tagline -->
