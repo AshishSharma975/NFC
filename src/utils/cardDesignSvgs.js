@@ -685,39 +685,43 @@ export function generateCardSvgString({
 
   // -------------------------------------------------------------------------
   // STAND VARIANT 2: ALL IN ONE STAND (6x6 inch)
-  // Premium Acrylic Modern Stand Plaque (Matching exact uploaded design):
-  // - Clean luxury warm cream/white background with curved decorative ribbon waves
-  // - Top Header: #Serial Badge on left, 1-TAP badge with NFC waves on right
-  // - Elegant Hero Title: "Connect & Review" with stylized italic Review in bronze/gold
-  // - Subtitle: "GOOGLE • INSTAGRAM • WHATSAPP • FACEBOOK" with centered 4-point diamond star
-  // - 4 Floating Rounded Square App Tiles: Google G, Instagram gradient, WhatsApp green, Facebook blue
-  // - Middle Left: Modern sleek smartphone with NFC waves inside warm organic blob, "TAP your phone"
-  // - Center Divider: Vertical thin line with bronze/gold circular "OR" badge
-  // - Middle Right: Clean QR Code with golden corner brackets, Stand ID capsule, "SCAN the QR code"
-  // - Bottom Base: Fluid luxury golden wave + obsidian dark footer with Smart NFC badge & "Powered By Tapform" (our emerald vortex logo)
+  // Matching user's exact uploaded design:
+  // - Clean White Acrylic Base with Rounded Corners
+  // - Top Header:
+  //   - Left: #70 badge
+  //   - Right: 1-TAP badge
+  //   - Top Center: 4 Circular Floating Social Icons (Google G, Instagram, WhatsApp, Facebook)
+  //   - Below Icons: Bold "CONNECT & REVIEW" Title
+  //   - Subtitle: "GOOGLE • INSTAGRAM • WHATSAPP • FACEBOOK" in golden orange
+  //   - 5 Golden Stars (★★★★★) with horizontal divider lines on left and right
+  // - Middle Dual Action:
+  //   - Left: Golden curved wave accent + phone with hand illustration + "TAP your phone" + golden underline
+  //   - Center: Vertical thin divider line + circular golden "OR" badge
+  //   - Right: Golden rounded border box with QR code + Stand ID pill + "SCAN the QR code" + golden underline
+  // - Bottom Footer:
+  //   - Smooth Golden Wave Arc + Dark Obsidian Bottom Slab
+  //   - Left: "SMART NFC • 6x6 ACRYLIC STAND", "Ph: +91 9893711447"
+  //   - Right: "Powered By:" on top, and on next line: Emerald Logo + "Tapform" perfectly side by side in one line!
   // -------------------------------------------------------------------------
   return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${SW} ${SH}" width="${SW}" height="${SH}">
     <defs>
-      <!-- Premium Bronze/Gold Gradients -->
-      <linearGradient id="bronzeGoldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-        <stop offset="0%" stop-color="#b46a2a"/>
-        <stop offset="40%" stop-color="#cf8438"/>
-        <stop offset="100%" stop-color="#934d17"/>
+      <!-- Gradient for the smooth bottom golden wave arc -->
+      <linearGradient id="bottomGoldSweep" x1="0%" y1="0%" x2="100%" y2="0%">
+        <stop offset="0%" stop-color="#f59e0b"/>
+        <stop offset="50%" stop-color="#fbbf24"/>
+        <stop offset="100%" stop-color="#d97706"/>
       </linearGradient>
-      <linearGradient id="warmBlobGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-        <stop offset="0%" stop-color="#fdf3e7"/>
-        <stop offset="100%" stop-color="#f5e1cb"/>
-      </linearGradient>
-      <linearGradient id="goldRibbonSweep" x1="0%" y1="0%" x2="100%" y2="0%">
-        <stop offset="0%" stop-color="#d49b4c"/>
-        <stop offset="50%" stop-color="#f0c27b"/>
-        <stop offset="100%" stop-color="#be7f32"/>
-      </linearGradient>
-      <linearGradient id="instaTileGrad" x1="0%" y1="100%" x2="100%" y2="0%">
+      <!-- Instagram Icon Gradient -->
+      <linearGradient id="instaRoundGrad" x1="0%" y1="100%" x2="100%" y2="0%">
         <stop offset="0%" stop-color="#ffd521"/>
         <stop offset="25%" stop-color="#f50000"/>
         <stop offset="50%" stop-color="#b900b4"/>
         <stop offset="100%" stop-color="#833ab4"/>
+      </linearGradient>
+      <!-- OR Badge Gradient -->
+      <linearGradient id="orBadgeGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stop-color="#f59e0b"/>
+        <stop offset="100%" stop-color="#d97706"/>
       </linearGradient>
       <!-- Clip path to keep stand rounded corners -->
       <clipPath id="allInOneClip">
@@ -727,199 +731,168 @@ export function generateCardSvgString({
 
     <!-- Outer Acrylic Stand Base with 50px Rounded Corners -->
     <g clip-path="url(#allInOneClip)">
-      <!-- Warm Luxury Off-White / Pearl Cream Canvas -->
-      <rect x="0" y="0" width="${SW}" height="${SH}" fill="#faf8f5"/>
-
-      <!-- Subtle background decorative curved ribbons -->
-      <path d="M 0,180 C 120,260 80,480 0,560 Z" fill="#f4ede4" opacity="0.7"/>
-      <path d="M ${SW},120 C ${SW - 100},320 ${SW - 60},520 ${SW},640 Z" fill="#f4ede4" opacity="0.6"/>
+      <!-- Pure Gloss White Background -->
+      <rect x="0" y="0" width="${SW}" height="${SH}" fill="#ffffff"/>
 
       <!-- ================= TOP HEADER BAR ================= -->
       <!-- Left: #Serial ID Badge -->
       <g transform="translate(60, 48)">
-        <rect x="0" y="0" width="105" height="42" rx="14" fill="#ffffff" stroke="#e8dfd5" stroke-width="2"/>
-        <text x="52" y="27" font-family="-apple-system, BlinkMacSystemFont, 'Inter', sans-serif" font-size="20" font-weight="900" fill="#1e2530" text-anchor="middle" letter-spacing="1">${isBlank ? "#____" : cornerNumber}</text>
+        <rect x="0" y="0" width="105" height="40" rx="12" fill="#ffffff" stroke="#e2e8f0" stroke-width="2"/>
+        <text x="52" y="26" font-family="-apple-system, BlinkMacSystemFont, 'Inter', sans-serif" font-size="20" font-weight="900" fill="#0f172a" text-anchor="middle" letter-spacing="1">${isBlank ? "#____" : cornerNumber}</text>
       </g>
 
-      <!-- Right: 1-TAP NFC Badge -->
-      <g transform="translate(${SW - 175}, 48)">
-        <rect x="0" y="0" width="115" height="42" rx="21" fill="#ffffff" stroke="#e8dfd5" stroke-width="2"/>
-        <text x="46" y="27" font-family="-apple-system, BlinkMacSystemFont, 'Inter', sans-serif" font-size="16" font-weight="900" fill="#934d17" letter-spacing="1">1-TAP</text>
-        <g transform="translate(94, 21) scale(0.65)">
-          <path d="M 0,-14 A 14 14 0 0 1 0,14" fill="none" stroke="#934d17" stroke-width="3" stroke-linecap="round"/>
-          <path d="M 6,-9 A 9 9 0 0 1 6,9" fill="none" stroke="#934d17" stroke-width="3" stroke-linecap="round"/>
-        </g>
+      <!-- Right: 1-TAP Badge -->
+      <g transform="translate(${SW - 165}, 48)">
+        <rect x="0" y="0" width="105" height="40" rx="12" fill="#ffffff" stroke="#e2e8f0" stroke-width="2"/>
+        <text x="52" y="26" font-family="-apple-system, BlinkMacSystemFont, 'Inter', sans-serif" font-size="16" font-weight="900" fill="#d97706" text-anchor="middle" letter-spacing="1.5">1-TAP</text>
       </g>
 
       <!-- Optional Client Business Title (If Assigned) -->
       ${
         displayTitle
           ? `
-          <g transform="translate(${SW / 2}, 80)">
-            <text x="0" y="0" font-family="-apple-system, BlinkMacSystemFont, 'Plus Jakarta Sans', sans-serif" font-size="22" font-weight="800" fill="#78716c" text-anchor="middle" letter-spacing="2">${displayTitle.toUpperCase()}</text>
+          <g transform="translate(${SW / 2}, 78)">
+            <text x="0" y="0" font-family="-apple-system, BlinkMacSystemFont, 'Plus Jakarta Sans', sans-serif" font-size="20" font-weight="800" fill="#64748b" text-anchor="middle" letter-spacing="1.5">${displayTitle.toUpperCase()}</text>
           </g>
           `
           : ''
       }
 
-      <!-- ================= HERO CONNECT & REVIEW TITLE ================= -->
-      <g transform="translate(${SW / 2}, ${displayTitle ? 142 : 130})">
-        <!-- "Connect & Review" Lockup -->
-        <text x="0" y="0" text-anchor="middle">
-          <tspan font-family="-apple-system, BlinkMacSystemFont, 'Plus Jakarta Sans', sans-serif" font-size="64" font-weight="900" fill="#181e26" letter-spacing="-1">Connect &amp; </tspan>
-          <tspan font-family="'Playfair Display', Georgia, serif" font-size="70" font-weight="800" font-style="italic" fill="url(#bronzeGoldGrad)">Review</tspan>
-        </text>
+      <!-- ================= 4 FLOATING CIRCULAR SOCIAL ICONS ================= -->
+      <g transform="translate(${SW / 2}, ${displayTitle ? 120 : 105})">
+        <!-- Google G -->
+        <circle cx="-75" cy="0" r="22" fill="#ffffff" stroke="#e2e8f0" stroke-width="2"/>
+        <g transform="translate(-89, -14) scale(1.15)">${ICONS.googleG}</g>
 
-        <!-- Subtitle: GOOGLE • INSTAGRAM • WHATSAPP • FACEBOOK -->
-        <text x="0" y="44" font-family="-apple-system, BlinkMacSystemFont, 'Inter', sans-serif" font-size="14" font-weight="800" fill="#44403c" text-anchor="middle" letter-spacing="4">GOOGLE &#8226; INSTAGRAM &#8226; WHATSAPP &#8226; FACEBOOK</text>
+        <!-- Instagram -->
+        <circle cx="-25" cy="0" r="22" fill="url(#instaRoundGrad)"/>
+        <g transform="translate(-40, -15) scale(1.2)">${ICONS.instagram}</g>
 
-        <!-- Centered Delicate 4-point Bronze Diamond Star with Horizontal Accent Lines -->
-        <g transform="translate(0, 78)">
-          <line x1="-150" y1="0" x2="-25" y2="0" stroke="#d5beaa" stroke-width="1.8" stroke-linecap="round"/>
-          <path d="M 0,-8 L 3,0 L 0,8 L -3,0 Z" fill="#b46a2a"/>
-          <path d="M -8,0 L 0,3 L 8,0 L 0,-3 Z" fill="#b46a2a"/>
-          <line x1="25" y1="0" x2="150" y2="0" stroke="#d5beaa" stroke-width="1.8" stroke-linecap="round"/>
-        </g>
+        <!-- WhatsApp -->
+        <circle cx="25" cy="0" r="22" fill="#25D366"/>
+        <g transform="translate(9, -16) scale(1.25)">${ICONS.whatsapp}</g>
+
+        <!-- Facebook -->
+        <circle cx="75" cy="0" r="22" fill="#1877F2"/>
+        <g transform="translate(62, -13) scale(1.05)">${ICONS.facebook}</g>
       </g>
 
-      <!-- ================= 4 FLOATING SOCIAL TILES ================= -->
-      <g transform="translate(${SW / 2}, ${displayTitle ? 286 : 274})">
-        <!-- 1. Google Tile -->
-        <g transform="translate(-165, 0)">
-          <rect x="-38" y="-38" width="76" height="76" rx="24" fill="#ffffff" stroke="#f0e9df" stroke-width="2"/>
-          <g transform="translate(-16, -16) scale(1.35)">${ICONS.googleG}</g>
-        </g>
+      <!-- ================= HERO CONNECT & REVIEW TITLE ================= -->
+      <g transform="translate(${SW / 2}, ${displayTitle ? 180 : 165})">
+        <!-- BOLD CONNECT & REVIEW -->
+        <text x="0" y="0" font-family="-apple-system, BlinkMacSystemFont, 'Plus Jakarta Sans', Arial, sans-serif" font-size="46" font-weight="900" fill="#0f172a" text-anchor="middle" letter-spacing="1">CONNECT &amp; REVIEW</text>
 
-        <!-- 2. Instagram Tile -->
-        <g transform="translate(-55, 0)">
-          <rect x="-38" y="-38" width="76" height="76" rx="24" fill="url(#instaTileGrad)"/>
-          <g transform="translate(-16, -16) scale(1.35)">${ICONS.instagram}</g>
-        </g>
+        <!-- SUBTITLE: GOOGLE • INSTAGRAM • WHATSAPP • FACEBOOK -->
+        <text x="0" y="34" font-family="-apple-system, BlinkMacSystemFont, 'Inter', sans-serif" font-size="15" font-weight="800" fill="#d97706" text-anchor="middle" letter-spacing="3">GOOGLE &#8226; INSTAGRAM &#8226; WHATSAPP &#8226; FACEBOOK</text>
 
-        <!-- 3. WhatsApp Tile -->
-        <g transform="translate(55, 0)">
-          <rect x="-38" y="-38" width="76" height="76" rx="24" fill="#25D366"/>
-          <g transform="translate(-16, -16) scale(1.35)">${ICONS.whatsapp}</g>
-        </g>
-
-        <!-- 4. Facebook Tile -->
-        <g transform="translate(165, 0)">
-          <rect x="-38" y="-38" width="76" height="76" rx="24" fill="#1877F2"/>
-          <g transform="translate(-13, -13) scale(1.15)">${ICONS.facebook}</g>
+        <!-- 5 GOLDEN STARS WITH HORIZONTAL ACCENT WINGS -->
+        <g transform="translate(0, 64)">
+          <!-- Left Wing Accent Line -->
+          <line x1="-190" y1="12" x2="-100" y2="12" stroke="#f59e0b" stroke-width="2.5" stroke-linecap="round"/>
+          <!-- 5 Golden Stars Centered -->
+          <g transform="translate(-82, -4) scale(1.05)">
+            ${ICONS.fiveStars}
+          </g>
+          <!-- Right Wing Accent Line -->
+          <line x1="100" y1="12" x2="190" y2="12" stroke="#f59e0b" stroke-width="2.5" stroke-linecap="round"/>
         </g>
       </g>
 
       <!-- ================= MIDDLE DUAL ACTION SECTION ================= -->
       <!-- LEFT ACTION: TAP YOUR PHONE -->
-      <g transform="translate(150, 410)">
-        <!-- Warm Soft Organic Background Blob -->
-        <path d="M 60,20 C 140,-10 210,40 220,120 C 230,200 160,240 80,230 C 0,220 -20,150 10,80 Z" fill="url(#warmBlobGrad)"/>
+      <g transform="translate(140, 410)">
+        <!-- Golden Curved Wave Accent (Matching Photo) -->
+        <path d="M 60,30 C 70,5 95,0 110,12" fill="none" stroke="#f59e0b" stroke-width="9" stroke-linecap="round"/>
 
-        <!-- Phone Silhouette tilted slightly -->
-        <g transform="translate(115, 125) rotate(-10)" stroke="#181e26" stroke-width="6.5" fill="none" stroke-linecap="round" stroke-linejoin="round">
-          <!-- Smartphone Outer Shell -->
-          <rect x="-50" y="-85" width="100" height="170" rx="22" fill="#ffffff"/>
-          <!-- Speaker Notch -->
-          <line x1="-15" y1="-72" x2="15" y2="-72" stroke-width="4"/>
-          <!-- NFC Radiating Waves inside phone screen -->
-          <path d="M -16,-22 A 24 24 0 0 1 -16,22" stroke-width="6" stroke="#181e26"/>
-          <path d="M -2,-14 A 15 15 0 0 1 -2,14" stroke-width="5.5" stroke="#181e26"/>
-          <path d="M 10,-7 A 7 7 0 0 1 10,7" stroke-width="5" stroke="#181e26"/>
+        <!-- Phone with Hand Illustration (Matching Photo Outline Style) -->
+        <g transform="translate(50, 42)" stroke="#0f172a" stroke-width="6.5" fill="none" stroke-linecap="round" stroke-linejoin="round">
+          <!-- Smartphone Body -->
+          <rect x="35" y="16" width="68" height="120" rx="16" fill="#ffffff"/>
+          <line x1="60" y1="28" x2="78" y2="28" stroke-width="4"/>
+          <!-- Fingers on left edge -->
+          <path d="M 35 46 C 24 46 18 54 18 62 C 18 70 24 74 35 74" fill="#ffffff"/>
+          <path d="M 35 74 C 24 74 18 82 18 90 C 18 98 24 102 35 102" fill="#ffffff"/>
+          <path d="M 35 102 C 24 102 18 110 18 118 C 18 126 24 130 35 130" fill="#ffffff"/>
+          <!-- Thumb & Palm / Wrist Support -->
+          <path d="M 103 78 C 116 78 124 88 124 102 L 124 132 L 148 156" fill="#ffffff"/>
+          <path d="M 103 124 L 120 144 L 136 172" />
         </g>
 
         <!-- Text: TAP your phone -->
-        <text x="115" y="275" font-family="-apple-system, BlinkMacSystemFont, 'Plus Jakarta Sans', sans-serif" font-size="44" font-weight="900" fill="#181e26" text-anchor="middle" letter-spacing="2">TAP</text>
-        <text x="115" y="312" font-family="-apple-system, BlinkMacSystemFont, 'Plus Jakarta Sans', sans-serif" font-size="28" font-weight="700" fill="#292524" text-anchor="middle">your phone</text>
+        <text x="110" y="258" font-family="-apple-system, BlinkMacSystemFont, 'Plus Jakarta Sans', sans-serif" font-size="44" font-weight="900" fill="#0f172a" text-anchor="middle" letter-spacing="1.5">TAP</text>
+        <text x="110" y="296" font-family="-apple-system, BlinkMacSystemFont, 'Plus Jakarta Sans', sans-serif" font-size="28" font-weight="700" fill="#0f172a" text-anchor="middle">your phone</text>
 
-        <!-- Bronze Golden Underline Bar -->
-        <rect x="75" y="330" width="80" height="8" rx="4" fill="url(#bronzeGoldGrad)"/>
+        <!-- Golden Pill Accent Underline -->
+        <rect x="70" y="316" width="80" height="8" rx="4" fill="#f59e0b"/>
       </g>
 
       <!-- CENTER DIVIDER WITH GOLDEN "OR" BADGE -->
       <g transform="translate(500, 560)">
-        <!-- Thin Divider Spindle -->
-        <line x1="0" y1="-140" x2="0" y2="-32" stroke="#d5beaa" stroke-width="2"/>
-        <line x1="0" y1="32" x2="0" y2="140" stroke="#d5beaa" stroke-width="2"/>
+        <!-- Vertical Golden Spindle Line -->
+        <line x1="0" y1="-140" x2="0" y2="-32" stroke="#f59e0b" stroke-width="2.5"/>
+        <line x1="0" y1="32" x2="0" y2="140" stroke="#f59e0b" stroke-width="2.5"/>
 
-        <!-- Bronze Circular Badge -->
-        <circle cx="0" cy="0" r="30" fill="url(#bronzeGoldGrad)"/>
-        <text x="0" y="8" font-family="-apple-system, BlinkMacSystemFont, 'Plus Jakarta Sans', sans-serif" font-size="22" font-weight="900" fill="#ffffff" text-anchor="middle" letter-spacing="1">OR</text>
+        <!-- Golden Circular Badge -->
+        <circle cx="0" cy="0" r="32" fill="url(#orBadgeGrad)"/>
+        <text x="0" y="8" font-family="-apple-system, BlinkMacSystemFont, 'Plus Jakarta Sans', sans-serif" font-size="22" font-weight="900" fill="#ffffff" text-anchor="middle" letter-spacing="0.5">OR</text>
       </g>
 
       <!-- RIGHT ACTION: SCAN THE QR CODE -->
-      <g transform="translate(605, 410)">
-        <!-- White Rounded Tile Container -->
-        <rect x="0" y="0" width="255" height="255" rx="36" fill="#ffffff" stroke="#f0e9df" stroke-width="3"/>
+      <g transform="translate(605, 400)">
+        <!-- Golden Rounded Border Frame Box (Exact like photo) -->
+        <rect x="0" y="0" width="265" height="265" rx="36" fill="#ffffff" stroke="#f59e0b" stroke-width="5"/>
 
-        <!-- 4 Golden Corner L-Brackets -->
-        <g stroke="url(#bronzeGoldGrad)" stroke-width="6" fill="none" stroke-linecap="round">
-          <!-- Top Left -->
-          <path d="M -12,28 L -12,0 Q -12,-12 0,-12 L 28,-12" />
-          <!-- Top Right -->
-          <path d="M 227,-12 L 255,-12 Q 267,-12 267,0 L 267,28" />
-          <!-- Bottom Left -->
-          <path d="M -12,227 L -12,255 Q -12,267 0,267 L 28,267" />
-          <!-- Bottom Right -->
-          <path d="M 227,267 L 255,267 Q 267,267 267,255 L 267,227" />
-        </g>
-
-        <!-- Vector High-Contrast QR Code -->
+        <!-- QR Code Body -->
         ${
           isBlank
             ? `
-            <rect x="18" y="18" width="219" height="219" rx="18" fill="#faf8f5" stroke="#e8dfd5" stroke-dasharray="6,6" stroke-width="2"/>
-            <text x="127" y="118" font-family="-apple-system, BlinkMacSystemFont, 'Inter', sans-serif" font-size="14" font-weight="800" fill="#78716c" text-anchor="middle">PRINT / PASTE QR</text>
-            <text x="127" y="142" font-family="-apple-system, BlinkMacSystemFont, 'Inter', sans-serif" font-size="12" font-weight="600" fill="#a8a29e" text-anchor="middle">Stand ID Placeholder</text>
+            <rect x="20" y="20" width="225" height="225" rx="18" fill="#f8fafc" stroke="#cbd5e1" stroke-dasharray="6,6" stroke-width="2"/>
+            <text x="132" y="122" font-family="-apple-system, BlinkMacSystemFont, 'Inter', sans-serif" font-size="14" font-weight="800" fill="#64748b" text-anchor="middle">PRINT / PASTE QR</text>
+            <text x="132" y="146" font-family="-apple-system, BlinkMacSystemFont, 'Inter', sans-serif" font-size="12" font-weight="600" fill="#94a3b8" text-anchor="middle">Stand ID Placeholder</text>
             `
-            : `<g transform="translate(18, 18)">${generateQrPath(qrValue, 0, 0, 219, 219, "#090b0e")}</g>`
+            : `<g transform="translate(20, 20)">${generateQrPath(qrValue, 0, 0, 225, 225, "#090b0e")}</g>`
         }
 
-        <!-- Mini Stand ID Pill Capsule at bottom of QR frame -->
-        <g transform="translate(127, 240)">
-          <rect x="-55" y="-14" width="110" height="24" rx="12" fill="#ffffff" stroke="#d5beaa" stroke-width="1.8"/>
-          <text x="0" y="3" font-family="monospace, -apple-system, sans-serif" font-size="13" font-weight="900" fill="#181e26" text-anchor="middle" letter-spacing="1">${isBlank ? "TF-____" : safeCardId}</text>
+        <!-- Mini QR Code ID Pill at bottom of frame (e.g. TF-70) -->
+        <g transform="translate(132, 252)">
+          <rect x="-55" y="-13" width="110" height="24" rx="12" fill="#ffffff" stroke="#e2e8f0" stroke-width="1.8"/>
+          <text x="0" y="4" font-family="monospace, -apple-system, sans-serif" font-size="12" font-weight="900" fill="#0f172a" text-anchor="middle" letter-spacing="1">${isBlank ? "TF-____" : safeCardId}</text>
         </g>
 
         <!-- Text: SCAN the QR code -->
-        <text x="127" y="306" font-family="-apple-system, BlinkMacSystemFont, 'Plus Jakarta Sans', sans-serif" font-size="44" font-weight="900" fill="#181e26" text-anchor="middle" letter-spacing="2">SCAN</text>
-        <text x="127" y="344" font-family="-apple-system, BlinkMacSystemFont, 'Plus Jakarta Sans', sans-serif" font-size="28" font-weight="700" fill="#292524" text-anchor="middle">the QR code</text>
+        <text x="132" y="316" font-family="-apple-system, BlinkMacSystemFont, 'Plus Jakarta Sans', sans-serif" font-size="44" font-weight="900" fill="#0f172a" text-anchor="middle" letter-spacing="1.5">SCAN</text>
+        <text x="132" y="354" font-family="-apple-system, BlinkMacSystemFont, 'Plus Jakarta Sans', sans-serif" font-size="28" font-weight="700" fill="#0f172a" text-anchor="middle">the QR code</text>
 
-        <!-- Bronze Golden Underline Bar -->
-        <rect x="87" y="362" width="80" height="8" rx="4" fill="url(#bronzeGoldGrad)"/>
+        <!-- Golden Pill Accent Underline -->
+        <rect x="92" y="372" width="80" height="8" rx="4" fill="#f59e0b"/>
       </g>
 
-      <!-- ================= BOTTOM DYNAMIC LUXURY WAVE ================= -->
-      <!-- Fluid Golden Ribbon Sweep -->
-      <path d="M 0,840 C 350,880 720,830 ${SW},790 L ${SW},840 C 720,880 350,930 0,890 Z" fill="url(#goldRibbonSweep)"/>
+      <!-- ================= BOTTOM DYNAMIC DUAL-TONE SWEEP ================= -->
+      <!-- Smooth Golden Accent Arc -->
+      <path d="M 0,810 C 350,860 700,810 ${SW},760 L ${SW},810 C 700,860 350,910 0,860 Z" fill="url(#bottomGoldSweep)"/>
 
       <!-- Deep Dark Obsidian Bottom Slab -->
-      <path d="M 0,875 C 350,915 720,865 ${SW},825 L ${SW},${SH} L 0,${SH} Z" fill="#0d1117"/>
+      <path d="M 0,845 C 350,895 700,845 ${SW},795 L ${SW},${SH} L 0,${SH} Z" fill="#0b0e14"/>
 
-      <!-- Bottom Left: Circular Smart NFC Badge & Info -->
+      <!-- Bottom Left: Ph & Info in Dark Section -->
       <g transform="translate(60, 936)">
-        <!-- Golden Circled NFC Wave Icon -->
-        <circle cx="28" cy="20" r="28" fill="#161b22" stroke="url(#goldRibbonSweep)" stroke-width="2.5"/>
-        <g transform="translate(28, 20) scale(0.85)">
-          <path d="M -12,-16 A 20 20 0 0 1 -12,16" fill="none" stroke="#f0c27b" stroke-width="3.5" stroke-linecap="round"/>
-          <path d="M -3,-10 A 12 12 0 0 1 -3,10" fill="none" stroke="#f0c27b" stroke-width="3.5" stroke-linecap="round"/>
-          <path d="M 6,-5 A 6 6 0 0 1 6,5" fill="none" stroke="#f0c27b" stroke-width="3" stroke-linecap="round"/>
-        </g>
-        <text x="72" y="14" font-family="-apple-system, BlinkMacSystemFont, 'Plus Jakarta Sans', sans-serif" font-size="20" font-weight="900" fill="#ffffff" letter-spacing="2">SMART NFC</text>
-        <text x="72" y="34" font-family="-apple-system, BlinkMacSystemFont, 'Inter', sans-serif" font-size="13" font-weight="700" fill="#94a3b8" letter-spacing="1">6 &#215; 6 ACRYLIC STAND</text>
+        <text x="0" y="0" font-family="-apple-system, BlinkMacSystemFont, 'Inter', sans-serif" font-size="14" font-weight="800" fill="#f59e0b" letter-spacing="1.5">SMART NFC &#8226; 6x6 ACRYLIC STAND</text>
+        <text x="0" y="24" font-family="-apple-system, BlinkMacSystemFont, 'Inter', sans-serif" font-size="12" font-weight="600" fill="#94a3b8">Ph: +91 ${safePhone}</text>
       </g>
 
-      <!-- Subtle Vertical Divider in Bottom Slab -->
-      <line x1="510" y1="925" x2="510" y2="975" stroke="#30363d" stroke-width="1.5"/>
-
-      <!-- Bottom Right: "Powered By Tapform" (Exact Emerald Vortex Logo) -->
-      <g transform="translate(${SW - 70}, 936)">
-        <text x="0" y="8" font-family="-apple-system, BlinkMacSystemFont, 'Plus Jakarta Sans', sans-serif" font-size="14" font-weight="600" fill="#94a3b8" text-anchor="end">Powered By</text>
-        <g transform="translate(0, 32)">
-          <text x="0" y="0" font-family="-apple-system, BlinkMacSystemFont, 'Plus Jakarta Sans', sans-serif" font-size="24" font-weight="900" fill="#ffffff" text-anchor="end" letter-spacing="1">Tapform</text>
-          <!-- Our Official Emerald Vortex Knot Logo -->
-          <g transform="translate(-134, -2)">
-            ${ICONS.tapformLogo(28, "#10b981", "#ffffff")}
+      <!-- Bottom Right: "Powered By:" + Logo & "Tapform" in exact same horizontal baseline -->
+      <g transform="translate(${SW - 60}, 920)">
+        <!-- "Powered By:" top right -->
+        <text x="0" y="0" font-family="-apple-system, BlinkMacSystemFont, 'Plus Jakarta Sans', sans-serif" font-size="13" font-weight="600" fill="#94a3b8" text-anchor="end">Powered By:</text>
+        
+        <!-- Next Line: Container aligned to the right. Width ~160px: [Logo 32px] + [10px gap] + [Tapform Text ~118px] -->
+        <g transform="translate(-160, 30)">
+          <!-- Emerald Vortex Logo: centered at (16, 0) with size 32 -->
+          <g transform="translate(16, 0)">
+            ${ICONS.tapformLogo(32, "#10b981", "#ffffff")}
           </g>
+          <!-- Tapform text starting at x="40", exactly vertically centered with logo via dominant-baseline="central" -->
+          <text x="40" y="0" dominant-baseline="central" font-family="-apple-system, BlinkMacSystemFont, 'Plus Jakarta Sans', sans-serif" font-size="26" font-weight="900" fill="#ffffff" letter-spacing="1">Tapform</text>
         </g>
       </g>
     </g>
