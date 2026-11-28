@@ -778,9 +778,18 @@ function renderConnectProfileHtml({ cardId, title, destinationUrl, socialLinks =
         <button type="button" class="preset-btn" onclick="setPresetAmt(500)">&#8377;500</button>
       </div>
 
-      <!-- Option 1: Direct UPI App Launch (PhonePe, Google Pay, Paytm) -->
+      <!-- Real Live UPI QR for Laptop / Desktop Scanner -->
+      <div id="laptopQrBox" style="background: #ffffff; border-radius: 16px; padding: 14px; margin-bottom: 14px; text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+        <span style="font-size: 11px; font-weight: 800; color: #0f172a; letter-spacing: 0.5px; text-transform: uppercase; margin-bottom: 6px;">
+          Scan with Any UPI App (PhonePe / GPay / Paytm / Slice)
+        </span>
+        <img id="dynamicUpiQrImg" src="" alt="Live Shop UPI QR" style="width: 170px; height: 170px; border-radius: 10px; display: block;" />
+        <span id="qrAmtText" style="font-size: 13px; font-weight: 800; color: #059669; margin-top: 6px;">Scan to Pay &bull; Fast &amp; Direct</span>
+      </div>
+
+      <!-- Option 1: Direct UPI App Launch (PhonePe, Google Pay, Paytm) for Mobile Tap -->
       <button type="button" class="pay-submit-btn" id="payDirectUpiBtn" style="background: linear-gradient(135deg, #059669, #10b981); margin-bottom: 10px;">
-        <span>Launch PhonePe / GPay / Paytm</span> &rarr;
+        <span>Launch PhonePe / GPay / Paytm App</span> &rarr;
       </button>
 
       <!-- Option 2: Fallback Online Cards / Netbanking Gateway -->
@@ -807,10 +816,33 @@ function renderConnectProfileHtml({ cardId, title, destinationUrl, socialLinks =
 
     const configuredUpiId = "${upiId.replace(/"/g, '\\"')}";
     const configuredPayee = "${upiPayee.replace(/"/g, '\\"')}";
+    const qrImg = document.getElementById("dynamicUpiQrImg");
+    const qrAmtText = document.getElementById("qrAmtText");
+
+    function updateLiveQr() {
+      const amt = parseFloat(amtInput.value) || 0;
+      let upiStr = "upi://pay?pa=" + encodeURIComponent(configuredUpiId) +
+        "&pn=" + encodeURIComponent(configuredPayee) +
+        "&cu=INR";
+      if (amt >= 1) {
+        upiStr += "&am=" + encodeURIComponent(amt.toFixed(2));
+        if (qrAmtText) qrAmtText.textContent = "Scan to Pay ₹" + amt.toFixed(2);
+      } else {
+        if (qrAmtText) qrAmtText.textContent = "Scan to Pay Any Amount";
+      }
+      if (qrImg && configuredUpiId) {
+        qrImg.src = "https://api.qrserver.com/v1/create-qr-code/?size=200x200&margin=4&data=" + encodeURIComponent(upiStr);
+      }
+    }
+
+    // Initialize QR code
+    updateLiveQr();
+    amtInput.addEventListener("input", updateLiveQr);
 
     if (openBtn) {
       openBtn.addEventListener("click", () => {
         modal.classList.add("active");
+        updateLiveQr();
         setTimeout(() => amtInput.focus(), 100);
       });
     }
@@ -827,6 +859,7 @@ function renderConnectProfileHtml({ cardId, title, destinationUrl, socialLinks =
 
     window.setPresetAmt = function(val) {
       amtInput.value = val;
+      updateLiveQr();
     };
 
     // DIRECT PHONEPE / GOOGLE PAY / PAYTM LAUNCH
