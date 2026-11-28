@@ -346,25 +346,26 @@ export function generateCardSvgString({
         </g>
 
         <!-- Action Capsule Pill Below QR -->
-        <g transform="translate(${W / 2 - 150}, 715)">
-          <rect x="0" y="0" width="300" height="46" rx="23" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.8"/>
-          <circle cx="26" cy="23" r="7" fill="#16a34a" />
-          <text x="160" y="29" font-family="-apple-system, BlinkMacSystemFont, 'Inter', sans-serif" font-size="14" font-weight="900" fill="#0f172a" text-anchor="middle" letter-spacing="2">1-TAP NFC &#8226; SCAN CAMERA</text>
+        <!-- Action Capsule Pill Below QR -->
+        <g transform="translate(${W / 2 - 165}, 715)">
+          <rect x="0" y="0" width="330" height="46" rx="23" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.8"/>
+          <circle cx="28" cy="23" r="6" fill="#16a34a" />
+          <text x="180" y="29" font-family="-apple-system, BlinkMacSystemFont, 'Inter', sans-serif" font-size="13" font-weight="900" fill="#0f172a" text-anchor="middle" letter-spacing="1.5">1-TAP NFC &#8226; SCAN CAMERA</text>
         </g>
 
-        <!-- Social Icons Row (Google, Insta, WhatsApp, FB) -->
+        <!-- Social Icons Row (Google, Insta, WhatsApp, FB) with No Border Clippings -->
         <g transform="translate(${W / 2}, 780)">
           <g transform="translate(-115, 0)">
-            <circle cx="28" cy="28" r="24" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5"/>
-            <g transform="translate(17, 17) scale(0.95)">${ICONS.googleG}</g>
+            <circle cx="28" cy="28" r="22" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5"/>
+            <g transform="translate(14, 14) scale(0.95)">${ICONS.googleG}</g>
 
-            <circle cx="90" cy="28" r="24" fill="#e1306c" stroke="#e1306c" stroke-width="1.5"/>
+            <circle cx="90" cy="28" r="22" fill="url(#instaRoundGrad)"/>
             <g transform="translate(77, 15) scale(1)">${ICONS.instagram}</g>
 
-            <circle cx="152" cy="28" r="24" fill="#16a34a" stroke="#22c55e" stroke-width="1.5"/>
+            <circle cx="152" cy="28" r="22" fill="#25D366"/>
             <g transform="translate(139, 15) scale(1)">${ICONS.whatsapp}</g>
 
-            <circle cx="214" cy="28" r="24" fill="#1d4ed8" stroke="#3b82f6" stroke-width="1.5"/>
+            <circle cx="214" cy="28" r="22" fill="#1877F2"/>
             <g transform="translate(203, 17) scale(0.95)">${ICONS.facebook}</g>
           </g>
         </g>
@@ -409,9 +410,9 @@ export function generateCardSvgString({
         <text x="50" y="28" font-family="-apple-system, BlinkMacSystemFont, 'Inter', sans-serif" font-size="14" font-weight="800" fill="#ffffff" letter-spacing="1.5">REVIEW</text>
       </g>
 
-      <g transform="translate(${W - 100}, 42)">
-        <g transform="scale(1.6)">${ICONS.nfcWave("#ffffff")}</g>
-        <text x="-10" y="47" font-family="-apple-system, BlinkMacSystemFont, 'Inter', sans-serif" font-size="12" font-weight="900" fill="#38bdf8" letter-spacing="2">TAP HERE</text>
+      <g transform="translate(${W - 105}, 36)">
+        <g transform="translate(18, 0) scale(1.6)">${ICONS.nfcWave("#ffffff")}</g>
+        <text x="32" y="58" font-family="-apple-system, BlinkMacSystemFont, 'Inter', sans-serif" font-size="11" font-weight="900" fill="#38bdf8" letter-spacing="1.5" text-anchor="middle">TAP HERE</text>
       </g>
 
       <!-- Business Name (Only if custom title provided, else clean blank space) -->
@@ -440,10 +441,10 @@ export function generateCardSvgString({
       </g>
 
       <!-- Action Capsule Pill Below QR -->
-      <g transform="translate(${W / 2 - 150}, 715)">
-        <rect x="0" y="0" width="300" height="46" rx="23" fill="#151a24" stroke="#2c3444" stroke-width="1.8"/>
-        <circle cx="26" cy="23" r="7" fill="#22c55e" />
-        <text x="160" y="29" font-family="-apple-system, BlinkMacSystemFont, 'Inter', sans-serif" font-size="14" font-weight="900" fill="#ffffff" text-anchor="middle" letter-spacing="2">1-TAP NFC &#8226; SCAN CAMERA</text>
+      <g transform="translate(${W / 2 - 165}, 715)">
+        <rect x="0" y="0" width="330" height="46" rx="23" fill="#151a24" stroke="#2c3444" stroke-width="1.8"/>
+        <circle cx="28" cy="23" r="6" fill="#22c55e" />
+        <text x="180" y="29" font-family="-apple-system, BlinkMacSystemFont, 'Inter', sans-serif" font-size="13" font-weight="900" fill="#ffffff" text-anchor="middle" letter-spacing="1.5">1-TAP NFC &#8226; SCAN CAMERA</text>
       </g>
 
       <!-- LARGER READABLE BOTTOM REVIEW TEXT (24px Bold) -->
