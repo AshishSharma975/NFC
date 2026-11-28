@@ -787,14 +787,25 @@ function renderConnectProfileHtml({ cardId, title, destinationUrl, socialLinks =
         <span id="qrAmtText" style="font-size: 13px; font-weight: 800; color: #059669; margin-top: 6px;">Scan to Pay &bull; Fast &amp; Direct</span>
       </div>
 
-      <!-- Option 1: Direct UPI App Launch (PhonePe, Google Pay, Paytm) for Mobile Tap -->
-      <button type="button" class="pay-submit-btn" id="payDirectUpiBtn" style="background: linear-gradient(135deg, #059669, #10b981); margin-bottom: 10px;">
-        <span>Launch PhonePe / GPay / Paytm App</span> &rarr;
-      </button>
+      <!-- Option 1: Dedicated 1-Tap UPI App Buttons (iOS & Android Compatible) -->
+      <div style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 12px;">
+        <button type="button" class="pay-submit-btn" onclick="triggerUpiApp('phonepe')" style="background: #5f259f; padding: 13px; font-size: 14px; box-shadow: 0 4px 14px rgba(95,37,159,0.35);">
+          <span>Pay with PhonePe</span> &rarr;
+        </button>
+        <button type="button" class="pay-submit-btn" onclick="triggerUpiApp('gpay')" style="background: #1a73e8; padding: 13px; font-size: 14px; box-shadow: 0 4px 14px rgba(26,115,232,0.35);">
+          <span>Pay with Google Pay (GPay)</span> &rarr;
+        </button>
+        <button type="button" class="pay-submit-btn" onclick="triggerUpiApp('paytm')" style="background: #00b9f1; color: #0f172a; padding: 13px; font-size: 14px; box-shadow: 0 4px 14px rgba(0,185,241,0.35);">
+          <span>Pay with Paytm</span> &rarr;
+        </button>
+        <button type="button" class="pay-submit-btn" onclick="triggerUpiApp('default')" style="background: linear-gradient(135deg, #059669, #10b981); padding: 13px; font-size: 14px;">
+          <span>Pay with Slice / Other UPI App</span> &rarr;
+        </button>
+      </div>
 
       <!-- Option 2: Fallback Online Cards / Netbanking Gateway -->
-      <button type="button" class="pay-submit-btn" id="payWithRazorpayBtn" style="background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); font-size: 13px; padding: 12px; box-shadow: none; color: #94a3b8;">
-        <span>Or Pay with Cards / NetBanking / Other UPI</span>
+      <button type="button" class="pay-submit-btn" id="payWithRazorpayBtn" style="background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12); font-size: 12px; padding: 10px; box-shadow: none; color: #94a3b8;">
+        <span>Or Pay with Credit/Debit Cards &bull; NetBanking</span>
       </button>
 
       <div class="secure-note">
@@ -862,8 +873,8 @@ function renderConnectProfileHtml({ cardId, title, destinationUrl, socialLinks =
       updateLiveQr();
     };
 
-    // DIRECT PHONEPE / GOOGLE PAY / PAYTM LAUNCH
-    payDirectUpiBtn.addEventListener("click", () => {
+    // DEDICATED APP INTENT LAUNCHER FOR IOS & ANDROID
+    window.triggerUpiApp = function(appType) {
       const amount = parseFloat(amtInput.value);
       if (!amount || amount < 1) {
         alert("Kripya amount enter karein (Minimum ₹1).");
@@ -872,20 +883,27 @@ function renderConnectProfileHtml({ cardId, title, destinationUrl, socialLinks =
       }
 
       if (!configuredUpiId) {
-        alert("Is shop ka direct UPI ID abhi configure nahi hai. Aap niche wale 'Cards / NetBanking / Other UPI' option se pay kar sakte hain.");
+        alert("Is shop ka direct UPI ID abhi configure nahi hai. Aap niche wale 'Cards & NetBanking' option se pay kar sakte hain.");
         return;
       }
 
-      // Standard NPCI UPI URI Scheme (Native Intent trigger)
-      const upiUrl = "upi://pay?pa=" + encodeURIComponent(configuredUpiId) +
+      const params = "pa=" + encodeURIComponent(configuredUpiId) +
         "&pn=" + encodeURIComponent(configuredPayee) +
         "&am=" + encodeURIComponent(amount.toFixed(2)) +
         "&cu=INR" +
         "&tn=" + encodeURIComponent("Payment to " + configuredPayee);
 
-      // Trigger app opening directly
-      window.location.href = upiUrl;
-    });
+      let targetScheme = "upi://pay?" + params;
+      if (appType === "phonepe") {
+        targetScheme = "phonepe://pay?" + params;
+      } else if (appType === "gpay") {
+        targetScheme = "gpay://upi/pay?" + params;
+      } else if (appType === "paytm") {
+        targetScheme = "paytmmp://pay?" + params;
+      }
+
+      window.location.href = targetScheme;
+    };
 
     // FALLBACK RAZORPAY GATEWAY
     paySubmitBtn.addEventListener("click", async () => {
