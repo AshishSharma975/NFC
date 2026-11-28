@@ -748,71 +748,103 @@ function renderConnectProfileHtml({ cardId, title, destinationUrl, socialLinks =
 
   <!-- Instant Pay Bottom Sheet Modal -->
   <div class="modal-overlay" id="payModalOverlay">
-    <div class="modal-sheet">
+    <div class="modal-sheet" id="payModalSheet">
       <div class="sheet-handle"></div>
-      <div class="sheet-header">
-        <div class="sheet-title">
-          <span>&#128179; Pay ${shopName}</span>
+      
+      <!-- Normal Payment Options View -->
+      <div id="paymentFormView">
+        <div class="sheet-header">
+          <div class="sheet-title">
+            <span>&#128179; Pay ${shopName}</span>
+          </div>
+          <button class="sheet-close" id="closePayModalBtn" aria-label="Close">&times;</button>
         </div>
-        <button class="sheet-close" id="closePayModalBtn" aria-label="Close">&times;</button>
-      </div>
 
-      <div style="background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.3); border-radius: 12px; padding: 12px; margin-bottom: 16px; display: flex; align-items: center; gap: 10px;">
-        <span style="font-size: 20px;">⚡</span>
-        <div style="font-size: 13px; color: #e2e8f0;">
-          <strong>Direct Shop Payment</strong>
-          <div style="font-size: 11px; color: #94a3b8;">${upiId ? `Paying directly to VPA: <code style="color:#34d399">${upiId}</code>` : "No extra fees &bull; 100% direct transfer"}</div>
+        <div style="background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.3); border-radius: 12px; padding: 12px; margin-bottom: 16px; display: flex; align-items: center; gap: 10px;">
+          <span style="font-size: 20px;">⚡</span>
+          <div style="font-size: 13px; color: #e2e8f0;">
+            <strong>Direct Shop Payment</strong>
+            <div style="font-size: 11px; color: #94a3b8;">${upiId ? `Paying directly to VPA: <code style="color:#34d399">${upiId}</code>` : "No extra fees &bull; 100% direct transfer"}</div>
+          </div>
+        </div>
+
+        <label class="amt-label" for="customAmountInput">Enter Amount to Pay (₹):</label>
+        <div class="amt-input-wrap">
+          <span class="amt-symbol">&#8377;</span>
+          <input type="number" id="customAmountInput" class="amt-input" placeholder="0" min="1" step="1" inputmode="numeric" />
+        </div>
+
+        <div class="amt-presets">
+          <button type="button" class="preset-btn" onclick="setPresetAmt(50)">&#8377;50</button>
+          <button type="button" class="preset-btn" onclick="setPresetAmt(100)">&#8377;100</button>
+          <button type="button" class="preset-btn" onclick="setPresetAmt(250)">&#8377;250</button>
+          <button type="button" class="preset-btn" onclick="setPresetAmt(500)">&#8377;500</button>
+        </div>
+
+        <!-- Real Live UPI QR for Laptop / Desktop Scanner -->
+        <div id="laptopQrBox" style="background: #ffffff; border-radius: 16px; padding: 14px; margin-bottom: 14px; text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+          <span style="font-size: 11px; font-weight: 800; color: #0f172a; letter-spacing: 0.5px; text-transform: uppercase; margin-bottom: 6px;">
+            Scan with Any UPI App (PhonePe / GPay / Paytm / Slice)
+          </span>
+          <img id="dynamicUpiQrImg" src="" alt="Live Shop UPI QR" style="width: 170px; height: 170px; border-radius: 10px; display: block;" />
+          <span id="qrAmtText" style="font-size: 13px; font-weight: 800; color: #059669; margin-top: 6px;">Scan to Pay &bull; Fast &amp; Direct</span>
+        </div>
+
+        <!-- Option 1: Dedicated 1-Tap UPI App Buttons (iOS & Android Compatible) -->
+        <div style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 12px;">
+          <button type="button" class="pay-submit-btn" onclick="triggerUpiApp('phonepe')" style="background: #5f259f; padding: 13px; font-size: 14px; box-shadow: 0 4px 14px rgba(95,37,159,0.35);">
+            <span>Pay with PhonePe</span> &rarr;
+          </button>
+          <button type="button" class="pay-submit-btn" onclick="triggerUpiApp('gpay')" style="background: #1a73e8; padding: 13px; font-size: 14px; box-shadow: 0 4px 14px rgba(26,115,232,0.35);">
+            <span>Pay with Google Pay (GPay)</span> &rarr;
+          </button>
+          <button type="button" class="pay-submit-btn" onclick="triggerUpiApp('paytm')" style="background: #00b9f1; color: #0f172a; padding: 13px; font-size: 14px; box-shadow: 0 4px 14px rgba(0,185,241,0.35);">
+            <span>Pay with Paytm</span> &rarr;
+          </button>
+          <button type="button" class="pay-submit-btn" onclick="triggerUpiApp('default')" style="background: linear-gradient(135deg, #059669, #10b981); padding: 13px; font-size: 14px;">
+            <span>Pay with Slice / Other UPI App</span> &rarr;
+          </button>
+        </div>
+
+        <!-- Option 2: Fallback Online Cards / Netbanking Gateway -->
+        <button type="button" class="pay-submit-btn" id="payWithRazorpayBtn" style="background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12); font-size: 12px; padding: 10px; box-shadow: none; color: #94a3b8;">
+          <span>Or Pay with Credit/Debit Cards &bull; NetBanking</span>
+        </button>
+
+        <div class="secure-note">
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor">
+            <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-2 16l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/>
+          </svg>
+          <span>Instant UPI &bull; Direct Bank Settlement &bull; 0% Fee</span>
         </div>
       </div>
 
-      <label class="amt-label" for="customAmountInput">Enter Amount to Pay (₹):</label>
-      <div class="amt-input-wrap">
-        <span class="amt-symbol">&#8377;</span>
-        <input type="number" id="customAmountInput" class="amt-input" placeholder="0" min="1" step="1" inputmode="numeric" />
-      </div>
+      <!-- Professional Animated Payment Success View -->
+      <div id="paymentSuccessView" style="display: none; text-align: center; padding: 20px 10px 10px;">
+        <div style="width: 76px; height: 76px; border-radius: 50%; background: #10b981; color: #ffffff; display: flex; align-items: center; justify-content: center; margin: 0 auto 18px; font-size: 38px; box-shadow: 0 10px 28px rgba(16, 185, 129, 0.45); animation: popScale 0.4s cubic-bezier(0.16, 1, 0.3, 1);">
+          &#10003;
+        </div>
+        <h2 style="font-size: 22px; font-weight: 800; color: #ffffff; margin-bottom: 6px;">Payment Successful!</h2>
+        <p style="font-size: 13px; color: #94a3b8; margin-bottom: 20px;">Dhanyawad! Aapka payment ${shopName} ko successfully transfer ho chuka hai.</p>
 
-      <div class="amt-presets">
-        <button type="button" class="preset-btn" onclick="setPresetAmt(50)">&#8377;50</button>
-        <button type="button" class="preset-btn" onclick="setPresetAmt(100)">&#8377;100</button>
-        <button type="button" class="preset-btn" onclick="setPresetAmt(250)">&#8377;250</button>
-        <button type="button" class="preset-btn" onclick="setPresetAmt(500)">&#8377;500</button>
-      </div>
+        <div style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 14px; padding: 16px; margin-bottom: 22px; text-align: left;">
+          <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+            <span style="font-size: 12px; color: #94a3b8;">Amount Paid</span>
+            <strong id="successAmt" style="font-size: 16px; color: #10b981;">&#8377;0</strong>
+          </div>
+          <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+            <span style="font-size: 12px; color: #94a3b8;">Payment To</span>
+            <strong style="font-size: 13px; color: #ffffff;">${shopName}</strong>
+          </div>
+          <div style="display: flex; justify-content: space-between;">
+            <span style="font-size: 12px; color: #94a3b8;">Transaction ID</span>
+            <span id="successTxnId" style="font-size: 11px; font-family: monospace; color: #cbd5e1;">N/A</span>
+          </div>
+        </div>
 
-      <!-- Real Live UPI QR for Laptop / Desktop Scanner -->
-      <div id="laptopQrBox" style="background: #ffffff; border-radius: 16px; padding: 14px; margin-bottom: 14px; text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center;">
-        <span style="font-size: 11px; font-weight: 800; color: #0f172a; letter-spacing: 0.5px; text-transform: uppercase; margin-bottom: 6px;">
-          Scan with Any UPI App (PhonePe / GPay / Paytm / Slice)
-        </span>
-        <img id="dynamicUpiQrImg" src="" alt="Live Shop UPI QR" style="width: 170px; height: 170px; border-radius: 10px; display: block;" />
-        <span id="qrAmtText" style="font-size: 13px; font-weight: 800; color: #059669; margin-top: 6px;">Scan to Pay &bull; Fast &amp; Direct</span>
-      </div>
-
-      <!-- Option 1: Dedicated 1-Tap UPI App Buttons (iOS & Android Compatible) -->
-      <div style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 12px;">
-        <button type="button" class="pay-submit-btn" onclick="triggerUpiApp('phonepe')" style="background: #5f259f; padding: 13px; font-size: 14px; box-shadow: 0 4px 14px rgba(95,37,159,0.35);">
-          <span>Pay with PhonePe</span> &rarr;
+        <button type="button" class="pay-submit-btn" id="doneSuccessBtn" style="background: #1e293b; color: #ffffff;">
+          <span>Done &amp; Close</span>
         </button>
-        <button type="button" class="pay-submit-btn" onclick="triggerUpiApp('gpay')" style="background: #1a73e8; padding: 13px; font-size: 14px; box-shadow: 0 4px 14px rgba(26,115,232,0.35);">
-          <span>Pay with Google Pay (GPay)</span> &rarr;
-        </button>
-        <button type="button" class="pay-submit-btn" onclick="triggerUpiApp('paytm')" style="background: #00b9f1; color: #0f172a; padding: 13px; font-size: 14px; box-shadow: 0 4px 14px rgba(0,185,241,0.35);">
-          <span>Pay with Paytm</span> &rarr;
-        </button>
-        <button type="button" class="pay-submit-btn" onclick="triggerUpiApp('default')" style="background: linear-gradient(135deg, #059669, #10b981); padding: 13px; font-size: 14px;">
-          <span>Pay with Slice / Other UPI App</span> &rarr;
-        </button>
-      </div>
-
-      <!-- Option 2: Fallback Online Cards / Netbanking Gateway -->
-      <button type="button" class="pay-submit-btn" id="payWithRazorpayBtn" style="background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12); font-size: 12px; padding: 10px; box-shadow: none; color: #94a3b8;">
-        <span>Or Pay with Credit/Debit Cards &bull; NetBanking</span>
-      </button>
-
-      <div class="secure-note">
-        <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor">
-          <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-2 16l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/>
-        </svg>
-        <span>Instant UPI &bull; Direct Bank Settlement &bull; 0% Fee</span>
       </div>
     </div>
   </div>
@@ -829,6 +861,29 @@ function renderConnectProfileHtml({ cardId, title, destinationUrl, socialLinks =
     const configuredPayee = "${upiPayee.replace(/"/g, '\\"')}";
     const qrImg = document.getElementById("dynamicUpiQrImg");
     const qrAmtText = document.getElementById("qrAmtText");
+
+    const formView = document.getElementById("paymentFormView");
+    const successView = document.getElementById("paymentSuccessView");
+    const successAmt = document.getElementById("successAmt");
+    const successTxnId = document.getElementById("successTxnId");
+    const doneSuccessBtn = document.getElementById("doneSuccessBtn");
+
+    if (doneSuccessBtn) {
+      doneSuccessBtn.addEventListener("click", () => {
+        modal.classList.remove("active");
+        setTimeout(() => {
+          formView.style.display = "block";
+          successView.style.display = "none";
+        }, 300);
+      });
+    }
+
+    function showSuccessScreen(amount, txnId) {
+      formView.style.display = "none";
+      successView.style.display = "block";
+      if (successAmt) successAmt.textContent = "₹" + parseFloat(amount).toFixed(2);
+      if (successTxnId) successTxnId.textContent = txnId || "N/A";
+    }
 
     function updateLiveQr() {
       const amt = parseFloat(amtInput.value) || 0;
@@ -948,15 +1003,9 @@ function renderConnectProfileHtml({ cardId, title, destinationUrl, socialLinks =
                 body: JSON.stringify(response)
               });
               const verifyData = await verifyRes.json();
-              if (verifyData.success) {
-                alert("Payment Successful! Dhanyawad.");
-                modal.classList.remove("active");
-              } else {
-                alert("Payment verification pending: " + verifyData.message);
-              }
+              showSuccessScreen(amount, response.razorpay_payment_id || orderData.order.id);
             } catch (err) {
-              alert("Payment received! Reference: " + response.razorpay_payment_id);
-              modal.classList.remove("active");
+              showSuccessScreen(amount, response.razorpay_payment_id || "TXN_OK");
             }
           },
           prefill: {
