@@ -61,12 +61,10 @@ const ICONS = {
     </g>
   `,
   googleG: `
-    <g transform="scale(1.2)">
-      <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.66-5.17 3.66-9.17z"/>
-      <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.25v3.15C3.26 21.36 7.33 24 12 24z"/>
-      <path fill="#FBBC05" d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.13-1.55.38-2.27V6.58H1.25C.45 8.18 0 9.98 0 12s.45 3.82 1.25 5.42l4.03-3.15z"/>
-      <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.33 0 3.26 2.64 1.25 6.58l4.03 3.15c.95-2.83 3.6-4.98 6.72-4.98z"/>
-    </g>
+    <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.66-5.17 3.66-9.17z"/>
+    <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.25v3.15C3.26 21.36 7.33 24 12 24z"/>
+    <path fill="#FBBC05" d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.13-1.55.38-2.27V6.58H1.25C.45 8.18 0 9.98 0 12s.45 3.82 1.25 5.42l4.03-3.15z"/>
+    <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.33 0 3.26 2.64 1.25 6.58l4.03 3.15c.95-2.83 3.6-4.98 6.72-4.98z"/>
   `,
   nfcWave: (color = "#ffffff") => `
     <g stroke="${color}" stroke-width="3.5" fill="none" stroke-linecap="round">
@@ -359,20 +357,24 @@ export function generateCardSvgString({
           <text x="180" y="29" font-family="-apple-system, BlinkMacSystemFont, 'Inter', sans-serif" font-size="13" font-weight="900" fill="#0f172a" text-anchor="middle" letter-spacing="1.5">1-TAP NFC &#8226; SCAN CAMERA</text>
         </g>
 
-        <!-- Social Icons Row (Google, Insta, WhatsApp, FB) with No Border Clippings -->
+        <!-- Social Icons Row (Google, Insta, WhatsApp, FB) with Exact Optical & Mathematical Centering -->
         <g transform="translate(${W / 2}, 780)">
           <g transform="translate(-115, 0)">
+            <!-- 1. Google (Circle center 28, 28, R=22. Google G is 24x24 viewBox (0..24), centered: 28 - 12 = 16) -->
             <circle cx="28" cy="28" r="22" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5"/>
-            <g transform="translate(14, 14) scale(0.95)">${ICONS.googleG}</g>
+            <g transform="translate(16, 16)">${ICONS.googleG}</g>
 
+            <!-- 2. Instagram (Circle center 90, 28, R=22. Icon outer box 22x22 from (3,3) to (25,25), center is (14,14). Offset = (90-14, 28-14) = (76, 14)) -->
             <circle cx="90" cy="28" r="22" fill="url(#pocketInstaGrad)"/>
-            <g transform="translate(77, 15) scale(1)">${ICONS.instagram}</g>
+            <g transform="translate(76, 14)">${ICONS.instagram}</g>
 
+            <!-- 3. WhatsApp (Circle center 152, 28, R=22. Bubble is 24x24 from (2,2) to (26,26), visual center is (14, 13.5). Offset = (152-14, 28-13.5) = (138, 14.5)) -->
             <circle cx="152" cy="28" r="22" fill="#25D366"/>
-            <g transform="translate(139, 15) scale(1)">${ICONS.whatsapp}</g>
+            <g transform="translate(138, 14.5)">${ICONS.whatsapp}</g>
 
+            <!-- 4. Facebook (Circle center 214, 28, R=22. Circle badge is 20x20 from (2,2) to (22,22), center is (12,12). Offset = (214-12, 28-12) = (202, 16)) -->
             <circle cx="214" cy="28" r="22" fill="#1877F2"/>
-            <g transform="translate(203, 17) scale(0.95)">${ICONS.facebook}</g>
+            <g transform="translate(202, 16)">${ICONS.facebook}</g>
           </g>
         </g>
 
@@ -772,21 +774,21 @@ export function generateCardSvgString({
 
       <!-- ================= 4 FLOATING CIRCULAR SOCIAL ICONS ================= -->
       <g transform="translate(${SW / 2}, ${displayTitle ? 120 : 105})">
-        <!-- 1. Google (Circle R=22 at -90, Icon 24x24 viewBox 0..24, centered at -90, 0) -->
+        <!-- 1. Google (Circle R=22 at cx=-90, cy=0. Google G 24x24 viewBox (0..24), scale 1.0 -> offset = -90-12 = -102, cy = 0-12 = -12) -->
         <circle cx="-90" cy="0" r="22" fill="#ffffff" stroke="#e2e8f0" stroke-width="2"/>
-        <g transform="translate(-104, -14) scale(1.16)">${ICONS.googleG}</g>
+        <g transform="translate(-102, -12)">${ICONS.googleG}</g>
 
-        <!-- 2. Instagram (Circle R=22 at -30, Icon 22x22 viewBox 3..25 centered at -30, 0) -->
+        <!-- 2. Instagram (Circle R=22 at cx=-30, cy=0. Instagram 22x22 viewBox (3..25), center (14,14) -> offset = -30-14 = -44, cy = 0-14 = -14) -->
         <circle cx="-30" cy="0" r="22" fill="url(#instaRoundGrad)"/>
-        <g transform="translate(-43, -13) scale(1.05)">${ICONS.instagram}</g>
+        <g transform="translate(-44, -14)">${ICONS.instagram}</g>
 
-        <!-- 3. WhatsApp (Circle R=22 at 30, Icon 24x24 viewBox 0..24 centered at 30, 0) -->
+        <!-- 3. WhatsApp (Circle R=22 at cx=30, cy=0. WhatsApp 24x24 viewBox (2..26), center (14, 13.5) -> offset = 30-14 = 16, cy = 0-13.5 = -13.5) -->
         <circle cx="30" cy="0" r="22" fill="#25D366"/>
-        <g transform="translate(17, -13) scale(1.08)">${ICONS.whatsapp}</g>
+        <g transform="translate(16, -13.5)">${ICONS.whatsapp}</g>
 
-        <!-- 4. Facebook (Circle R=22 at 90, Icon 24x24 viewBox 0..24 centered at 90, 0) -->
+        <!-- 4. Facebook (Circle R=22 at cx=90, cy=0. Facebook 20x20 viewBox (2..22), center (12,12) -> offset = 90-12 = 78, cy = 0-12 = -12) -->
         <circle cx="90" cy="0" r="22" fill="#1877F2"/>
-        <g transform="translate(77, -13) scale(1.08)">${ICONS.facebook}</g>
+        <g transform="translate(78, -12)">${ICONS.facebook}</g>
       </g>
 
       <!-- ================= HERO CONNECT & REVIEW TITLE ================= -->
