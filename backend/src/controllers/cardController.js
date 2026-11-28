@@ -237,103 +237,34 @@ function renderConnectProfileHtml({ cardId, title, destinationUrl, socialLinks =
 
   const linksHtml = [];
 
-  // 1. Google Review & Maps (Mandatory & Prominently Highlighted)
+  // 1. Google Review & Maps (Hero Premium Card)
   linksHtml.push(`
-    <a href="${destinationUrl}" target="_blank" rel="noopener noreferrer" class="link-card google-card">
-      <div class="card-icon google-icon">
-        <svg viewBox="0 0 24 24" width="26" height="26">
-          <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.66-5.17 3.66-9.17z"/>
-          <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.25v3.15C3.26 21.36 7.33 24 12 24z"/>
-          <path fill="#FBBC05" d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.13-1.55.38-2.27V6.58H1.25C.45 8.18 0 9.98 0 12s.45 3.82 1.25 5.42l4.03-3.15z"/>
-          <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.33 0 3.26 2.64 1.25 6.58l4.03 3.15c.95-2.83 3.6-4.98 6.72-4.98z"/>
-        </svg>
+    <a href="${destinationUrl}" target="_blank" rel="noopener noreferrer" class="link-card hero-review-card">
+      <div class="card-left-group">
+        <div class="brand-square google-brand-square">
+          <svg viewBox="0 0 24 24" width="22" height="22">
+            <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.66-5.17 3.66-9.17z"/>
+            <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.25v3.15C3.26 21.36 7.33 24 12 24z"/>
+            <path fill="#FBBC05" d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.13-1.55.38-2.27V6.58H1.25C.45 8.18 0 9.98 0 12s.45 3.82 1.25 5.42l4.03-3.15z"/>
+            <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.33 0 3.26 2.64 1.25 6.58l4.03 3.15c.95-2.83 3.6-4.98 6.72-4.98z"/>
+          </svg>
+        </div>
+        <div class="card-info">
+          <div class="card-top-pill">
+            <span class="rating-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</span>
+            <span class="rating-text">RECOMMENDED</span>
+          </div>
+          <strong class="card-main-title">Write a Google Review</strong>
+          <span class="card-secondary-desc">Rate location &amp; experience</span>
+        </div>
       </div>
-      <div class="card-text">
-        <span class="card-badge">RECOMMENDED</span>
-        <strong class="card-title">Leave a Review on Google</strong>
-        <span class="card-sub">&#11088;&#11088;&#11088;&#11088;&#11088; Rate your experience & location</span>
+      <div class="chevron-icon">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
       </div>
-      <div class="card-arrow">&rarr;</div>
     </a>
   `);
 
-  // 2. Instagram
-  if (socialLinks.instagram) {
-    linksHtml.push(`
-      <a href="${socialLinks.instagram}" target="_blank" rel="noopener noreferrer" class="link-card insta-card">
-        <div class="card-icon insta-icon">
-          <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
-            <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
-            <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
-          </svg>
-        </div>
-        <div class="card-text">
-          <strong class="card-title">Follow on Instagram</strong>
-          <span class="card-sub">Photos, reels & stories</span>
-        </div>
-        <div class="card-arrow">&rarr;</div>
-      </a>
-    `);
-  }
-
-  // 3. WhatsApp Business
-  if (socialLinks.whatsapp) {
-    linksHtml.push(`
-      <a href="${socialLinks.whatsapp}" target="_blank" rel="noopener noreferrer" class="link-card wa-card">
-        <div class="card-icon wa-icon">
-          <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
-            <path d="M12.04 2c-5.46 0-9.91 4.45-9.91 9.91 0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.816 9.816 0 0 0 12.04 2zm0 18.15c-1.48 0-2.93-.4-4.2-1.15l-.3-.18-3.12.82.83-3.04-.2-.31c-.82-1.31-1.26-2.83-1.26-4.38 0-4.54 3.7-8.24 8.24-8.24 2.2 0 4.27.86 5.82 2.42a8.18 8.18 0 0 1 2.41 5.83c.02 4.54-3.68 8.23-8.22 8.23zm4.52-6.16c-.25-.12-1.47-.72-1.7-.81-.23-.08-.39-.12-.56.12-.17.25-.64.81-.79.97-.14.17-.29.19-.54.06-.25-.12-1.05-.39-1.99-1.23-.74-.66-1.23-1.47-1.38-1.72-.14-.25-.02-.38.11-.5.11-.11.25-.29.37-.43.12-.14.17-.25.25-.41.08-.17.04-.31-.02-.43s-.56-1.34-.76-1.84c-.2-.48-.41-.42-.56-.43h-.48c-.17 0-.43.06-.66.31-.22.25-.86.84-.86 2.05s.88 2.38 1 2.54c.12.17 1.73 2.64 4.2 3.7.59.25 1.05.4 1.41.51.59.19 1.13.16 1.56.1.48-.07 1.47-.6 1.68-1.18.21-.58.21-1.07.14-1.18-.06-.11-.22-.17-.47-.29z"/>
-          </svg>
-        </div>
-        <div class="card-text">
-          <strong class="card-title">Chat on WhatsApp</strong>
-          <span class="card-sub">Direct chat & orders</span>
-        </div>
-        <div class="card-arrow">&rarr;</div>
-      </a>
-    `);
-  }
-
-  // 4. Facebook
-  if (socialLinks.facebook) {
-    linksHtml.push(`
-      <a href="${socialLinks.facebook}" target="_blank" rel="noopener noreferrer" class="link-card fb-card">
-        <div class="card-icon fb-icon">
-          <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
-            <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
-          </svg>
-        </div>
-        <div class="card-text">
-          <strong class="card-title">Connect on Facebook</strong>
-          <span class="card-sub">Follow our official page</span>
-        </div>
-        <div class="card-arrow">&rarr;</div>
-      </a>
-    `);
-  }
-
-  // 5. Official Website (if provided)
-  if (socialLinks.website) {
-    linksHtml.push(`
-      <a href="${socialLinks.website}" target="_blank" rel="noopener noreferrer" class="link-card web-card">
-        <div class="card-icon web-icon">
-          <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <circle cx="12" cy="12" r="10"></circle>
-            <line x1="2" y1="12" x2="22" y2="12"></line>
-            <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
-          </svg>
-        </div>
-        <div class="card-text">
-          <strong class="card-title">Visit Official Website</strong>
-          <span class="card-sub">Products, catalog &amp; services</span>
-        </div>
-        <div class="card-arrow">&rarr;</div>
-      </a>
-    `);
-  }
-
-  // 6. Direct Pay to Shop (Instant PhonePe / Google Pay / Paytm / UPI)
+  // 2. Direct Pay to Shop (Minimal Slate/Teal Accent)
   const upiId = (socialLinks.upiId || "").trim();
   const upiPayee = (socialLinks.upiName || shopName || "Shop Payment").trim();
   const upiPayLink = upiId 
@@ -341,23 +272,119 @@ function renderConnectProfileHtml({ cardId, title, destinationUrl, socialLinks =
     : "";
 
   linksHtml.push(`
-    <div class="link-card pay-card" id="openPayModalBtn">
-      <div class="card-icon pay-icon">
-        <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-          <rect x="2" y="5" width="20" height="14" rx="3"></rect>
-          <line x1="2" y1="10" x2="22" y2="10"></line>
-          <path d="M6 15h2"></path>
-          <path d="M10 15h4"></path>
-        </svg>
+    <div class="link-card pay-action-card" id="openPayModalBtn">
+      <div class="card-left-group">
+        <div class="brand-square pay-brand-square">
+          <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#38bdf8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="2" y="5" width="20" height="14" rx="3"></rect>
+            <line x1="2" y1="10" x2="22" y2="10"></line>
+            <path d="M6 15h2"></path>
+            <path d="M10 15h4"></path>
+          </svg>
+        </div>
+        <div class="card-info">
+          <span class="tag-label text-cyan">INSTANT 0% UPI</span>
+          <strong class="card-main-title">Pay Shop &bull; PhonePe / GPay / Paytm</strong>
+          <span class="card-secondary-desc">Direct bank transfer &bull; Any amount</span>
+        </div>
       </div>
-      <div class="card-text">
-        <span class="card-badge pay-badge">DIRECT PAYMENT</span>
-        <strong class="card-title">Pay Shop &bull; PhonePe / GPay / Paytm</strong>
-        <span class="card-sub">Instant 0% fee UPI transfer &bull; Any amount</span>
+      <div class="chevron-icon">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
       </div>
-      <div class="card-arrow">&rarr;</div>
     </div>
   `);
+
+  // 3. Instagram
+  if (socialLinks.instagram) {
+    linksHtml.push(`
+      <a href="${socialLinks.instagram}" target="_blank" rel="noopener noreferrer" class="link-card minimal-card">
+        <div class="card-left-group">
+          <div class="brand-square insta-brand-square">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#f43f5e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
+              <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
+              <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
+            </svg>
+          </div>
+          <div class="card-info">
+            <strong class="card-main-title">Instagram Profile</strong>
+            <span class="card-secondary-desc">Photos, reels &amp; updates</span>
+          </div>
+        </div>
+        <div class="chevron-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </a>
+    `);
+  }
+
+  // 4. WhatsApp Business
+  if (socialLinks.whatsapp) {
+    linksHtml.push(`
+      <a href="${socialLinks.whatsapp}" target="_blank" rel="noopener noreferrer" class="link-card minimal-card">
+        <div class="card-left-group">
+          <div class="brand-square wa-brand-square">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="#10b981">
+              <path d="M12.04 2c-5.46 0-9.91 4.45-9.91 9.91 0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.816 9.816 0 0 0 12.04 2zm0 18.15c-1.48 0-2.93-.4-4.2-1.15l-.3-.18-3.12.82.83-3.04-.2-.31c-.82-1.31-1.26-2.83-1.26-4.38 0-4.54 3.7-8.24 8.24-8.24 2.2 0 4.27.86 5.82 2.42a8.18 8.18 0 0 1 2.41 5.83c.02 4.54-3.68 8.23-8.22 8.23zm4.52-6.16c-.25-.12-1.47-.72-1.7-.81-.23-.08-.39-.12-.56.12-.17.25-.64.81-.79.97-.14.17-.29.19-.54.06-.25-.12-1.05-.39-1.99-1.23-.74-.66-1.23-1.47-1.38-1.72-.14-.25-.02-.38.11-.5.11-.11.25-.29.37-.43.12-.14.17-.25.25-.41.08-.17.04-.31-.02-.43s-.56-1.34-.76-1.84c-.2-.48-.41-.42-.56-.43h-.48c-.17 0-.43.06-.66.31-.22.25-.86.84-.86 2.05s.88 2.38 1 2.54c.12.17 1.73 2.64 4.2 3.7.59.25 1.05.4 1.41.51.59.19 1.13.16 1.56.1.48-.07 1.47-.6 1.68-1.18.21-.58.21-1.07.14-1.18-.06-.11-.22-.17-.47-.29z"/>
+            </svg>
+          </div>
+          <div class="card-info">
+            <strong class="card-main-title">WhatsApp Chat</strong>
+            <span class="card-secondary-desc">Quick inquiries &amp; support</span>
+          </div>
+        </div>
+        <div class="chevron-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </a>
+    `);
+  }
+
+  // 5. Official Website
+  if (socialLinks.website) {
+    linksHtml.push(`
+      <a href="${socialLinks.website}" target="_blank" rel="noopener noreferrer" class="link-card minimal-card">
+        <div class="card-left-group">
+          <div class="brand-square web-brand-square">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#60a5fa" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"></circle>
+              <line x1="2" y1="12" x2="22" y2="12"></line>
+              <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+            </svg>
+          </div>
+          <div class="card-info">
+            <strong class="card-main-title">Visit Official Website</strong>
+            <span class="card-secondary-desc">Catalog, products &amp; details</span>
+          </div>
+        </div>
+        <div class="chevron-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </a>
+    `);
+  }
+
+  // 6. Facebook
+  if (socialLinks.facebook) {
+    linksHtml.push(`
+      <a href="${socialLinks.facebook}" target="_blank" rel="noopener noreferrer" class="link-card minimal-card">
+        <div class="card-left-group">
+          <div class="brand-square fb-brand-square">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="#3b82f6">
+              <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+            </svg>
+          </div>
+          <div class="card-info">
+            <strong class="card-main-title">Facebook Page</strong>
+            <span class="card-secondary-desc">Community &amp; updates</span>
+          </div>
+        </div>
+        <div class="chevron-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </a>
+    `);
+  }
 
   return `<!DOCTYPE html>
 <html lang="en">
@@ -368,14 +395,15 @@ function renderConnectProfileHtml({ cardId, title, destinationUrl, socialLinks =
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
     body {
-      background: #0d0f12;
-      color: #f1f5f9;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+      background: #090b10;
+      color: #f8fafc;
+      font-family: -apple-system, BlinkMacSystemFont, "Plus Jakarta Sans", "Inter", Roboto, sans-serif;
       min-height: 100vh;
       display: flex;
       flex-direction: column;
       align-items: center;
-      padding: 32px 18px 48px;
+      padding: 40px 18px 56px;
+      -webkit-font-smoothing: antialiased;
     }
     .profile-container {
       width: 100%;
@@ -386,39 +414,39 @@ function renderConnectProfileHtml({ cardId, title, destinationUrl, socialLinks =
     }
     .avatar-wrapper {
       position: relative;
-      margin-bottom: 14px;
+      margin-bottom: 16px;
     }
     .avatar {
-      width: 76px;
-      height: 76px;
-      border-radius: 50%;
+      width: 80px;
+      height: 80px;
+      border-radius: 24px;
       background: linear-gradient(135deg, #1e293b, #0f172a);
-      border: 3px solid #334155;
+      border: 1px solid rgba(255, 255, 255, 0.12);
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 30px;
+      font-size: 32px;
       font-weight: 800;
-      color: #ffffff;
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+      color: #38bdf8;
+      box-shadow: 0 16px 36px rgba(0, 0, 0, 0.5);
     }
     .nfc-badge {
       position: absolute;
-      bottom: -2px;
-      right: -2px;
-      background: #10b981;
-      color: #0f1218;
-      width: 24px;
-      height: 24px;
+      bottom: -4px;
+      right: -4px;
+      background: #0284c7;
+      color: #ffffff;
+      width: 26px;
+      height: 26px;
       border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
       font-size: 13px;
-      border: 2px solid #0d0f12;
+      border: 3px solid #090b10;
     }
     .shop-title {
-      font-size: 22px;
+      font-size: 24px;
       font-weight: 800;
       text-align: center;
       color: #ffffff;
@@ -429,109 +457,122 @@ function renderConnectProfileHtml({ cardId, title, destinationUrl, socialLinks =
       display: inline-flex;
       align-items: center;
       gap: 6px;
-      background: rgba(255, 255, 255, 0.06);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      padding: 5px 14px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      padding: 6px 14px;
       border-radius: 100px;
       font-size: 12px;
       color: #94a3b8;
-      margin-bottom: 24px;
+      margin-bottom: 28px;
     }
-    .shop-pill strong { color: #fbbf24; }
+    .shop-pill strong { color: #f59e0b; }
     .links-list {
       width: 100%;
       display: flex;
       flex-direction: column;
-      gap: 14px;
+      gap: 12px;
     }
+    
+    /* Sleek Apple / Cred Style Link Cards */
     .link-card {
       display: flex;
       align-items: center;
-      gap: 14px;
+      justify-content: space-between;
       padding: 16px 18px;
-      border-radius: 16px;
+      border-radius: 18px;
       text-decoration: none;
       color: inherit;
+      background: rgba(18, 22, 31, 0.7);
+      border: 1px solid rgba(255, 255, 255, 0.07);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
       transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-      position: relative;
-      overflow: hidden;
+      cursor: pointer;
     }
     .link-card:active {
       transform: scale(0.98);
+      background: rgba(26, 32, 45, 0.85);
     }
-    .google-card {
-      background: #171a21;
-      border: 2px solid #fbbf24;
-      box-shadow: 0 8px 30px rgba(251, 191, 36, 0.12);
+    
+    /* Hero Google Review Card: Subtle Royal Blue / Gold Accent */
+    .hero-review-card {
+      background: linear-gradient(135deg, rgba(30, 58, 138, 0.25), rgba(15, 23, 42, 0.75));
+      border: 1.5px solid rgba(96, 165, 250, 0.35);
+      box-shadow: 0 10px 30px rgba(37, 99, 235, 0.12);
     }
-    .card-badge {
-      display: inline-block;
-      font-size: 9px;
-      font-weight: 800;
-      letter-spacing: 0.08em;
-      color: #fbbf24;
-      margin-bottom: 2px;
+    .hero-review-card:active {
+      border-color: rgba(96, 165, 250, 0.6);
     }
-    .insta-card {
-      background: linear-gradient(135deg, rgba(188, 24, 136, 0.15), rgba(240, 148, 51, 0.15));
-      border: 1px solid rgba(220, 39, 67, 0.4);
+    
+    /* Pay Action Card: Subtle Emerald Glow */
+    .pay-action-card {
+      background: linear-gradient(135deg, rgba(6, 78, 59, 0.25), rgba(15, 23, 42, 0.75));
+      border: 1.5px solid rgba(16, 185, 129, 0.35);
+      box-shadow: 0 10px 30px rgba(16, 185, 129, 0.12);
     }
-    .wa-card {
-      background: linear-gradient(135deg, rgba(37, 211, 102, 0.15), rgba(18, 140, 126, 0.15));
-      border: 1px solid rgba(37, 211, 102, 0.4);
+
+    .card-left-group {
+      display: flex;
+      align-items: center;
+      gap: 14px;
     }
-    .fb-card {
-      background: linear-gradient(135deg, rgba(24, 119, 242, 0.15), rgba(24, 119, 242, 0.05));
-      border: 1px solid rgba(24, 119, 242, 0.4);
-    }
-    .card-icon {
+    .brand-square {
       width: 44px;
       height: 44px;
-      border-radius: 12px;
+      border-radius: 14px;
       display: flex;
       align-items: center;
       justify-content: center;
       flex-shrink: 0;
-      background: rgba(255, 255, 255, 0.06);
+      background: #151b26;
+      border: 1px solid rgba(255, 255, 255, 0.08);
     }
-    .insta-icon { background: linear-gradient(45deg, #f09433, #dc2743, #bc1888); color: #fff; }
-    .wa-icon { background: #25D366; color: #fff; }
-    .fb-icon { background: #1877F2; color: #fff; }
-    .web-card {
-      background: linear-gradient(135deg, rgba(56, 189, 248, 0.12), rgba(30, 58, 138, 0.2));
-      border: 1px solid rgba(56, 189, 248, 0.35);
-    }
-    .web-icon { background: #0284c7; color: #fff; }
-    .pay-card {
-      background: linear-gradient(135deg, rgba(16, 185, 129, 0.15), rgba(5, 150, 105, 0.25));
-      border: 2px solid #10b981;
-      cursor: pointer;
-      box-shadow: 0 8px 24px rgba(16, 185, 129, 0.15);
-    }
-    .pay-icon { background: #10b981; color: #022c22; font-weight: bold; }
-    .pay-badge { color: #34d399 !important; font-weight: 800; }
-    .card-text {
-      flex: 1;
+    .card-info {
       display: flex;
       flex-direction: column;
     }
-    .card-title {
+    .card-top-pill {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 2px;
+    }
+    .rating-stars {
+      color: #fbbf24;
+      font-size: 11px;
+      letter-spacing: 1px;
+    }
+    .rating-text {
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      color: #60a5fa;
+    }
+    .tag-label {
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      margin-bottom: 2px;
+    }
+    .text-cyan { color: #38bdf8; }
+    .card-main-title {
       font-size: 15px;
       font-weight: 700;
       color: #ffffff;
+      letter-spacing: -0.01em;
     }
-    .card-sub {
+    .card-secondary-desc {
       font-size: 12px;
       color: #94a3b8;
       margin-top: 2px;
     }
-    .card-arrow {
-      font-size: 18px;
+    .chevron-icon {
       color: #64748b;
-      padding-left: 6px;
+      padding-left: 8px;
     }
+
     .footer-meta {
-      margin-top: 36px;
+      margin-top: 40px;
       text-align: center;
       display: flex;
       flex-direction: column;
@@ -543,8 +584,8 @@ function renderConnectProfileHtml({ cardId, title, destinationUrl, socialLinks =
       letter-spacing: 0.08em;
       color: #64748b;
       font-family: monospace;
-      background: rgba(255, 255, 255, 0.05);
-      padding: 3px 10px;
+      background: rgba(255, 255, 255, 0.04);
+      padding: 4px 12px;
       border-radius: 6px;
     }
     .meta-powered {
@@ -552,14 +593,14 @@ function renderConnectProfileHtml({ cardId, title, destinationUrl, socialLinks =
       color: #475569;
     }
 
-    /* Payment Modal Styles */
+    /* Modal Overlay */
     .modal-overlay {
       display: none;
       position: fixed;
       inset: 0;
-      background: rgba(0, 0, 0, 0.85);
-      backdrop-filter: blur(8px);
-      -webkit-backdrop-filter: blur(8px);
+      background: rgba(4, 6, 10, 0.85);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
       z-index: 1000;
       align-items: flex-end;
       justify-content: center;
@@ -571,12 +612,12 @@ function renderConnectProfileHtml({ cardId, title, destinationUrl, socialLinks =
     .modal-sheet {
       width: 100%;
       max-width: 440px;
-      background: #131720;
-      border: 1px solid rgba(255, 255, 255, 0.12);
-      border-top-left-radius: 24px;
-      border-top-right-radius: 24px;
-      padding: 24px 20px 34px;
-      box-shadow: 0 -12px 40px rgba(0, 0, 0, 0.7);
+      background: #0f131a;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-top-left-radius: 28px;
+      border-top-right-radius: 28px;
+      padding: 24px 22px 36px;
+      box-shadow: 0 -16px 48px rgba(0, 0, 0, 0.8);
       animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
     }
     @keyframes slideUp {
@@ -584,7 +625,7 @@ function renderConnectProfileHtml({ cardId, title, destinationUrl, socialLinks =
       to { transform: translateY(0); }
     }
     .sheet-handle {
-      width: 40px;
+      width: 36px;
       height: 4px;
       background: #334155;
       border-radius: 2px;
@@ -594,7 +635,7 @@ function renderConnectProfileHtml({ cardId, title, destinationUrl, socialLinks =
       display: flex;
       align-items: center;
       justify-content: space-between;
-      margin-bottom: 16px;
+      margin-bottom: 18px;
     }
     .sheet-title {
       font-size: 18px;
@@ -605,7 +646,7 @@ function renderConnectProfileHtml({ cardId, title, destinationUrl, socialLinks =
       gap: 8px;
     }
     .sheet-close {
-      background: #1e293b;
+      background: #1e2533;
       border: none;
       color: #94a3b8;
       width: 32px;
@@ -616,7 +657,9 @@ function renderConnectProfileHtml({ cardId, title, destinationUrl, socialLinks =
       display: flex;
       align-items: center;
       justify-content: center;
+      transition: background 0.15s;
     }
+    .sheet-close:hover { background: #334155; color: #fff; }
     .amt-label {
       font-size: 12px;
       font-weight: 600;
@@ -626,97 +669,79 @@ function renderConnectProfileHtml({ cardId, title, destinationUrl, socialLinks =
     }
     .amt-input-wrap {
       position: relative;
-      margin-bottom: 14px;
+      margin-bottom: 12px;
     }
     .amt-symbol {
       position: absolute;
-      left: 14px;
+      left: 16px;
       top: 50%;
       transform: translateY(-50%);
-      font-size: 22px;
+      font-size: 24px;
       font-weight: 700;
-      color: #10b981;
+      color: #38bdf8;
     }
     .amt-input {
       width: 100%;
-      padding: 14px 14px 14px 38px;
-      font-size: 24px;
+      padding: 14px 16px 14px 42px;
+      font-size: 26px;
       font-weight: 800;
-      background: #090d14;
-      border: 1.5px solid #334155;
-      border-radius: 14px;
+      background: #090c12;
+      border: 1.5px solid #1e293b;
+      border-radius: 16px;
       color: #ffffff;
       outline: none;
       box-sizing: border-box;
-      transition: border-color 0.2s;
+      transition: all 0.2s;
     }
     .amt-input:focus {
-      border-color: #10b981;
-      box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2);
+      border-color: #38bdf8;
+      box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.15);
     }
     .amt-presets {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
       gap: 8px;
-      margin-bottom: 20px;
+      margin-bottom: 18px;
     }
     .preset-btn {
-      padding: 8px;
-      border-radius: 10px;
-      background: #1e293b;
-      border: 1px solid rgba(255, 255, 255, 0.08);
+      padding: 10px;
+      border-radius: 12px;
+      background: #151b26;
+      border: 1px solid rgba(255, 255, 255, 0.06);
       color: #e2e8f0;
       font-size: 13px;
-      font-weight: 600;
+      font-weight: 700;
       cursor: pointer;
       transition: all 0.15s;
     }
     .preset-btn:hover, .preset-btn:active {
-      background: #334155;
-      border-color: #10b981;
-      color: #10b981;
+      background: #1e293b;
+      border-color: #38bdf8;
+      color: #38bdf8;
     }
     .pay-submit-btn {
       width: 100%;
-      padding: 16px;
-      background: linear-gradient(135deg, #10b981, #059669);
+      padding: 14px;
       border: none;
       border-radius: 14px;
       color: #ffffff;
-      font-size: 16px;
-      font-weight: 800;
-      letter-spacing: 0.02em;
+      font-size: 14px;
+      font-weight: 700;
       cursor: pointer;
-      box-shadow: 0 8px 24px rgba(16, 185, 129, 0.35);
       transition: all 0.2s;
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 10px;
+      gap: 8px;
     }
-    .pay-submit-btn:disabled {
-      opacity: 0.6;
-      cursor: not-allowed;
-    }
-    .direct-upi-box {
-      margin-top: 16px;
-      padding-top: 14px;
-      border-top: 1px solid rgba(255, 255, 255, 0.08);
-      text-align: center;
-    }
-    .direct-upi-link {
-      font-size: 12px;
-      color: #60a5fa;
-      text-decoration: none;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
+    .pay-submit-btn:active {
+      transform: scale(0.98);
     }
     .secure-note {
       font-size: 11px;
       color: #64748b;
       text-align: center;
-      margin-top: 12px;
+      margin-top: 14px;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -760,15 +785,18 @@ function renderConnectProfileHtml({ cardId, title, destinationUrl, socialLinks =
           <button class="sheet-close" id="closePayModalBtn" aria-label="Close">&times;</button>
         </div>
 
-        <div style="background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.3); border-radius: 12px; padding: 12px; margin-bottom: 16px; display: flex; align-items: center; gap: 10px;">
-          <span style="font-size: 20px;">⚡</span>
-          <div style="font-size: 13px; color: #e2e8f0;">
-            <strong>Direct Shop Payment</strong>
-            <div style="font-size: 11px; color: #94a3b8;">${upiId ? `Paying directly to VPA: <code style="color:#34d399">${upiId}</code>` : "No extra fees &bull; 100% direct transfer"}</div>
+        <div style="background: rgba(56, 189, 248, 0.06); border: 1px solid rgba(56, 189, 248, 0.18); border-radius: 14px; padding: 12px 14px; margin-bottom: 18px; display: flex; align-items: center; justify-content: space-between;">
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <div style="width: 28px; height: 28px; border-radius: 8px; background: rgba(56, 189, 248, 0.15); display: flex; align-items: center; justify-content: center; font-size: 13px;">⚡</div>
+            <div>
+              <span style="font-size: 11px; font-weight: 700; color: #94a3b8; display: block; text-transform: uppercase; letter-spacing: 0.5px;">Payee VPA</span>
+              <strong style="font-size: 13px; color: #ffffff; font-family: monospace;">${upiId || "Configured Store UPI"}</strong>
+            </div>
           </div>
+          <span style="font-size: 10px; font-weight: 800; background: rgba(16, 185, 129, 0.15); color: #34d399; padding: 3px 8px; border-radius: 6px;">0% FEE</span>
         </div>
 
-        <label class="amt-label" for="customAmountInput">Enter Amount to Pay (₹):</label>
+        <label class="amt-label" for="customAmountInput">Amount to Pay</label>
         <div class="amt-input-wrap">
           <span class="amt-symbol">&#8377;</span>
           <input type="number" id="customAmountInput" class="amt-input" placeholder="0" min="1" step="1" inputmode="numeric" />
@@ -781,34 +809,38 @@ function renderConnectProfileHtml({ cardId, title, destinationUrl, socialLinks =
           <button type="button" class="preset-btn" onclick="setPresetAmt(500)">&#8377;500</button>
         </div>
 
-        <!-- Real Live UPI QR for Laptop / Desktop Scanner -->
-        <div id="laptopQrBox" style="background: #ffffff; border-radius: 16px; padding: 14px; margin-bottom: 14px; text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center;">
-          <span style="font-size: 11px; font-weight: 800; color: #0f172a; letter-spacing: 0.5px; text-transform: uppercase; margin-bottom: 6px;">
-            Scan with Any UPI App (PhonePe / GPay / Paytm / Slice)
+        <!-- Real Live UPI QR for Laptop / Desktop Scanner (Clean Card Style) -->
+        <div id="laptopQrBox" style="background: #ffffff; border-radius: 18px; padding: 16px; margin-bottom: 16px; text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; box-shadow: 0 8px 24px rgba(0,0,0,0.25);">
+          <span style="font-size: 11px; font-weight: 800; color: #475569; letter-spacing: 0.6px; text-transform: uppercase; margin-bottom: 10px;">
+            Scan with any UPI app to pay
           </span>
-          <img id="dynamicUpiQrImg" src="" alt="Live Shop UPI QR" style="width: 170px; height: 170px; border-radius: 10px; display: block;" />
-          <span id="qrAmtText" style="font-size: 13px; font-weight: 800; color: #059669; margin-top: 6px;">Scan to Pay &bull; Fast &amp; Direct</span>
+          <img id="dynamicUpiQrImg" src="" alt="Live Shop UPI QR" style="width: 176px; height: 176px; border-radius: 12px; display: block;" />
+          <span id="qrAmtText" style="font-size: 13px; font-weight: 800; color: #0284c7; margin-top: 10px;">Instant Direct Transfer</span>
         </div>
 
-        <!-- Option 1: Dedicated 1-Tap UPI App Buttons (iOS & Android Compatible) -->
-        <div style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 12px;">
-          <button type="button" class="pay-submit-btn" onclick="triggerUpiApp('phonepe')" style="background: #5f259f; padding: 13px; font-size: 14px; box-shadow: 0 4px 14px rgba(95,37,159,0.35);">
-            <span>Pay with PhonePe</span> &rarr;
-          </button>
-          <button type="button" class="pay-submit-btn" onclick="triggerUpiApp('gpay')" style="background: #1a73e8; padding: 13px; font-size: 14px; box-shadow: 0 4px 14px rgba(26,115,232,0.35);">
-            <span>Pay with Google Pay (GPay)</span> &rarr;
-          </button>
-          <button type="button" class="pay-submit-btn" onclick="triggerUpiApp('paytm')" style="background: #00b9f1; color: #0f172a; padding: 13px; font-size: 14px; box-shadow: 0 4px 14px rgba(0,185,241,0.35);">
-            <span>Pay with Paytm</span> &rarr;
-          </button>
-          <button type="button" class="pay-submit-btn" onclick="triggerUpiApp('default')" style="background: linear-gradient(135deg, #059669, #10b981); padding: 13px; font-size: 14px;">
-            <span>Pay with Slice / Other UPI App</span> &rarr;
-          </button>
+        <!-- Sleek Unified App Launcher Strip -->
+        <div style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 14px;">
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+            <button type="button" class="pay-submit-btn" onclick="triggerUpiApp('phonepe')" style="background: #1e2230; border: 1px solid rgba(255,255,255,0.08); padding: 12px; color: #e2e8f0; font-size: 13px;">
+              <span style="width:8px; height:8px; border-radius:50%; background:#8b5cf6; display:inline-block; margin-right:4px;"></span> PhonePe
+            </button>
+            <button type="button" class="pay-submit-btn" onclick="triggerUpiApp('gpay')" style="background: #1e2230; border: 1px solid rgba(255,255,255,0.08); padding: 12px; color: #e2e8f0; font-size: 13px;">
+              <span style="width:8px; height:8px; border-radius:50%; background:#3b82f6; display:inline-block; margin-right:4px;"></span> Google Pay
+            </button>
+          </div>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+            <button type="button" class="pay-submit-btn" onclick="triggerUpiApp('paytm')" style="background: #1e2230; border: 1px solid rgba(255,255,255,0.08); padding: 12px; color: #e2e8f0; font-size: 13px;">
+              <span style="width:8px; height:8px; border-radius:50%; background:#00b9f1; display:inline-block; margin-right:4px;"></span> Paytm
+            </button>
+            <button type="button" class="pay-submit-btn" onclick="triggerUpiApp('default')" style="background: #1e2230; border: 1px solid rgba(255,255,255,0.08); padding: 12px; color: #e2e8f0; font-size: 13px;">
+              <span style="width:8px; height:8px; border-radius:50%; background:#10b981; display:inline-block; margin-right:4px;"></span> Slice / Other
+            </button>
+          </div>
         </div>
 
         <!-- Option 2: Fallback Online Cards / Netbanking Gateway -->
-        <button type="button" class="pay-submit-btn" id="payWithRazorpayBtn" style="background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12); font-size: 12px; padding: 10px; box-shadow: none; color: #94a3b8;">
-          <span>Or Pay with Credit/Debit Cards &bull; NetBanking</span>
+        <button type="button" class="pay-submit-btn" id="payWithRazorpayBtn" style="background: transparent; border: 1px dashed rgba(255,255,255,0.12); font-size: 12px; padding: 10px; color: #64748b;">
+          <span>Credit/Debit Card or NetBanking</span>
         </button>
 
         <div class="secure-note">
