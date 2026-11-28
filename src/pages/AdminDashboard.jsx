@@ -72,6 +72,9 @@ export default function AdminDashboard() {
   const [studioInstagram, setStudioInstagram] = useState("");
   const [studioWhatsapp, setStudioWhatsapp] = useState("");
   const [studioFacebook, setStudioFacebook] = useState("");
+  const [studioWebsite, setStudioWebsite] = useState("");
+  const [studioUpiId, setStudioUpiId] = useState("");
+  const [studioUpiName, setStudioUpiName] = useState("");
   const [studioStatus, setStudioStatus] = useState("active");
   const [studioSaving, setStudioSaving] = useState(false);
   const [studioSuccess, setStudioSuccess] = useState("");
@@ -109,6 +112,9 @@ export default function AdminDashboard() {
   const [editInstagram, setEditInstagram] = useState("");
   const [editWhatsapp, setEditWhatsapp] = useState("");
   const [editFacebook, setEditFacebook] = useState("");
+  const [editWebsite, setEditWebsite] = useState("");
+  const [editUpiId, setEditUpiId] = useState("");
+  const [editUpiName, setEditUpiName] = useState("");
   const [savingEdit, setSavingEdit] = useState(false);
   const [editError, setEditError] = useState("");
 
@@ -201,6 +207,9 @@ export default function AdminDashboard() {
             setStudioInstagram(first.socialLinks?.instagram || "");
             setStudioWhatsapp(first.socialLinks?.whatsapp || "");
             setStudioFacebook(first.socialLinks?.facebook || "");
+            setStudioWebsite(first.socialLinks?.website || "");
+            setStudioUpiId(first.socialLinks?.upiId || "");
+            setStudioUpiName(first.socialLinks?.upiName || "");
             setStudioStatus(first.status || "active");
             return first.cardId;
           }
@@ -226,6 +235,9 @@ export default function AdminDashboard() {
     setStudioInstagram(card.socialLinks?.instagram || "");
     setStudioWhatsapp(card.socialLinks?.whatsapp || "");
     setStudioFacebook(card.socialLinks?.facebook || "");
+    setStudioWebsite(card.socialLinks?.website || "");
+    setStudioUpiId(card.socialLinks?.upiId || "");
+    setStudioUpiName(card.socialLinks?.upiName || "");
     setStudioStatus(card.status || "active");
     setStudioError("");
     setStudioSuccess("");
@@ -320,6 +332,9 @@ export default function AdminDashboard() {
           instagram: editInstagram.trim(),
           whatsapp: editWhatsapp.trim(),
           facebook: editFacebook.trim(),
+          website: editWebsite.trim(),
+          upiId: editUpiId.trim(),
+          upiName: editUpiName.trim(),
         },
       };
 
@@ -411,6 +426,9 @@ export default function AdminDashboard() {
           instagram: studioInstagram.trim(),
           whatsapp: studioWhatsapp.trim(),
           facebook: studioFacebook.trim(),
+          website: studioWebsite.trim(),
+          upiId: studioUpiId.trim(),
+          upiName: studioUpiName.trim(),
         },
       };
 
@@ -1105,6 +1123,39 @@ export default function AdminDashboard() {
                             placeholder="Facebook page link"
                           />
                         </div>
+
+                        <div className="social-input-row-admin">
+                          <span className="social-admin-prefix" style={{ background: "#0284c7" }}>Website</span>
+                          <input
+                            type="text"
+                            value={studioWebsite}
+                            onChange={(e) => setStudioWebsite(e.target.value)}
+                            className="admin-social-input"
+                            placeholder="Official website (e.g. myshop.com)"
+                          />
+                        </div>
+
+                        <div className="social-input-row-admin">
+                          <span className="social-admin-prefix" style={{ background: "#10b981" }}>UPI ID</span>
+                          <input
+                            type="text"
+                            value={studioUpiId}
+                            onChange={(e) => setStudioUpiId(e.target.value)}
+                            className="admin-social-input"
+                            placeholder="e.g. storename@okaxis / 9876543210@upi"
+                          />
+                        </div>
+
+                        <div className="social-input-row-admin">
+                          <span className="social-admin-prefix" style={{ background: "#059669" }}>Payee Name</span>
+                          <input
+                            type="text"
+                            value={studioUpiName}
+                            onChange={(e) => setStudioUpiName(e.target.value)}
+                            className="admin-social-input"
+                            placeholder="Payee display name for UPI/QR"
+                          />
+                        </div>
                       </div>
                     </div>
                   )}
@@ -1383,6 +1434,9 @@ export default function AdminDashboard() {
                                   setEditInstagram(card.socialLinks?.instagram || "");
                                   setEditWhatsapp(card.socialLinks?.whatsapp || "");
                                   setEditFacebook(card.socialLinks?.facebook || "");
+                                  setEditWebsite(card.socialLinks?.website || "");
+                                  setEditUpiId(card.socialLinks?.upiId || "");
+                                  setEditUpiName(card.socialLinks?.upiName || "");
                                 }}
                                 title="Click to activate and set Google / Social links"
                               >
@@ -1478,6 +1532,9 @@ export default function AdminDashboard() {
                                   setEditInstagram(card.socialLinks?.instagram || "");
                                   setEditWhatsapp(card.socialLinks?.whatsapp || "");
                                   setEditFacebook(card.socialLinks?.facebook || "");
+                                  setEditWebsite(card.socialLinks?.website || "");
+                                  setEditUpiId(card.socialLinks?.upiId || "");
+                                  setEditUpiName(card.socialLinks?.upiName || "");
                                 }}
                                 title="Edit Destination"
                               >
@@ -1705,6 +1762,30 @@ export default function AdminDashboard() {
                         onChange={(e) => setEditFacebook(e.target.value)}
                         className="admin-input-styled"
                         placeholder="Facebook page URL"
+                        style={{ fontSize: "12px" }}
+                      />
+                      <input
+                        type="text"
+                        value={editWebsite}
+                        onChange={(e) => setEditWebsite(e.target.value)}
+                        className="admin-input-styled"
+                        placeholder="Official website URL (e.g. store.com)"
+                        style={{ fontSize: "12px" }}
+                      />
+                      <input
+                        type="text"
+                        value={editUpiId}
+                        onChange={(e) => setEditUpiId(e.target.value)}
+                        className="admin-input-styled"
+                        placeholder="UPI ID for payments (e.g. shop@upi)"
+                        style={{ fontSize: "12px" }}
+                      />
+                      <input
+                        type="text"
+                        value={editUpiName}
+                        onChange={(e) => setEditUpiName(e.target.value)}
+                        className="admin-input-styled"
+                        placeholder="UPI Payee Name (e.g. Shop Name)"
                         style={{ fontSize: "12px" }}
                       />
                     </div>

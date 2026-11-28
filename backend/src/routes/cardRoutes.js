@@ -11,11 +11,17 @@ import {
   getAdminStats,
   bulkGenerateCards,
   bulkDeleteCards,
+  createPaymentOrder,
+  verifyPayment,
 } from "../controllers/cardController.js";
 import { requireApiKey, requireAdminAuth } from "../middleware/authMiddleware.js";
 import { apiLimiter, scanLimiter } from "../middleware/rateLimiter.js";
 
 const router = express.Router();
+
+// Razorpay Order Creation & Verification
+router.post("/api/payment/create-order", apiLimiter, createPaymentOrder);
+router.post("/api/payment/verify", apiLimiter, verifyPayment);
 
 // Admin Authentication: POST /api/admin/login
 router.post("/api/admin/login", apiLimiter, adminLogin);

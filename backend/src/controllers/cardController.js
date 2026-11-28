@@ -5,8 +5,25 @@ import {
   normalizeCardId,
 } from "../utils/validators.js";
 import { resolveGoogleMapsUrl } from "../utils/urlResolver.js";
+import Razorpay from "razorpay";
+import crypto from "crypto";
 
 import os from "os";
+
+// Initialize Razorpay client with safe fallback
+let razorpayInstance = null;
+function getRazorpayInstance() {
+  const key_id = process.env.RAZORPAY_KEY_ID || "rzp_test_U5V3ADmxw4zMX7";
+  const key_secret = process.env.RAZORPAY_KEY_SECRET || "NHVELcdWvTrEMLxwAqckZ0Bk";
+  if (!razorpayInstance && key_id && key_secret) {
+    try {
+      razorpayInstance = new Razorpay({ key_id, key_secret });
+    } catch (e) {
+      console.error("Failed to initialize Razorpay:", e);
+    }
+  }
+  return razorpayInstance;
+}
 
 function getLocalIp() {
   const interfaces = os.networkInterfaces();
@@ -154,6 +171,9 @@ function normalizeSocialLinks(links = {}) {
     instagram: "",
     whatsapp: "",
     facebook: "",
+    website: "",
+    upiId: "",
+    upiName: "",
   };
 
   if (!links || typeof links !== "object") return normalized;
@@ -188,6 +208,24 @@ function normalizeSocialLinks(links = {}) {
       }
       normalized.facebook = fb;
     }
+  }
+
+  if (links.website && typeof links.website === "string") {
+    let web = links.website.trim();
+    if (web) {
+      if (!web.startsWith("http://") && !web.startsWith("https://")) {
+        web = `https://${web}`;
+      }
+      normalized.website = web;
+    }
+  }
+
+  if (links.upiId && typeof links.upiId === "string") {
+    normalized.upiId = links.upiId.trim();
+  }
+
+  if (links.upiName && typeof links.upiName === "string") {
+    normalized.upiName = links.upiName.trim();
   }
 
   return normalized;
@@ -274,6 +312,50 @@ function renderConnectProfileHtml({ cardId, title, destinationUrl, socialLinks =
       </a>
     `);
   }
+
+  // 5. Official Website (if provided)
+  if (socialLinks.website) {
+    linksHtml.push(`
+      <a href="${socialLinks.website}" target="_blank" rel="noopener noreferrer" class="link-card web-card">
+        <div class="card-icon web-icon">
+          <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="2" y1="12" x2="22" y2="12"></line>
+            <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+          </svg>
+        </div>
+        <div class="card-text">
+          <strong class="card-title">Visit Official Website</strong>
+          <span class="card-sub">Products, catalog &amp; services</span>
+        </div>
+        <div class="card-arrow">&rarr;</div>
+      </a>
+    `);
+  }
+
+  // 6. Direct Pay to Shop / UPI / Razorpay Payment Card
+  const upiPayLink = socialLinks.upiId 
+    ? `upi://pay?pa=${encodeURIComponent(socialLinks.upiId)}&pn=${encodeURIComponent(socialLinks.upiName || shopName)}&cu=INR`
+    : "";
+
+  linksHtml.push(`
+    <div class="link-card pay-card" id="openPayModalBtn">
+      <div class="card-icon pay-icon">
+        <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="2" y="5" width="20" height="14" rx="3"></rect>
+          <line x1="2" y1="10" x2="22" y2="10"></line>
+          <path d="M6 15h2"></path>
+          <path d="M10 15h4"></path>
+        </svg>
+      </div>
+      <div class="card-text">
+        <span class="card-badge pay-badge">INSTANT PAYMENT</span>
+        <strong class="card-title">Pay Store &bull; UPI / Cards</strong>
+        <span class="card-sub">GPay, PhonePe, Paytm, Cards &amp; NetBanking</span>
+      </div>
+      <div class="card-arrow">&rarr;</div>
+    </div>
+  `);
 
   return `<!DOCTYPE html>
 <html lang="en">
@@ -413,6 +495,19 @@ function renderConnectProfileHtml({ cardId, title, destinationUrl, socialLinks =
     .insta-icon { background: linear-gradient(45deg, #f09433, #dc2743, #bc1888); color: #fff; }
     .wa-icon { background: #25D366; color: #fff; }
     .fb-icon { background: #1877F2; color: #fff; }
+    .web-card {
+      background: linear-gradient(135deg, rgba(56, 189, 248, 0.12), rgba(30, 58, 138, 0.2));
+      border: 1px solid rgba(56, 189, 248, 0.35);
+    }
+    .web-icon { background: #0284c7; color: #fff; }
+    .pay-card {
+      background: linear-gradient(135deg, rgba(16, 185, 129, 0.15), rgba(5, 150, 105, 0.25));
+      border: 2px solid #10b981;
+      cursor: pointer;
+      box-shadow: 0 8px 24px rgba(16, 185, 129, 0.15);
+    }
+    .pay-icon { background: #10b981; color: #022c22; font-weight: bold; }
+    .pay-badge { color: #34d399 !important; font-weight: 800; }
     .card-text {
       flex: 1;
       display: flex;
@@ -454,7 +549,179 @@ function renderConnectProfileHtml({ cardId, title, destinationUrl, socialLinks =
       font-size: 11px;
       color: #475569;
     }
+
+    /* Payment Modal Styles */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.85);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      z-index: 1000;
+      align-items: flex-end;
+      justify-content: center;
+      transition: opacity 0.25s ease;
+    }
+    .modal-overlay.active {
+      display: flex;
+    }
+    .modal-sheet {
+      width: 100%;
+      max-width: 440px;
+      background: #131720;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-top-left-radius: 24px;
+      border-top-right-radius: 24px;
+      padding: 24px 20px 34px;
+      box-shadow: 0 -12px 40px rgba(0, 0, 0, 0.7);
+      animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    @keyframes slideUp {
+      from { transform: translateY(100%); }
+      to { transform: translateY(0); }
+    }
+    .sheet-handle {
+      width: 40px;
+      height: 4px;
+      background: #334155;
+      border-radius: 2px;
+      margin: 0 auto 18px;
+    }
+    .sheet-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+    }
+    .sheet-title {
+      font-size: 18px;
+      font-weight: 800;
+      color: #ffffff;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .sheet-close {
+      background: #1e293b;
+      border: none;
+      color: #94a3b8;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      font-size: 18px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .amt-label {
+      font-size: 12px;
+      font-weight: 600;
+      color: #94a3b8;
+      margin-bottom: 8px;
+      display: block;
+    }
+    .amt-input-wrap {
+      position: relative;
+      margin-bottom: 14px;
+    }
+    .amt-symbol {
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 22px;
+      font-weight: 700;
+      color: #10b981;
+    }
+    .amt-input {
+      width: 100%;
+      padding: 14px 14px 14px 38px;
+      font-size: 24px;
+      font-weight: 800;
+      background: #090d14;
+      border: 1.5px solid #334155;
+      border-radius: 14px;
+      color: #ffffff;
+      outline: none;
+      box-sizing: border-box;
+      transition: border-color 0.2s;
+    }
+    .amt-input:focus {
+      border-color: #10b981;
+      box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2);
+    }
+    .amt-presets {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+      margin-bottom: 20px;
+    }
+    .preset-btn {
+      padding: 8px;
+      border-radius: 10px;
+      background: #1e293b;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      color: #e2e8f0;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .preset-btn:hover, .preset-btn:active {
+      background: #334155;
+      border-color: #10b981;
+      color: #10b981;
+    }
+    .pay-submit-btn {
+      width: 100%;
+      padding: 16px;
+      background: linear-gradient(135deg, #10b981, #059669);
+      border: none;
+      border-radius: 14px;
+      color: #ffffff;
+      font-size: 16px;
+      font-weight: 800;
+      letter-spacing: 0.02em;
+      cursor: pointer;
+      box-shadow: 0 8px 24px rgba(16, 185, 129, 0.35);
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+    .pay-submit-btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+    .direct-upi-box {
+      margin-top: 16px;
+      padding-top: 14px;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      text-align: center;
+    }
+    .direct-upi-link {
+      font-size: 12px;
+      color: #60a5fa;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .secure-note {
+      font-size: 11px;
+      color: #64748b;
+      text-align: center;
+      margin-top: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
   </style>
+  <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 </head>
 <body>
   <div class="profile-container">
@@ -476,6 +743,155 @@ function renderConnectProfileHtml({ cardId, title, destinationUrl, socialLinks =
       <span class="meta-powered">Tapform Smart NFC &bull; Direct Touch</span>
     </div>
   </div>
+
+  <!-- Instant Pay Bottom Sheet Modal -->
+  <div class="modal-overlay" id="payModalOverlay">
+    <div class="modal-sheet">
+      <div class="sheet-handle"></div>
+      <div class="sheet-header">
+        <div class="sheet-title">
+          <span>&#128179; Pay ${shopName}</span>
+        </div>
+        <button class="sheet-close" id="closePayModalBtn" aria-label="Close">&times;</button>
+      </div>
+
+      <label class="amt-label" for="customAmountInput">Enter Amount to Pay (INR):</label>
+      <div class="amt-input-wrap">
+        <span class="amt-symbol">&#8377;</span>
+        <input type="number" id="customAmountInput" class="amt-input" placeholder="0" min="1" step="1" inputmode="numeric" />
+      </div>
+
+      <div class="amt-presets">
+        <button type="button" class="preset-btn" onclick="setPresetAmt(50)">&#8377;50</button>
+        <button type="button" class="preset-btn" onclick="setPresetAmt(100)">&#8377;100</button>
+        <button type="button" class="preset-btn" onclick="setPresetAmt(250)">&#8377;250</button>
+        <button type="button" class="preset-btn" onclick="setPresetAmt(500)">&#8377;500</button>
+      </div>
+
+      <button type="button" class="pay-submit-btn" id="payWithRazorpayBtn">
+        <span>Proceed with Razorpay / UPI</span> &rarr;
+      </button>
+
+      ${upiPayLink ? `
+      <div class="direct-upi-box">
+        <a href="${upiPayLink}" class="direct-upi-link">
+          <span>&#9889; Or tap to launch UPI App (GPay/PhonePe/Paytm)</span> &rarr;
+        </a>
+      </div>` : ""}
+
+      <div class="secure-note">
+        <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor">
+          <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-2 16l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/>
+        </svg>
+        <span>100% Secure 256-Bit SSL Payment via Razorpay</span>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const modal = document.getElementById("payModalOverlay");
+    const openBtn = document.getElementById("openPayModalBtn");
+    const closeBtn = document.getElementById("closePayModalBtn");
+    const amtInput = document.getElementById("customAmountInput");
+    const paySubmitBtn = document.getElementById("payWithRazorpayBtn");
+
+    if (openBtn) {
+      openBtn.addEventListener("click", () => {
+        modal.classList.add("active");
+        setTimeout(() => amtInput.focus(), 100);
+      });
+    }
+
+    if (closeBtn) {
+      closeBtn.addEventListener("click", () => {
+        modal.classList.remove("active");
+      });
+    }
+
+    modal.addEventListener("click", (e) => {
+      if (e.target === modal) modal.classList.remove("active");
+    });
+
+    window.setPresetAmt = function(val) {
+      amtInput.value = val;
+    };
+
+    paySubmitBtn.addEventListener("click", async () => {
+      const amount = parseFloat(amtInput.value);
+      if (!amount || amount < 1) {
+        alert("Kripya ek valid amount dalein (Minimum Rs 1).");
+        amtInput.focus();
+        return;
+      }
+
+      paySubmitBtn.disabled = true;
+      paySubmitBtn.innerHTML = "<span>Initiating Secure Gateway...</span>";
+
+      try {
+        const orderRes = await fetch("/api/payment/create-order", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            cardId: "${cardId}",
+            amount: amount,
+            shopName: "${shopName.replace(/"/g, '\\"')}"
+          })
+        });
+
+        const orderData = await orderRes.json();
+        if (!orderData.success || !orderData.order) {
+          throw new Error(orderData.message || "Failed to create order");
+        }
+
+        const options = {
+          key: orderData.keyId,
+          amount: orderData.order.amount,
+          currency: orderData.order.currency,
+          name: "${shopName.replace(/"/g, '\\"')}",
+          description: "Payment via Tapform Smart Stand",
+          order_id: orderData.order.id,
+          handler: async function (response) {
+            try {
+              const verifyRes = await fetch("/api/payment/verify", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(response)
+              });
+              const verifyData = await verifyRes.json();
+              if (verifyData.success) {
+                alert("Payment Successful! Dhanyawad.");
+                modal.classList.remove("active");
+              } else {
+                alert("Payment verification pending: " + verifyData.message);
+              }
+            } catch (err) {
+              alert("Payment received! Reference: " + response.razorpay_payment_id);
+              modal.classList.remove("active");
+            }
+          },
+          prefill: {
+            name: "",
+            email: "",
+            contact: ""
+          },
+          theme: {
+            color: "#10b981"
+          }
+        };
+
+        const rzp = new Razorpay(options);
+        rzp.on("payment.failed", function (response) {
+          alert("Payment fail ho gaya: " + (response.error.description || "Try again"));
+        });
+        rzp.open();
+      } catch (err) {
+        alert("Payment start nahi ho paya: " + err.message);
+      } finally {
+        paySubmitBtn.disabled = false;
+        paySubmitBtn.innerHTML = "<span>Proceed with Razorpay / UPI</span> &rarr;";
+      }
+    });
+  </script>
 </body>
 </html>`;
 }
@@ -1292,6 +1708,99 @@ export async function bulkDeleteCards(req, res, next) {
       message: `Deleted ${result.deletedCount} cards successfully.`,
       deletedCount: result.deletedCount,
     });
+  } catch (error) {
+    next(error);
+  }
+}
+
+/**
+ * Create Razorpay Order
+ * POST /api/payment/create-order
+ */
+export async function createPaymentOrder(req, res, next) {
+  try {
+    const { amount, cardId, shopName } = req.body;
+    const numAmount = parseFloat(amount);
+
+    if (isNaN(numAmount) || numAmount < 1) {
+      return res.status(400).json({
+        success: false,
+        message: "Please specify a valid amount of at least ₹1",
+      });
+    }
+
+    const rzp = getRazorpayInstance();
+    const keyId = process.env.RAZORPAY_KEY_ID || "rzp_test_U5V3ADmxw4zMX7";
+
+    if (!rzp) {
+      return res.status(500).json({
+        success: false,
+        message: "Razorpay payment gateway not configured",
+      });
+    }
+
+    const receipt = `rcpt_${(cardId || "stand").substring(0, 10)}_${Date.now().toString().slice(-8)}`;
+    const options = {
+      amount: Math.round(numAmount * 100), // in paise
+      currency: "INR",
+      receipt: receipt,
+      notes: {
+        cardId: cardId || "N/A",
+        shopName: shopName || "Shop Payment",
+      },
+    };
+
+    const order = await rzp.orders.create(options);
+    return res.status(200).json({
+      success: true,
+      order,
+      keyId,
+    });
+  } catch (error) {
+    console.error("Razorpay order creation error:", error);
+    return res.status(500).json({
+      success: false,
+      message: error.error && error.error.description ? error.error.description : error.message,
+    });
+  }
+}
+
+/**
+ * Verify Razorpay Payment Signature
+ * POST /api/payment/verify
+ */
+export async function verifyPayment(req, res, next) {
+  try {
+    const { razorpay_order_id, razorpay_payment_id, razorpay_signature } = req.body;
+
+    if (!razorpay_order_id || !razorpay_payment_id || !razorpay_signature) {
+      return res.status(400).json({
+        success: false,
+        message: "Missing payment parameters",
+      });
+    }
+
+    const secret = process.env.RAZORPAY_KEY_SECRET || "NHVELcdWvTrEMLxwAqckZ0Bk";
+    const body = razorpay_order_id + "|" + razorpay_payment_id;
+    const expectedSignature = crypto
+      .createHmac("sha256", secret)
+      .update(body.toString())
+      .digest("hex");
+
+    const isAuthentic = expectedSignature === razorpay_signature;
+
+    if (isAuthentic) {
+      return res.status(200).json({
+        success: true,
+        message: "Payment verified successfully",
+        paymentId: razorpay_payment_id,
+      });
+    } else {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid payment signature verification failed",
+      });
+    }
   } catch (error) {
     next(error);
   }

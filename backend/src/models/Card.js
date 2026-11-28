@@ -56,6 +56,9 @@ const cardSchema = new mongoose.Schema(
       instagram: { type: String, trim: true, default: "" },
       whatsapp: { type: String, trim: true, default: "" },
       facebook: { type: String, trim: true, default: "" },
+      website: { type: String, trim: true, default: "" },
+      upiId: { type: String, trim: true, default: "" },
+      upiName: { type: String, trim: true, default: "" },
     },
     designTheme: {
       type: String,
