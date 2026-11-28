@@ -297,6 +297,12 @@ export function generateCardSvgString({
             <stop offset="66%" stop-color="#FBBC05"/>
             <stop offset="100%" stop-color="#34A853"/>
           </linearGradient>
+          <linearGradient id="pocketInstaGrad" x1="0%" y1="100%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#ffd521"/>
+            <stop offset="25%" stop-color="#f50000"/>
+            <stop offset="50%" stop-color="#b900b4"/>
+            <stop offset="100%" stop-color="#7200ca"/>
+          </linearGradient>
         </defs>
 
         <rect x="2" y="2" width="${W - 4}" height="${H - 4}" rx="${R}" fill="url(#pocketWhiteGrad)" stroke="#cbd5e1" stroke-width="2.5"/>
@@ -359,7 +365,7 @@ export function generateCardSvgString({
             <circle cx="28" cy="28" r="22" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5"/>
             <g transform="translate(14, 14) scale(0.95)">${ICONS.googleG}</g>
 
-            <circle cx="90" cy="28" r="22" fill="url(#instaRoundGrad)"/>
+            <circle cx="90" cy="28" r="22" fill="url(#pocketInstaGrad)"/>
             <g transform="translate(77, 15) scale(1)">${ICONS.instagram}</g>
 
             <circle cx="152" cy="28" r="22" fill="#25D366"/>
