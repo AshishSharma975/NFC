@@ -314,10 +314,10 @@ export function generateCardSvgString({
           <text x="55" y="30" font-family="-apple-system, BlinkMacSystemFont, 'Plus Jakarta Sans', sans-serif" font-size="28" font-weight="900" fill="#0f172a">${safeBrand}</text>
         </g>
 
-        <g transform="translate(${W - 130}, 44)">
-          <rect x="0" y="0" width="84" height="44" rx="14" fill="#ffffff" stroke="#cbd5e1" stroke-width="2"/>
-          <g transform="translate(14, 11) scale(0.8)">${ICONS.nfcWave("#0284c7")}</g>
-          <text x="52" y="27" font-family="-apple-system, BlinkMacSystemFont, 'Inter', sans-serif" font-size="11" font-weight="900" fill="#0f172a">1-TAP</text>
+        <g transform="translate(${W - 145}, 44)">
+          <rect x="0" y="0" width="105" height="44" rx="14" fill="#ffffff" stroke="#cbd5e1" stroke-width="2"/>
+          <g transform="translate(14, 11) scale(0.85)">${ICONS.nfcWave("#0284c7")}</g>
+          <text x="56" y="27" font-family="-apple-system, BlinkMacSystemFont, 'Inter', sans-serif" font-size="13" font-weight="900" fill="#0f172a" letter-spacing="1">1-TAP</text>
         </g>
 
         <!-- Business Name (Blank clean space if unassigned) -->
@@ -523,16 +523,20 @@ export function generateCardSvgString({
         <g transform="translate(60, 60)">
           ${
             displayTitle
-              ? `
+              ? (() => {
+                  const titleLen = displayTitle.length;
+                  const fontSize = titleLen > 18 ? 16 : titleLen > 13 ? 19 : titleLen > 9 ? 22 : 26;
+                  return `
               <!-- Client Emblem Badge Circle -->
-              <circle cx="150" cy="120" r="95" fill="#1e222d" stroke="#f59e0b" stroke-width="4.5"/>
-              <circle cx="150" cy="120" r="88" fill="none" stroke="#ffffff" stroke-width="1.5" stroke-dasharray="4,4"/>
+              <circle cx="150" cy="120" r="105" fill="#1e222d" stroke="#f59e0b" stroke-width="4.5"/>
+              <circle cx="150" cy="120" r="98" fill="none" stroke="#ffffff" stroke-width="1.5" stroke-dasharray="4,4"/>
               
-              <!-- Client Name inside or around badge -->
-              <text x="150" y="105" font-family="-apple-system, BlinkMacSystemFont, 'Plus Jakarta Sans', sans-serif" font-size="28" font-weight="900" fill="#ffffff" text-anchor="middle" letter-spacing="1">${displayTitle}</text>
-              <g transform="translate(98, 122) scale(0.65)">${ICONS.fiveStars}</g>
-              <text x="150" y="162" font-family="-apple-system, BlinkMacSystemFont, 'Inter', sans-serif" font-size="13" font-weight="800" fill="#fef08a" text-anchor="middle" letter-spacing="2">OFFICIAL PARTNER</text>
-              `
+              <!-- Client Name inside or around badge (auto-scaled) -->
+              <text x="150" y="104" font-family="-apple-system, BlinkMacSystemFont, 'Plus Jakarta Sans', sans-serif" font-size="${fontSize}" font-weight="900" fill="#ffffff" text-anchor="middle" letter-spacing="0.5">${displayTitle}</text>
+              <g transform="translate(98, 118) scale(0.65)">${ICONS.fiveStars}</g>
+              <text x="150" y="160" font-family="-apple-system, BlinkMacSystemFont, 'Inter', sans-serif" font-size="11" font-weight="800" fill="#fef08a" text-anchor="middle" letter-spacing="1.5">OFFICIAL PARTNER</text>
+              `;
+                })()
               : `
               <!-- Unassigned Stand: Beautiful Clean Space for Custom Logo / Rubber Stamp / Sticker -->
               <rect x="20" y="30" width="260" height="180" rx="20" fill="none" stroke="#ffffff" stroke-width="2" stroke-dasharray="8,8" stroke-opacity="0.35"/>
