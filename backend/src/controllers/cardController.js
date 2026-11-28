@@ -333,9 +333,11 @@ function renderConnectProfileHtml({ cardId, title, destinationUrl, socialLinks =
     `);
   }
 
-  // 6. Direct Pay to Shop / UPI / Razorpay Payment Card
-  const upiPayLink = socialLinks.upiId 
-    ? `upi://pay?pa=${encodeURIComponent(socialLinks.upiId)}&pn=${encodeURIComponent(socialLinks.upiName || shopName)}&cu=INR`
+  // 6. Direct Pay to Shop (Instant PhonePe / Google Pay / Paytm / UPI)
+  const upiId = (socialLinks.upiId || "").trim();
+  const upiPayee = (socialLinks.upiName || shopName || "Shop Payment").trim();
+  const upiPayLink = upiId 
+    ? `upi://pay?pa=${encodeURIComponent(upiId)}&pn=${encodeURIComponent(upiPayee)}&cu=INR`
     : "";
 
   linksHtml.push(`
@@ -349,9 +351,9 @@ function renderConnectProfileHtml({ cardId, title, destinationUrl, socialLinks =
         </svg>
       </div>
       <div class="card-text">
-        <span class="card-badge pay-badge">INSTANT PAYMENT</span>
-        <strong class="card-title">Pay Store &bull; UPI / Cards</strong>
-        <span class="card-sub">GPay, PhonePe, Paytm, Cards &amp; NetBanking</span>
+        <span class="card-badge pay-badge">DIRECT PAYMENT</span>
+        <strong class="card-title">Pay Shop &bull; PhonePe / GPay / Paytm</strong>
+        <span class="card-sub">Instant 0% fee UPI transfer &bull; Any amount</span>
       </div>
       <div class="card-arrow">&rarr;</div>
     </div>
@@ -755,7 +757,15 @@ function renderConnectProfileHtml({ cardId, title, destinationUrl, socialLinks =
         <button class="sheet-close" id="closePayModalBtn" aria-label="Close">&times;</button>
       </div>
 
-      <label class="amt-label" for="customAmountInput">Enter Amount to Pay (INR):</label>
+      <div style="background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.3); border-radius: 12px; padding: 12px; margin-bottom: 16px; display: flex; align-items: center; gap: 10px;">
+        <span style="font-size: 20px;">⚡</span>
+        <div style="font-size: 13px; color: #e2e8f0;">
+          <strong>Direct Shop Payment</strong>
+          <div style="font-size: 11px; color: #94a3b8;">${upiId ? `Paying directly to VPA: <code style="color:#34d399">${upiId}</code>` : "No extra fees &bull; 100% direct transfer"}</div>
+        </div>
+      </div>
+
+      <label class="amt-label" for="customAmountInput">Enter Amount to Pay (₹):</label>
       <div class="amt-input-wrap">
         <span class="amt-symbol">&#8377;</span>
         <input type="number" id="customAmountInput" class="amt-input" placeholder="0" min="1" step="1" inputmode="numeric" />
@@ -768,22 +778,21 @@ function renderConnectProfileHtml({ cardId, title, destinationUrl, socialLinks =
         <button type="button" class="preset-btn" onclick="setPresetAmt(500)">&#8377;500</button>
       </div>
 
-      <button type="button" class="pay-submit-btn" id="payWithRazorpayBtn">
-        <span>Proceed with Razorpay / UPI</span> &rarr;
+      <!-- Option 1: Direct UPI App Launch (PhonePe, Google Pay, Paytm) -->
+      <button type="button" class="pay-submit-btn" id="payDirectUpiBtn" style="background: linear-gradient(135deg, #059669, #10b981); margin-bottom: 10px;">
+        <span>Launch PhonePe / GPay / Paytm</span> &rarr;
       </button>
 
-      ${upiPayLink ? `
-      <div class="direct-upi-box">
-        <a href="${upiPayLink}" class="direct-upi-link">
-          <span>&#9889; Or tap to launch UPI App (GPay/PhonePe/Paytm)</span> &rarr;
-        </a>
-      </div>` : ""}
+      <!-- Option 2: Fallback Online Cards / Netbanking Gateway -->
+      <button type="button" class="pay-submit-btn" id="payWithRazorpayBtn" style="background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); font-size: 13px; padding: 12px; box-shadow: none; color: #94a3b8;">
+        <span>Or Pay with Cards / NetBanking / Other UPI</span>
+      </button>
 
       <div class="secure-note">
         <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor">
           <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-2 16l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/>
         </svg>
-        <span>100% Secure 256-Bit SSL Payment via Razorpay</span>
+        <span>Instant UPI &bull; Direct Bank Settlement &bull; 0% Fee</span>
       </div>
     </div>
   </div>
@@ -793,7 +802,11 @@ function renderConnectProfileHtml({ cardId, title, destinationUrl, socialLinks =
     const openBtn = document.getElementById("openPayModalBtn");
     const closeBtn = document.getElementById("closePayModalBtn");
     const amtInput = document.getElementById("customAmountInput");
+    const payDirectUpiBtn = document.getElementById("payDirectUpiBtn");
     const paySubmitBtn = document.getElementById("payWithRazorpayBtn");
+
+    const configuredUpiId = "${upiId.replace(/"/g, '\\"')}";
+    const configuredPayee = "${upiPayee.replace(/"/g, '\\"')}";
 
     if (openBtn) {
       openBtn.addEventListener("click", () => {
@@ -816,6 +829,32 @@ function renderConnectProfileHtml({ cardId, title, destinationUrl, socialLinks =
       amtInput.value = val;
     };
 
+    // DIRECT PHONEPE / GOOGLE PAY / PAYTM LAUNCH
+    payDirectUpiBtn.addEventListener("click", () => {
+      const amount = parseFloat(amtInput.value);
+      if (!amount || amount < 1) {
+        alert("Kripya amount enter karein (Minimum ₹1).");
+        amtInput.focus();
+        return;
+      }
+
+      if (!configuredUpiId) {
+        alert("Is shop ka direct UPI ID abhi configure nahi hai. Aap niche wale 'Cards / NetBanking / Other UPI' option se pay kar sakte hain.");
+        return;
+      }
+
+      // Standard NPCI UPI URI Scheme (Native Intent trigger)
+      const upiUrl = "upi://pay?pa=" + encodeURIComponent(configuredUpiId) +
+        "&pn=" + encodeURIComponent(configuredPayee) +
+        "&am=" + encodeURIComponent(amount.toFixed(2)) +
+        "&cu=INR" +
+        "&tn=" + encodeURIComponent("Payment to " + configuredPayee);
+
+      // Trigger app opening directly
+      window.location.href = upiUrl;
+    });
+
+    // FALLBACK RAZORPAY GATEWAY
     paySubmitBtn.addEventListener("click", async () => {
       const amount = parseFloat(amtInput.value);
       if (!amount || amount < 1) {
@@ -888,7 +927,7 @@ function renderConnectProfileHtml({ cardId, title, destinationUrl, socialLinks =
         alert("Payment start nahi ho paya: " + err.message);
       } finally {
         paySubmitBtn.disabled = false;
-        paySubmitBtn.innerHTML = "<span>Proceed with Razorpay / UPI</span> &rarr;";
+        paySubmitBtn.innerHTML = "<span>Or Pay with Cards / NetBanking / Other UPI</span>";
       }
     });
   </script>
